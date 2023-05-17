@@ -1,6 +1,6 @@
-import express from 'express';
+import express from 'express'
 
-const router = express();
+const router = express()
 
 /**
  * @openapi
@@ -12,8 +12,8 @@ const router = express();
  *         description: TODO - decide on format of data
  */
 router.post('/execute', (req, res) => {
-  // TODO
-  res.send('TODO');
-});
+	// TODO
+	res.send('TODO')
+})
 
-export default router;
+export default router
