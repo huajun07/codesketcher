@@ -11,7 +11,7 @@ const router = express()
  *       200:
  *         description: TODO - decide on format of data
  */
-router.post('/execute', (req, res) => {
+router.post('/execute', (_req, res) => {
 	// TODO
 	res.send('TODO')
 })
