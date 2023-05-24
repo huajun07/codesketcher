@@ -1,21 +1,11 @@
 name: Test and deploy a branch to dev environment
-on:
-  issue_comment:
-    types: [created]
-
-# permissions to allow branch-deploy to comment on the pull request
-permissions:
-  pull-requests: write
-  deployments: write
-  contents: write
-  checks: read
+on: workflow_dispatch
 
 jobs:
   test:
     uses: ./.github/workflows/branch-test.yml
   deploy:
     runs-on: ubuntu-latest
-    if: ${{ github.event.issue.pull_request }} # only run on pull request comments
     needs: test
 
     env:
@@ -23,15 +13,10 @@ jobs:
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_DEV_SECRET_ACCESS_KEY }}
 
     steps:
-      - uses: github/branch-deploy@v5.2.2
-        id: branch-deploy
-        with:
-          trigger: ".deploy"
-
       # checkout code
       - uses: actions/checkout@v3
         with:
-          ref: ${{ steps.branch-deploy.outputs.ref }}
+          ref: ${{ github.ref }}
 
       # setup nodejs and python
       - uses: actions/setup-node@v3
@@ -52,13 +37,10 @@ jobs:
           pip install -r requirements.txt
           npm ci
 
-      # the steps below are skipped if noop
       # deploy backend
       - run: npm run deploy:dev
-        if: ${{ steps.branch-deploy.outputs.continue == 'true' && steps.branch-deploy.outputs.noop != 'true' }}
         working-directory: ./backend
 
       # deploy executor service
       - run: npm run deploy:dev
-        if: ${{ steps.branch-deploy.outputs.continue == 'true' && steps.branch-deploy.outputs.noop != 'true' }}
         working-directory: ./services/executor
