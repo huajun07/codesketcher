@@ -16,7 +16,7 @@ import {
   useColorModeValue,
 } from '@chakra-ui/react'
 
-export default function NavBar() {
+export const NavBar = () => {
   const { colorMode, toggleColorMode } = useColorMode()
   return (
     <>
