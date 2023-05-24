@@ -48,5 +48,6 @@ def execute(code):
         'data': debugger.data
     }
 
+# handler function for AWS Lambda
 def handler(code, _context):
     return execute(code)
