@@ -5,7 +5,7 @@
 		"dev": "cp env/.env.local .env && nodemon src/index.ts",
 		"test": "jest",
 		"build": "tsc",
-        "deploy:dev": "cp env/.env.development .env && serverless deploy --stage dev",
+		"deploy:dev": "cp env/.env.development .env && serverless deploy --stage dev",
 		"start": "cp env/.env.production .env && node build/index.js"
 	},
 	"devDependencies": {
@@ -28,8 +28,10 @@
 		"typescript": "^5.0.4"
 	},
 	"dependencies": {
+		"@aws-sdk/client-lambda": "^3.338.0",
 		"@vendia/serverless-express": "^4.10.4",
 		"body-parser": "^1.20.2",
+		"celebrate": "^15.0.1",
 		"convict": "^6.2.4",
 		"dotenv": "^16.0.3",
 		"express": "^4.18.2",
