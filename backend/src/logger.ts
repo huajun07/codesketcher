@@ -3,7 +3,7 @@ import config from './config'
 
 const logger = pino({
 	transport: {
-		target: config.get('env') == 'development' ? 'pino-pretty' : 'pino/file',
+		target: config.get('env') === 'local' ? 'pino-pretty' : 'pino/file',
 	},
 })
 

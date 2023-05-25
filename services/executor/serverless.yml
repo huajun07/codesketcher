@@ -1,0 +1,13 @@
+service: executor
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: python3.10
+
+functions:
+  executor:
+    handler: executor/main.handler
+    name: executor-${sls:stage}
+    timeout: 1
+    

@@ -1,0 +1,24 @@
+name: Test Backend
+on:
+  - pull_request
+  - workflow_call
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      # checkout code
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.ref }}
+      
+      # setup nodejs
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      
+      - name: Run Backend Tests
+        working-directory: ./backend
+        run: |
+          npm ci
+          npm run test
