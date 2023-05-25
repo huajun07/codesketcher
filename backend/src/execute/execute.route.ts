@@ -1,4 +1,6 @@
 import express from 'express'
+import { celebrate, Joi, Segments } from 'celebrate'
+import execute from './execute.service'
 
 const router = express()
 
@@ -11,9 +13,18 @@ const router = express()
  *       200:
  *         description: TODO - decide on format of data
  */
-router.post('/execute', (_req, res) => {
-	// TODO
-	res.send('TODO')
-})
+router.post(
+	'/execute',
+	celebrate({
+		[Segments.BODY]: Joi.object().keys({
+			code: Joi.string().required(),
+		}),
+	}),
+	async (req, res) => {
+        const code = req.body.code as string;
+		const response = await execute(code)
+        res.status(200).json(response)
+	}
+)
 
 export default router
