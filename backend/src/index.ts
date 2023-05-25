@@ -34,7 +34,7 @@ app.use(celebrateErrorHandler)
 
 // handles all other types of errors
 const httpErrorHandler: ErrorRequestHandler = (err, _req, res, _next) => {
-	logger.error('sending json error response', err)
+	logger.error({ message: 'sending json error response', error: err })
 
 	if (err instanceof URIError) {
 		// this error happens when someone types a malformed url such as /%c0
