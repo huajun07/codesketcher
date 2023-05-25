@@ -17,7 +17,7 @@ const config = convict({
     executorRegion: {
         doc: 'The region hosting the executor service\'s Lambda',
         format: '*',
-        default: 'us-east-1',
+        default: 'ap-southeast-1',
         env: 'EXECUTOR_REGION'
     },
     executorName: {
