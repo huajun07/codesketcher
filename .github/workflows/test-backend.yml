@@ -1,4 +1,4 @@
-name: Test a pull request
+name: Test Backend
 on:
   - pull_request
   - workflow_call
@@ -12,23 +12,13 @@ jobs:
         with:
           ref: ${{ github.ref }}
       
-      # setup nodejs and python
+      # setup nodejs
       - uses: actions/setup-node@v3
         with:
           node-version: '18'
-      - uses: actions/setup-python@v4
-        with:
-          python-version: '3.10' 
       
       - name: Run Backend Tests
         working-directory: ./backend
         run: |
           npm ci
           npm run test
-      
-      - name: Run Executor Tests
-        working-directory: ./services/executor
-        run: |
-          npm ci
-          pip install -r requirements.txt
-          pytest

@@ -1,9 +1,9 @@
-name: Test and deploy a branch to dev environment
+name: Deploy Backend (Dev)
 on: workflow_dispatch
 
 jobs:
   test:
-    uses: ./.github/workflows/branch-test.yml
+    uses: ./.github/workflows/test-backend.yml
   deploy:
     runs-on: ubuntu-latest
     needs: test
@@ -18,29 +18,15 @@ jobs:
         with:
           ref: ${{ github.ref }}
 
-      # setup nodejs and python
+      # setup nodejs
       - uses: actions/setup-node@v3
         with:
           node-version: '18'
-      - uses: actions/setup-python@v4
-        with:
-          python-version: '3.10' 
       
       # setup backend
       - run: npm ci
         working-directory: ./backend
-      
-      # setup executor service
-      - name: Setup executor service
-        working-directory: ./services/executor
-        run: |
-          pip install -r requirements.txt
-          npm ci
 
       # deploy backend
       - run: npm run deploy:dev
         working-directory: ./backend
-
-      # deploy executor service
-      - run: npm run deploy:dev
-        working-directory: ./services/executor
