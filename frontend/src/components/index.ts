@@ -1,3 +1,5 @@
 export * from './CodeIDE'
 export * from './CodeIDEButtons'
+export * from './DataTable'
+export * from './InputIDE'
 export * from './NavBar'
