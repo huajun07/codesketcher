@@ -8,6 +8,12 @@ plugins:
 provider:
   name: aws
   runtime: nodejs18.x
+  iam:
+    role:
+      statements: # give this lambda permission to invoke the execute service's lambda
+        - Effect: Allow
+          Action: 'lambda:InvokeFunction'
+          Resource: arn:aws:lambda:${aws:region}:${aws:accountId}:function:executor-${sls:stage}
 
 functions:
   api:
