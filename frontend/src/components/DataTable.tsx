@@ -48,7 +48,8 @@ export const DataTable = (props: dataTableProps) => {
               <IoFilter color="gray.300" />
             </InputLeftElement>
             <Input
-              borderRadius={0}
+              border="none"
+              _focusVisible={{ border: 'none' }}
               value={filterVal}
               placeholder="Filter variable names"
               onChange={(e) => setFilterVal(e.target.value)}
