@@ -1,9 +1,9 @@
 service: backend
 frameworkVersion: '3'
 
-useDotenv: true
 plugins:
   - serverless-plugin-typescript
+  - serverless-dotenv-plugin
 
 provider:
   name: aws
