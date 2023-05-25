@@ -1,20 +1,12 @@
 import express from 'express'
-import swaggerJsdoc from 'swagger-jsdoc'
 import swaggerUi from 'swagger-ui-express'
+import fs from 'fs'
+import YAML from 'yaml'
 
-const options = {
-	definition: {
-		openapi: '3.0.0',
-		info: {
-			title: 'CodeSketcher API',
-			version: '0.0.1',
-		},
-	},
-	apis: ['./src/*/*.route.ts'],
-}
-const openapiSpecification = swaggerJsdoc(options)
+const file = fs.readFileSync('./swagger.yml', 'utf8')
+const swaggerDocument = YAML.parse(file)
 const router = express()
 
-router.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openapiSpecification))
+router.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
 
 export default router
