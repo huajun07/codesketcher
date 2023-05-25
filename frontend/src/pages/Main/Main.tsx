@@ -1,7 +1,14 @@
 import { useState } from 'react'
 import { Box, Flex } from '@chakra-ui/react'
 
-import { CodeIDE, CodeIDEButtons, DataTable, InputIDE } from 'components'
+import {
+  CodeIDE,
+  CodeIDEButtons,
+  ControlBar,
+  DataTable,
+  InputIDE,
+  VisualArea,
+} from 'components'
 
 export const Main = () => {
   const [editing, setEditing] = useState(true)
@@ -23,6 +30,14 @@ export const Main = () => {
         <Flex w="500px" borderRightWidth="1px" flexDirection="column">
           <DataTable data={test} />
           <InputIDE />
+        </Flex>
+        <Flex flex={1} flexDirection="column">
+          <Flex flex={1}>
+            <VisualArea />
+          </Flex>
+          <Box>
+            <ControlBar curIdx={2} length={10} playing={false} curSpeed={10} />
+          </Box>
         </Flex>
       </Flex>
     </>
