@@ -3,6 +3,7 @@ import copy
 
 class Debugger(bdb.Bdb):
     def __init__(self):
+        super().__init__()
         self.is_tracing = False
         self.data = []
         self.last_line_number = -1
