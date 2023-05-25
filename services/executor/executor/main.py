@@ -2,10 +2,12 @@ import bdb
 import copy
 
 class Debugger(bdb.Bdb):
-    is_tracing = False
-    data = []
-    last_line_number = -1
-    last_variables = {}
+    def __init__(self):
+        super().__init__()
+        self.is_tracing = False
+        self.data = []
+        self.last_line_number = -1
+        self.last_variables = {}
 
     def user_line(self, frame):
         if not self.is_tracing:

@@ -1,19 +1,26 @@
 service: backend
 frameworkVersion: '3'
 
-useDotenv: true
 plugins:
   - serverless-plugin-typescript
+  - serverless-dotenv-plugin
 
 provider:
   name: aws
   runtime: nodejs18.x
+  region: ap-southeast-1
+  iam:
+    role:
+      statements: # give this lambda permission to invoke the execute service's lambda
+        - Effect: Allow
+          Action: 'lambda:InvokeFunction'
+          Resource: arn:aws:lambda:${aws:region}:${aws:accountId}:function:executor-${sls:stage}
 
 functions:
   api:
     handler: src/index.handler
     events:
       - httpApi:
-          method: GET
+          method: '*'
           path: /{any+}
     

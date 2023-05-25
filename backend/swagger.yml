@@ -1,0 +1,49 @@
+openapi: 3.0.3
+info:
+  title: CodeSketcher
+  description: |-
+    Documentation for the backend API of CodeSketcher.
+  version: 0.0.1
+paths:
+  /execute:
+    post:
+      description: Get information about how variables change throughout code execution.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: string
+                  example: 'a = 1\nb = 2'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  data:
+                    $ref: '#/components/schemas/ExecutionInformationArray'
+components:
+  schemas:
+    ExecutionInformation:
+      type: object
+      properties:
+        line_number:
+          type: integer
+          example: 1
+        variable_changes:
+          type: object
+          description: A mapping from every changed variable to their new value.
+          example:
+            a: 1
+    ExecutionInformationArray:
+      type: array
+      items:
+        $ref: '#/components/schemas/ExecutionInformation'

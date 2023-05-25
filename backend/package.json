@@ -5,7 +5,7 @@
 		"dev": "cp env/.env.local .env && nodemon src/index.ts",
 		"test": "jest",
 		"build": "tsc",
-        "deploy:dev": "cp env/.env.development .env && serverless deploy --stage dev",
+		"deploy:dev": "cp env/.env.development .env && serverless deploy --stage dev",
 		"start": "cp env/.env.production .env && node build/index.js"
 	},
 	"devDependencies": {
@@ -22,21 +22,24 @@
 		"pino-pretty": "^10.0.0",
 		"prettier": "^2.8.8",
 		"serverless": "^3.31.0",
+		"serverless-dotenv-plugin": "^6.0.0",
 		"serverless-plugin-typescript": "^2.1.4",
 		"ts-jest": "^29.1.0",
 		"ts-node": "^10.9.1",
 		"typescript": "^5.0.4"
 	},
 	"dependencies": {
+		"@aws-sdk/client-lambda": "^3.338.0",
 		"@vendia/serverless-express": "^4.10.4",
 		"body-parser": "^1.20.2",
+		"celebrate": "^15.0.1",
 		"convict": "^6.2.4",
 		"dotenv": "^16.0.3",
 		"express": "^4.18.2",
 		"joi": "^17.9.2",
 		"pino": "^8.14.1",
 		"pino-http": "^8.3.3",
-		"swagger-jsdoc": "^6.2.8",
-		"swagger-ui-express": "^4.6.3"
+		"swagger-ui-express": "^4.6.3",
+		"yaml": "^2.3.0"
 	}
 }
