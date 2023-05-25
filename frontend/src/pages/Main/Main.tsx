@@ -1,8 +1,10 @@
+import { useState } from 'react'
 import { Box, Flex } from '@chakra-ui/react'
 
-import { CodeIDE } from 'components'
+import { CodeIDE, CodeIDEButtons } from 'components'
 
 export const Main = () => {
+  const [editing, setEditing] = useState(true)
   return (
     <>
       <Flex>
@@ -12,7 +14,11 @@ export const Main = () => {
           height="calc(100vh - 64px)"
           borderRightWidth="1px"
         >
-          <CodeIDE />
+          <CodeIDEButtons
+            editing={editing}
+            toggleMode={() => setEditing(!editing)}
+          />
+          <CodeIDE editable={editing} lineHighlight={2} />
         </Box>
       </Flex>
     </>
