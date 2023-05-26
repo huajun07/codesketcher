@@ -1,5 +1,12 @@
 import { useState } from 'react'
-import { Box, Center, Flex, Spinner, useInterval } from '@chakra-ui/react'
+import {
+  Box,
+  Center,
+  Flex,
+  Spinner,
+  useInterval,
+  useToast,
+} from '@chakra-ui/react'
 
 import { getInstructions, instruction } from 'utils/executor'
 import {
@@ -67,11 +74,25 @@ export const Main = () => {
     setCurIdx(idx)
   }
 
+  const toast = useToast()
+
   const toggleEditing = async () => {
     if (editing) {
       // Start playing
       setLoading(true)
-      const newInstructions = await getInstructions(code)
+      const { instructions: newInstructions, errorMessage } =
+        await getInstructions(code)
+      if (!newInstructions) {
+        setLoading(false)
+        toast({
+          title: 'An Error Has Occured',
+          description: errorMessage,
+          status: 'error',
+          duration: 2000,
+          isClosable: true,
+        })
+        return
+      }
       setInstructions(newInstructions)
       setCurIdx(0)
       setData([])
