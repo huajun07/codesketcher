@@ -43,9 +43,9 @@ export const Main = (props: MainProps) => {
 
   useInterval(
     () => {
-      setCurIdx(curIdx + 1) // This is updated after the hook is called
       // sanity check
       if (curIdx >= 0 && curIdx < props.instructions.length) {
+        setCurIdx(curIdx + 1) // This is updated after the hook is called
         const newInstructions = props.instructions[curIdx].variable_changes
         console.log(curIdx, newInstructions, props.instructions)
         for (const [key, value] of Object.entries(newInstructions)) {
