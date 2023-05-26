@@ -29,16 +29,16 @@ export const Main = (props: MainProps) => {
   const [editing, setEditing] = useState(true)
   const [data, setData] = useState<dataVal[]>([])
   const [isPlaying, setPlaying] = useState(false)
+  const [wasPlaying, setWasPlaying] = useState(false)
   const [speed, setSpeed] = useState<number>(1)
   const [curIdx, setCurIdx] = useState(0)
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const updateData = (name: string, value: any) => {
-    const idx = data.findIndex((item) => item.name === name)
+  const updateData = (name: string, value: any, dataArr: dataVal[]) => {
+    const idx = dataArr.findIndex((item) => item.name === name)
     const newData = { name, value }
-    if (idx !== -1) data[idx] = newData
-    else data.push(newData)
-    setData(data)
+    if (idx !== -1) dataArr[idx] = newData
+    else dataArr.push(newData)
   }
 
   useInterval(
@@ -49,8 +49,9 @@ export const Main = (props: MainProps) => {
         const newInstructions = props.instructions[curIdx].variable_changes
         console.log(curIdx, newInstructions, props.instructions)
         for (const [key, value] of Object.entries(newInstructions)) {
-          updateData(key, value)
+          updateData(key, value, data)
         }
+        setData(data)
       }
       if (curIdx >= props.instructions.length - 1) {
         setPlaying(false)
@@ -59,6 +60,18 @@ export const Main = (props: MainProps) => {
     isPlaying ? Math.ceil(1000 / speed) : null,
   )
 
+  const setDataIdx = (idx: number) => {
+    const newData: dataVal[] = []
+    for (let i = 0; i < idx; i++) {
+      const newInstructions = props.instructions[i].variable_changes
+      for (const [key, value] of Object.entries(newInstructions)) {
+        updateData(key, value, newData)
+      }
+    }
+    setData(newData)
+    setCurIdx(idx)
+  }
+
   const toggleEditing = () => {
     if (editing) {
       // Start playing
@@ -66,6 +79,7 @@ export const Main = (props: MainProps) => {
       setCurIdx(0)
       setData([])
       setPlaying(true)
+      setWasPlaying(false)
       console.log('Start playing')
     } else {
       // Stop playing
@@ -104,7 +118,10 @@ export const Main = (props: MainProps) => {
               togglePlaying={() => {
                 setPlaying(!isPlaying)
               }}
+              setCurIdx={setDataIdx}
               disabled={editing}
+              wasPlaying={wasPlaying}
+              setWasPlaying={setWasPlaying}
             />
           </Box>
         </Flex>

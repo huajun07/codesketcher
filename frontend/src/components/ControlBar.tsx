@@ -24,8 +24,11 @@ interface ControlBarProps {
   length: number
   curSpeed: number
   disabled: boolean
+  wasPlaying: boolean
   setSpeed: (speed: number) => void
   togglePlaying: () => void
+  setWasPlaying: (newVal: boolean) => void
+  setCurIdx: (idx: number) => void
 }
 
 export const ControlBar = (props: ControlBarProps) => {
@@ -42,6 +45,23 @@ export const ControlBar = (props: ControlBarProps) => {
             size="lg"
             focusThumbOnChange={false}
             isDisabled={props.disabled}
+            onChange={props.setCurIdx}
+            onChangeStart={
+              props.playing
+                ? () => {
+                    props.setWasPlaying(true)
+                    props.togglePlaying()
+                  }
+                : void 0
+            }
+            onChangeEnd={
+              props.wasPlaying
+                ? () => {
+                    props.setWasPlaying(false)
+                    props.togglePlaying()
+                  }
+                : void 0
+            }
           >
             <SliderTrack>
               <Box position="relative" right={10} />
@@ -113,6 +133,7 @@ export const ControlBar = (props: ControlBarProps) => {
               min={0}
               max={props.length}
               isDisabled={props.disabled}
+              onChange={(v) => props.setCurIdx(Number(v))}
             >
               <NumberInputField />
               <NumberInputStepper>
