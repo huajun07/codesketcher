@@ -14,6 +14,7 @@ const getInstructions = async (code: string): Promise<instruction[]> => {
         code,
       },
     )
+    console.log(res)
     return res.data?.data || ([] as instruction[])
   } catch (err) {
     return []
