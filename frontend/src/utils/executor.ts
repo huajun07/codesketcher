@@ -8,12 +8,9 @@ interface instruction {
 
 const getInstructions = async(code: string): Promise<instruction[]> => {
     try{
-        console.log(code)
-        console.log(process.env.REACT_APP_EXECUTOR_ENDPOINT + '/execute')
         const res = await axios.post(process.env.REACT_APP_EXECUTOR_ENDPOINT + '/execute', {
             code
         })
-        console.log(res)
         return res.data?.data || [] as instruction[]
     }catch(err){
         return []
