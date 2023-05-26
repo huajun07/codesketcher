@@ -19,7 +19,7 @@ interface RowDataProps {
 }
 
 const RowData = (props: RowDataProps) => {
-  return <Text>{props.val}</Text>
+  return <Text>{JSON.stringify(props.val)}</Text>
 }
 
 interface dataVal {
