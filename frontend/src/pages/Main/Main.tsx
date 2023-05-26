@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Box, Flex, useInterval } from '@chakra-ui/react'
 
+import { getInstructions, instruction } from 'utils/executor'
 import {
   CodeIDE,
   CodeIDEButtons,
@@ -15,23 +16,15 @@ interface dataVal {
   value: string | number
 }
 
-interface instruction {
-  line_number: number
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  variable_changes: Record<string, any>
-}
-
-interface MainProps {
-  instructions: instruction[]
-}
-
-export const Main = (props: MainProps) => {
+export const Main = () => {
+  const [instructions, setInstructions] = useState<instruction[]>([])
   const [editing, setEditing] = useState(true)
   const [data, setData] = useState<dataVal[]>([])
   const [isPlaying, setPlaying] = useState(false)
   const [wasPlaying, setWasPlaying] = useState(false)
   const [speed, setSpeed] = useState<number>(1)
   const [curIdx, setCurIdx] = useState(0)
+  const [code, setCode] = useState("print('hello world')")
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const updateData = (name: string, value: any, dataArr: dataVal[]) => {
@@ -44,16 +37,16 @@ export const Main = (props: MainProps) => {
   useInterval(
     () => {
       // sanity check
-      if (curIdx >= 0 && curIdx < props.instructions.length) {
+      if (curIdx >= 0 && curIdx < instructions.length) {
         setCurIdx(curIdx + 1) // This is updated after the hook is called
-        const newInstructions = props.instructions[curIdx].variable_changes
-        console.log(curIdx, newInstructions, props.instructions)
+        const newInstructions = instructions[curIdx].variable_changes
+        console.log(curIdx, newInstructions, instructions)
         for (const [key, value] of Object.entries(newInstructions)) {
           updateData(key, value, data)
         }
         setData(data)
       }
-      if (curIdx >= props.instructions.length - 1) {
+      if (curIdx >= instructions.length - 1) {
         setPlaying(false)
       }
     },
@@ -63,7 +56,7 @@ export const Main = (props: MainProps) => {
   const setDataIdx = (idx: number) => {
     const newData: dataVal[] = []
     for (let i = 0; i < idx; i++) {
-      const newInstructions = props.instructions[i].variable_changes
+      const newInstructions = instructions[i].variable_changes
       for (const [key, value] of Object.entries(newInstructions)) {
         updateData(key, value, newData)
       }
@@ -72,15 +65,15 @@ export const Main = (props: MainProps) => {
     setCurIdx(idx)
   }
 
-  const toggleEditing = () => {
+  const toggleEditing = async () => {
     if (editing) {
       // Start playing
-      /* Fetch instructions TODO*/
+      const newInstructions = await getInstructions(code)
+      setInstructions(newInstructions)
       setCurIdx(0)
       setData([])
       setPlaying(true)
       setWasPlaying(false)
-      console.log('Start playing')
     } else {
       // Stop playing
       setPlaying(false)
@@ -94,9 +87,11 @@ export const Main = (props: MainProps) => {
         <Box w="500px" overflowX="scroll" borderRightWidth="1px">
           <CodeIDEButtons editing={editing} toggleMode={toggleEditing} />
           <CodeIDE
+            code={code}
+            setCode={setCode}
             editable={editing}
             lineHighlight={
-              curIdx > 0 ? props.instructions[curIdx - 1].line_number : 0
+              curIdx > 0 ? instructions[curIdx - 1].line_number : 0
             }
           />
         </Box>
@@ -111,12 +106,12 @@ export const Main = (props: MainProps) => {
           <Box>
             <ControlBar
               curIdx={curIdx}
-              length={props.instructions.length}
+              length={instructions.length}
               playing={isPlaying}
               curSpeed={speed}
               setSpeed={setSpeed}
               togglePlaying={() => {
-                if (isPlaying || curIdx < props.instructions.length)
+                if (isPlaying || curIdx < instructions.length)
                   setPlaying(!isPlaying)
               }}
               setCurIdx={setDataIdx}
