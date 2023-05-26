@@ -35,11 +35,10 @@ export const Main = (props: MainProps) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const updateData = (name: string, value: any) => {
     const idx = data.findIndex((item) => item.name === name)
-    const tempData = data
     const newData = { name, value }
-    if (idx !== -1) tempData[idx] = newData
-    else tempData.push(newData)
-    setData(tempData)
+    if (idx !== -1) data[idx] = newData
+    else data.push(newData)
+    setData(data)
   }
 
   useInterval(
