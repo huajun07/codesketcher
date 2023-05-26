@@ -11,6 +11,7 @@ import {
 
 interface CodeIDEButtonProps {
   editing: boolean
+  isDisabled: boolean
   toggleMode: () => void
 }
 
@@ -37,6 +38,7 @@ export const CodeIDEButtons = (props: CodeIDEButtonProps) => {
             colorScheme="blue"
             variant="solid"
             onClick={props.toggleMode}
+            isDisabled={props.isDisabled}
           >
             {props.editing ? 'Run' : 'Edit'}
           </Button>
