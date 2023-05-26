@@ -3,7 +3,11 @@ import {
   Box,
   Flex,
   IconButton,
-  Input,
+  NumberDecrementStepper,
+  NumberIncrementStepper,
+  NumberInput,
+  NumberInputField,
+  NumberInputStepper,
   Slider,
   SliderFilledTrack,
   SliderThumb,
@@ -19,6 +23,9 @@ interface ControlBarProps {
   playing: boolean
   length: number
   curSpeed: number
+  disabled: boolean
+  setSpeed: (speed: number) => void
+  togglePlaying: () => void
 }
 
 export const ControlBar = (props: ControlBarProps) => {
@@ -26,13 +33,15 @@ export const ControlBar = (props: ControlBarProps) => {
   return (
     <>
       <Flex flexDirection="column">
-        <Box px="15px" py="0px">
+        <Box px="15px" paddingTop="10px">
           <Slider
             value={props.curIdx}
             min={0}
             max={props.length}
             step={1}
             size="lg"
+            focusThumbOnChange={false}
+            isDisabled={props.disabled}
           >
             <SliderTrack>
               <Box position="relative" right={10} />
@@ -44,7 +53,21 @@ export const ControlBar = (props: ControlBarProps) => {
         <Flex>
           <Stack direction="row" align="center" px="10px">
             <Text> Speed</Text>
-            <Input value={props.curSpeed} w="60px" textAlign="center" />
+            <NumberInput
+              maxW="80px"
+              mr="2rem"
+              value={props.curSpeed}
+              onChange={(v) => props.setSpeed(Number(v))}
+              min={1}
+              max={1000}
+              isDisabled={props.disabled}
+            >
+              <NumberInputField />
+              <NumberInputStepper>
+                <NumberIncrementStepper />
+                <NumberDecrementStepper />
+              </NumberInputStepper>
+            </NumberInput>
           </Stack>
           <Spacer />
           <Stack direction="row" align="center">
@@ -53,6 +76,7 @@ export const ControlBar = (props: ControlBarProps) => {
               background="none"
               size="lg"
               aria-label="Rewind"
+              isDisabled={props.disabled}
               icon={<FaBackward color={buttonColor} />}
             />
             <IconButton
@@ -60,6 +84,7 @@ export const ControlBar = (props: ControlBarProps) => {
               background="none"
               size="lg"
               aria-label="Play/Pause"
+              isDisabled={props.disabled || props.curIdx === props.length}
               icon={
                 props.playing ? (
                   <FaPause color={buttonColor} />
@@ -67,19 +92,34 @@ export const ControlBar = (props: ControlBarProps) => {
                   <FaPlay color={buttonColor} />
                 )
               }
+              onClick={props.togglePlaying}
             />
             <IconButton
               isRound={true}
               background="none"
               size="lg"
               aria-label="Forward"
+              isDisabled={props.disabled}
               icon={<FaForward color={buttonColor} />}
             />
           </Stack>
           <Spacer />
           <Stack direction="row" align="center" px="10px">
             <Text> Step</Text>
-            <Input value={props.curIdx} w="60px" textAlign="center" />
+            <NumberInput
+              maxW="80px"
+              mr="2rem"
+              value={props.curIdx}
+              min={0}
+              max={props.length}
+              isDisabled={props.disabled}
+            >
+              <NumberInputField />
+              <NumberInputStepper>
+                <NumberIncrementStepper />
+                <NumberDecrementStepper />
+              </NumberInputStepper>
+            </NumberInput>
           </Stack>
         </Flex>
       </Flex>

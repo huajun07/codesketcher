@@ -14,7 +14,8 @@ import {
 } from '@chakra-ui/react'
 
 interface RowDataProps {
-  val: string | number
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  val: any
 }
 
 const RowData = (props: RowDataProps) => {
