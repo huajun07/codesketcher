@@ -46,12 +46,11 @@ export const Main = () => {
           updateData(key, value, data)
         }
         setData(data)
-        setLoading(false)
       }
       if (curIdx >= instructions.length - 1) {
         setPlaying(false)
-        setLoading(false)
       }
+      setLoading(false)
     },
     isPlaying ? Math.ceil(1000 / speed) : null,
   )
