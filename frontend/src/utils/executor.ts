@@ -6,7 +6,13 @@ interface instruction {
   variable_changes: Record<string, any>
 }
 
-const getInstructions = async (code: string): Promise<instruction[]> => {
+interface instructionRes {
+  errorMessage?: string
+  instructions?: instruction[]
+}
+
+const getInstructions = async (code: string): Promise<instructionRes> => {
+  const defaultErrorMessage = 'An unexpected error has occured'
   try {
     const res = await axios.post(
       process.env.REACT_APP_EXECUTOR_ENDPOINT + '/execute',
@@ -14,10 +20,15 @@ const getInstructions = async (code: string): Promise<instruction[]> => {
         code,
       },
     )
-    console.log(res)
-    return res.data?.data || ([] as instruction[])
+    const instructions = res.data?.data
+    if (instructions) return { instructions }
+    return {
+      errorMessage: res.data?.errorMessage || defaultErrorMessage,
+    }
   } catch (err) {
-    return []
+    return {
+      errorMessage: defaultErrorMessage,
+    }
   }
 }
 
