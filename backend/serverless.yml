@@ -16,6 +16,10 @@ provider:
           Action: 'lambda:InvokeFunction'
           Resource: arn:aws:lambda:${aws:region}:${aws:accountId}:function:executor-${sls:stage}
 
+package:
+  include:
+    - ./swagger.yml # needed for generating documentation
+
 functions:
   api:
     handler: src/index.handler
