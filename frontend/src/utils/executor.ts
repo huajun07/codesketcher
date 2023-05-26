@@ -7,7 +7,7 @@ interface instruction {
 }
 
 interface instructionRes {
-  errorMessage: string
+  errorMessage?: string
   instructions?: instruction[]
 }
 
@@ -20,9 +20,9 @@ const getInstructions = async (code: string): Promise<instructionRes> => {
         code,
       },
     )
-    console.log(res)
+    const instructions = res.data?.data
+    if (instructions) return { instructions }
     return {
-      instructions: res.data?.data,
       errorMessage: res.data?.errorMessage || defaultErrorMessage,
     }
   } catch (err) {
