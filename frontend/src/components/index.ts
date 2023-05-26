@@ -1,5 +1,7 @@
 export * from './CodeIDE'
 export * from './CodeIDEButtons'
+export * from './ControlBar'
 export * from './DataTable'
 export * from './InputIDE'
 export * from './NavBar'
+export * from './VisualArea'
