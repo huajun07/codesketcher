@@ -116,7 +116,8 @@ export const Main = (props: MainProps) => {
               curSpeed={speed}
               setSpeed={setSpeed}
               togglePlaying={() => {
-                setPlaying(!isPlaying)
+                if (isPlaying || curIdx < props.instructions.length)
+                  setPlaying(!isPlaying)
               }}
               setCurIdx={setDataIdx}
               disabled={editing}
