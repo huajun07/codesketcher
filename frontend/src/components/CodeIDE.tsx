@@ -21,6 +21,7 @@ export const CodeIDE = (props: codeIDEProps) => {
       readOnly={!props.editable}
       placeholder={placeholder}
       autoFocus={true}
+      width="500px"
       basicSetup={{
         highlightActiveLineGutter: props.editable,
         highlightActiveLine: props.editable,
