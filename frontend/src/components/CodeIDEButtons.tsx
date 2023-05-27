@@ -23,6 +23,7 @@ export const CodeIDEButtons = (props: CodeIDEButtonProps) => {
         minWidth="max-content"
         alignItems="center"
         gap="2"
+        h="60px"
       >
         <Spacer />
         <Tooltip

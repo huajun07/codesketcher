@@ -16,7 +16,7 @@ export const CodeIDE = (props: codeIDEProps) => {
   return (
     <CodeMirror
       value={props.code}
-      height="calc(100vh - 144px)"
+      height="calc(100vh - 125px)"
       editable={props.editable}
       readOnly={!props.editable}
       placeholder={placeholder}
