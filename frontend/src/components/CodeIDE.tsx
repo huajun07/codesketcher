@@ -16,11 +16,12 @@ export const CodeIDE = (props: codeIDEProps) => {
   return (
     <CodeMirror
       value={props.code}
-      height="calc(100vh - 144px)"
+      height="calc(100vh - 125px)"
       editable={props.editable}
       readOnly={!props.editable}
       placeholder={placeholder}
       autoFocus={true}
+      width="500px"
       basicSetup={{
         highlightActiveLineGutter: props.editable,
         highlightActiveLine: props.editable,

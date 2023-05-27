@@ -20,7 +20,12 @@ export const NavBar = () => {
   const { colorMode, toggleColorMode } = useColorMode()
   return (
     <>
-      <Box bg={useColorModeValue('blue.100', 'blue.900')} px={4}>
+      <Box
+        bg={useColorModeValue('blue.100', 'blue.900')}
+        px={4}
+        minW="1500px"
+        h="65px"
+      >
         <Flex h={16} alignItems={'center'} justifyContent={'space-between'}>
           <Heading color={useColorModeValue('blue.700', 'blue.300')}>
             CodeSketcher

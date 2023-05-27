@@ -108,7 +108,7 @@ export const Main = () => {
   return (
     <>
       <Flex>
-        <Box w="500px" overflowX="scroll" borderRightWidth="1px">
+        <Box minW="500px" borderRightWidth="1px">
           <CodeIDEButtons
             editing={editing}
             toggleMode={toggleEditing}
@@ -147,7 +147,7 @@ export const Main = () => {
             <DataTable data={data} />
             <InputIDE />
           </Flex>
-          <Flex flex={1} flexDirection="column">
+          <Flex flex={1} flexDirection="column" minW="500px">
             <Flex flex={1}>
               <VisualArea />
             </Flex>
