@@ -29,6 +29,7 @@ interface ControlBarProps {
   togglePlaying: () => void
   setWasPlaying: (newVal: boolean) => void
   setCurIdx: (idx: number) => void
+  moveStep: (forward: boolean) => void
 }
 
 export const ControlBar = (props: ControlBarProps) => {
@@ -98,6 +99,7 @@ export const ControlBar = (props: ControlBarProps) => {
               aria-label="Rewind"
               isDisabled={props.disabled}
               icon={<FaBackward color={buttonColor} />}
+              onClick={() => props.moveStep(false)}
             />
             <IconButton
               isRound={true}
@@ -121,6 +123,7 @@ export const ControlBar = (props: ControlBarProps) => {
               aria-label="Forward"
               isDisabled={props.disabled}
               icon={<FaForward color={buttonColor} />}
+              onClick={() => props.moveStep(true)}
             />
           </Stack>
           <Spacer />

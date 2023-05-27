@@ -42,26 +42,6 @@ export const Main = () => {
     else dataArr.push(newData)
   }
 
-  useInterval(
-    () => {
-      // sanity check
-      if (curIdx >= 0 && curIdx < instructions.length) {
-        setCurIdx(curIdx + 1) // This is updated after the hook is called
-        const newInstructions = instructions[curIdx].variable_changes
-        console.log(curIdx, newInstructions, instructions)
-        for (const [key, value] of Object.entries(newInstructions)) {
-          updateData(key, value, data)
-        }
-        setData(data)
-      }
-      if (curIdx >= instructions.length - 1) {
-        setPlaying(false)
-      }
-      setLoading(false)
-    },
-    isPlaying ? Math.ceil(1000 / speed) : null,
-  )
-
   const setDataIdx = (idx: number) => {
     const newData: dataVal[] = []
     for (let i = 0; i < idx; i++) {
@@ -72,6 +52,31 @@ export const Main = () => {
     }
     setData(newData)
     setCurIdx(idx)
+  }
+
+  useInterval(
+    () => {
+      // sanity check
+      if (curIdx >= 0 && curIdx < instructions.length) {
+        setDataIdx(curIdx + 1)
+      }
+      if (curIdx >= instructions.length - 1) {
+        setPlaying(false)
+      }
+      setLoading(false)
+    },
+    isPlaying ? Math.ceil(1000 / speed) : null,
+  )
+
+  const moveStep = (forward: boolean) => {
+    const newIdx = Math.min(
+      instructions.length,
+      Math.max(0, (forward ? 1 : -1) * speed + curIdx),
+    )
+    setDataIdx(newIdx)
+    if (newIdx >= instructions.length) {
+      setPlaying(false)
+    }
   }
 
   const toast = useToast()
@@ -166,6 +171,7 @@ export const Main = () => {
                 disabled={editing}
                 wasPlaying={wasPlaying}
                 setWasPlaying={setWasPlaying}
+                moveStep={moveStep}
               />
             </Box>
           </Flex>
