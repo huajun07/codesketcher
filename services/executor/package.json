@@ -1,6 +1,7 @@
 {
   "scripts": {
-    "deploy:dev": "serverless deploy --stage dev"
+    "deploy:dev": "serverless deploy --stage dev",
+    "deploy:prod": "serverless deploy --stage prod"
   },
   "dependencies": {
     "serverless": "^3.31.0"

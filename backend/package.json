@@ -6,6 +6,7 @@
 		"test": "jest",
 		"build": "tsc",
 		"deploy:dev": "cp env/.env.development .env && serverless deploy --stage dev",
+		"deploy:prod": "cp env/.env.prod .env && serverless deploy --stage prod",
 		"start": "cp env/.env.production .env && node build/index.js"
 	},
 	"devDependencies": {
