@@ -12,7 +12,7 @@ interface codeIDEProps {
 }
 
 export const CodeIDE = (props: codeIDEProps) => {
-  const placeholder = "Enter your python code here!\nE.g. print('hello world')"
+  const placeholder = 'Enter your python code here!\nE.g. a = [1, 2, 3]'
   return (
     <CodeMirror
       value={props.code}
