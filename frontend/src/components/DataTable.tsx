@@ -16,8 +16,7 @@ import {
 import { parsedVariable } from 'utils/executor'
 
 interface RowDataProps {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  val: any
+  val: parsedVariable
 }
 
 const RowData = (props: RowDataProps) => {
