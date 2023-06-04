@@ -13,6 +13,8 @@ import {
   useColorModeValue,
 } from '@chakra-ui/react'
 
+import { parsedVariable } from 'utils/executor'
+
 interface RowDataProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   val: any
@@ -24,7 +26,7 @@ const RowData = (props: RowDataProps) => {
 
 interface dataVal {
   name: string
-  value: string | number
+  value: parsedVariable
 }
 
 interface dataTableProps {

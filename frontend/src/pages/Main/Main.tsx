@@ -8,7 +8,12 @@ import {
   useToast,
 } from '@chakra-ui/react'
 
-import { getInstructions, instruction } from 'utils/executor'
+import {
+  getInstructions,
+  instruction,
+  parsedVariable,
+  parseVariableValue,
+} from 'utils/executor'
 import {
   CodeIDE,
   CodeIDEButtons,
@@ -20,7 +25,7 @@ import {
 
 interface dataVal {
   name: string
-  value: string | number
+  value: parsedVariable
 }
 
 export const Main = () => {
@@ -47,7 +52,7 @@ export const Main = () => {
     for (let i = 0; i < idx; i++) {
       const newInstructions = instructions[i].variable_changes
       for (const [key, value] of Object.entries(newInstructions)) {
-        updateData(key, value, newData)
+        updateData(key, parseVariableValue(value), newData)
       }
     }
     setData(newData)
