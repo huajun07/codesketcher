@@ -40,7 +40,6 @@ type variableValue =
 
 interface instruction {
   line_number: number
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   variable_changes: Record<string, variableValue>
 }
 
