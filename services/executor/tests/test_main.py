@@ -20,7 +20,7 @@ def test_variable_declaration():
     )
 
     assert result == {
-        "ok": True,
+        "executed": True,
         "output": "",
         "data": [
             {"line_number": 1, "variable_changes": {"a": {"type": "int", "value": 1}}},
@@ -97,7 +97,7 @@ def test_input_output():
 
     print(result)
     assert result == {
-        "ok": True,
+        "executed": True,
         "output": "Value of d is 6\n",
         "data": [
             {"line_number": 1, "variable_changes": {"a": {"type": "int", "value": 1}}},
@@ -122,7 +122,7 @@ def test_syntax_error():
     )
 
     assert result == {
-        "ok": False,
+        "executed": False,
         "data": [],
         "output": "",
         "error": {
@@ -145,7 +145,7 @@ def test_divide_by_zero_exception():
     )
 
     assert result == {
-        "ok": True,
+        "executed": True,
         "data": [
             {"line_number": 1, "variable_changes": {"a": {"type": "int", "value": 1}}},
             {"line_number": 2, "variable_changes": {}},

@@ -107,15 +107,15 @@ class Debugger(bdb.Bdb):
 
 def execute(event):
     if not isinstance(event, dict):
-        return {"ok": False, "error": "Input event is not a dictionary"}
+        return {"executed": False, "error": "Input event is not a dictionary"}
 
     code = event.get("code")
     inp = event.get("input", "")
 
     if not isinstance(code, str):
-        return {"ok": False, "error": "Field 'code' must be a string"}
+        return {"executed": False, "error": "Field 'code' must be a string"}
     if not isinstance(inp, str):
-        return {"ok": False, "error": "Field 'input' must be empty or a string"}
+        return {"executed": False, "error": "Field 'input' must be empty or a string"}
 
     sys.stdin = StringIO(inp)
     output = StringIO()
@@ -124,11 +124,15 @@ def execute(event):
     with redirect_stdout(output):
         try:
             debugger.run(code, globals={}, locals={})
-            return {"ok": True, "data": debugger.data, "output": output.getvalue()}
+            return {
+                "executed": True,
+                "data": debugger.data,
+                "output": output.getvalue(),
+            }
         except SyntaxError as error:
             # Syntax errors will cause the code to not run at all (i.e. data and output are empty)
             return {
-                "ok": False,
+                "executed": False,
                 "data": debugger.data,
                 "output": output.getvalue(),
                 "error": {"line_number": error.lineno, "message": str(error)},
@@ -138,7 +142,7 @@ def execute(event):
                 1 if len(debugger.data) == 0 else debugger.data[-1]["line_number"]
             )
             return {
-                "ok": True,
+                "executed": True,
                 "data": debugger.data,
                 "output": output.getvalue(),
                 "error": {
