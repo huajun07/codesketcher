@@ -150,22 +150,16 @@ def execute(event):
                     "executed": False,
                     "data": debugger.data,
                     "output": output.getvalue(),
-                    "error": {"line_number": error.lineno, "message": str(error)},
+                    "error": str(error),
                 }
             )
         except Exception as error:
-            error_line_number = (
-                1 if len(debugger.data) == 0 else debugger.data[-1]["line_number"]
-            )
             return json_size_checker(
                 {
                     "executed": True,
                     "data": debugger.data,
                     "output": output.getvalue(),
-                    "error": {
-                        "line_number": error_line_number,
-                        "message": str(error),
-                    },
+                    "error": str(error),
                 }
             )
 

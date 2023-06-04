@@ -125,10 +125,7 @@ def test_syntax_error():
         "executed": False,
         "data": [],
         "output": "",
-        "error": {
-            "line_number": 2,
-            "message": "unterminated string literal (detected at line 2) (<string>, line 2)",
-        },
+        "error": "unterminated string literal (detected at line 2) (<string>, line 2)",
     }
 
 
@@ -151,7 +148,7 @@ def test_divide_by_zero_exception():
             {"line_number": 2, "variable_changes": {}},
         ],
         "output": "",
-        "error": {"line_number": 2, "message": "division by zero"},
+        "error": "division by zero",
     }
 
 
