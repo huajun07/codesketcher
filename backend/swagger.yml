@@ -13,10 +13,14 @@ paths:
           application/json:
             schema:
               type: object
+              required: [code]
               properties:
                 code:
                   type: string
-                  example: 'a = 1\nb = 2'
+                  example: 'a = 1\nb = "test"'
+                input:
+                  type: string
+                  example: '1\n2\n3'
         required: true
       responses:
         '200':
@@ -42,7 +46,11 @@ components:
           type: object
           description: A mapping from every changed variable to their new value.
           example:
-            a: 1
+            a:
+              type: object
+              properties:
+                type: int
+                value: 1
     ExecutionInformationArray:
       type: array
       items:
