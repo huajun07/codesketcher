@@ -153,3 +153,22 @@ def test_divide_by_zero_exception():
         "output": "",
         "error": {"line_number": 2, "message": "division by zero"},
     }
+
+
+def test_json_size_limit():
+    result = execute(
+        {
+            "code": dedent(
+                """\
+                    a = 0
+                    for i in range(10000):
+                        a += 1"""
+            )
+        }
+    )
+
+    print(result)
+    assert result == {
+        "executed": True,
+        "error": "Too much data was generated! Please don't overload our servers ):",
+    }

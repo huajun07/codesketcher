@@ -1,5 +1,6 @@
 import bdb
 import copy
+import json
 import sys
 from io import StringIO
 from contextlib import redirect_stdout
@@ -105,6 +106,17 @@ class Debugger(bdb.Bdb):
         self.last_variables = variables
 
 
+def json_size_checker(return_data):
+    json_string = json.dumps(return_data)
+    if len(json_string) > 1024 * 1024:
+        # json_string exceeds 1MB in length
+        return {
+            "executed": return_data["executed"],
+            "error": "Too much data was generated! Please don't overload our servers ):",
+        }
+    return return_data
+
+
 def execute(event):
     if not isinstance(event, dict):
         return {"executed": False, "error": "Input event is not a dictionary"}
@@ -124,32 +136,38 @@ def execute(event):
     with redirect_stdout(output):
         try:
             debugger.run(code, globals={}, locals={})
-            return {
-                "executed": True,
-                "data": debugger.data,
-                "output": output.getvalue(),
-            }
+            return json_size_checker(
+                {
+                    "executed": True,
+                    "data": debugger.data,
+                    "output": output.getvalue(),
+                }
+            )
         except SyntaxError as error:
             # Syntax errors will cause the code to not run at all (i.e. data and output are empty)
-            return {
-                "executed": False,
-                "data": debugger.data,
-                "output": output.getvalue(),
-                "error": {"line_number": error.lineno, "message": str(error)},
-            }
+            return json_size_checker(
+                {
+                    "executed": False,
+                    "data": debugger.data,
+                    "output": output.getvalue(),
+                    "error": {"line_number": error.lineno, "message": str(error)},
+                }
+            )
         except Exception as error:
             error_line_number = (
                 1 if len(debugger.data) == 0 else debugger.data[-1]["line_number"]
             )
-            return {
-                "executed": True,
-                "data": debugger.data,
-                "output": output.getvalue(),
-                "error": {
-                    "line_number": error_line_number,
-                    "message": str(error),
-                },
-            }
+            return json_size_checker(
+                {
+                    "executed": True,
+                    "data": debugger.data,
+                    "output": output.getvalue(),
+                    "error": {
+                        "line_number": error_line_number,
+                        "message": str(error),
+                    },
+                }
+            )
 
 
 def handler(event, _context):
