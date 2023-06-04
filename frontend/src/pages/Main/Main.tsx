@@ -92,7 +92,7 @@ export const Main = () => {
       setLoading(true)
       const { instructions: newInstructions, errorMessage } =
         await getInstructions(code)
-      if (!newInstructions) {
+      if (!newInstructions || errorMessage) {
         setLoading(false)
         toast({
           title: 'An Error Has Occured',
