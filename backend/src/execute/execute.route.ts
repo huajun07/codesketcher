@@ -9,12 +9,14 @@ router.post(
 	celebrate({
 		[Segments.BODY]: Joi.object().keys({
 			code: Joi.string().required(),
+			input: Joi.string().allow(''),
 		}),
 	}),
 	async (req, res) => {
-        const code = req.body.code as string;
-		const response = await execute(code)
-        res.status(200).json(response)
+		const code = req.body.code as string
+		const input = req.body.input as string | undefined
+		const response = await execute({ code, input })
+		res.status(200).json(response)
 	}
 )
 
