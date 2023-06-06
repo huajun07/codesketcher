@@ -1,5 +1,8 @@
 name: Deploy Backend (Prod)
-on: workflow_dispatch
+on:
+  push:
+    branches:
+      - main
 
 jobs:
   test:
