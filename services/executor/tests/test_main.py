@@ -1,6 +1,7 @@
 import pytest
 from textwrap import dedent
 from executor.main import execute
+from util import MatchesRegex
 
 
 def test_variable_declaration():
@@ -164,8 +165,50 @@ def test_json_size_limit():
         }
     )
 
-    print(result)
     assert result == {
         "executed": True,
         "error": "Too much data was generated! Please don't overload our servers ):",
+    }
+
+
+def test_function_without_return_statement():
+    result = execute(
+        {
+            "code": dedent(
+                """\
+                    def func():
+                        a = 1
+                        b = 2
+                    
+                    func()"""
+            )
+        }
+    )
+
+    assert result == {
+        "executed": True,
+        "data": [
+            {
+                "line_number": 1,
+                "variable_changes": {
+                    "func": {
+                        "type": "function",
+                        "value": MatchesRegex("<function func at 0x[a-z0-9_]*>"),
+                    }
+                },
+            },
+            {"line_number": 5, "variable_changes": {}},
+            {"line_number": 2, "variable_changes": {"a": {"type": "int", "value": 1}}},
+            {
+                "line_number": 3,
+                "variable_changes": {
+                    "b": {"type": "int", "value": 2},
+                    "func": {
+                        "type": "function",
+                        "value": MatchesRegex("<function func at 0x[a-z0-9_]*>"),
+                    },
+                },
+            },
+        ],
+        "output": "",
     }

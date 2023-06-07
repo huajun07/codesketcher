@@ -13,6 +13,7 @@ class Debugger(bdb.Bdb):
         self.data = []
         self.last_line_number = -1
         self.last_variables = {}
+        self.current_variables = {}
         self.done = False
 
     # This function takes in a dictionary of local variables and clones them
@@ -70,6 +71,10 @@ class Debugger(bdb.Bdb):
 
         return {key: convert_variable(value) for key, value in locals_dict.items()}
 
+    def user_return(self, frame, return_value):
+        # Since local variables are dropped upon returning, we need to capture them here
+        self.current_variables |= frame.f_locals
+
     def user_line(self, frame):
         if not self.is_tracing:
             # First tiime this function is called (from the caller's frame), setup everything
@@ -85,10 +90,12 @@ class Debugger(bdb.Bdb):
 
         if "__name__" in frame.f_globals and frame.f_globals["__name__"] == "bdb":
             # Code has finished executing, frame is caller's frame, hence we take frame.f_locals["locals"] instead
-            variables = self.clone_locals(frame.f_locals["locals"])
+            self.current_variables |= frame.f_locals["locals"]
             self.done = True
         else:
-            variables = self.clone_locals(frame.f_locals)
+            self.current_variables |= frame.f_locals
+        variables = self.clone_locals(self.current_variables)
+        self.current_variables = {}
 
         variable_changes = {}
         for var in variables:
