@@ -244,7 +244,7 @@ def test_function_without_return_statement():
                 "local_variable_changes": {
                     "func": {
                         "type": "function",
-                        "value": MatchesRegex("<function func at 0x[a-z0-9_]*>"),
+                        "value": MatchesRegex("<function func at 0x[0-9a-f]*>"),
                     }
                 },
                 "global_variable_changes": {},
