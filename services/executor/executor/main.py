@@ -14,7 +14,7 @@ class Debugger(bdb.Bdb):
         self.done = False
         self.previous_line_number = -1
         self.data = []
-        self.previous_function_scope = []
+        self.previous_function_scope = []  # e.g. ["f1", "f2"]. Empty if not in function
         self.previous_local_variables_stack = [{}]
         self.previous_global_variables = {}
         self.current_local_variables = {}
