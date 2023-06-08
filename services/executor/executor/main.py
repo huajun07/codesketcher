@@ -117,7 +117,11 @@ class Debugger(bdb.Bdb):
             }
         )
 
-        self.previous_function_scope = self.get_scope(frame)
+        current_scope = self.get_scope(frame)
+        while len(current_scope) + 1 > len(self.previous_local_variables_stack):
+            self.previous_local_variables_stack.append({})
+
+        self.previous_function_scope = current_scope
         self.previous_line_number = frame.f_lineno
         self.previous_local_variables_stack[-1] = self.current_local_variables
         self.previous_global_variables = self.current_global_variables
