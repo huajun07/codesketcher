@@ -50,7 +50,13 @@ export const Main = () => {
   const setDataIdx = (idx: number) => {
     const newData: dataVal[] = []
     for (let i = 0; i < idx; i++) {
-      const newInstructions = instructions[i].variable_changes
+      // local_variable_changes and global_variable_changes will be merged for now,
+      // so that the frontend retains the same behaviour. Will be changed once we decide
+      // how to deal with function scopes in the frontend
+      const newInstructions = {
+        ...instructions[i].local_variable_changes,
+        ...instructions[i].global_variable_changes,
+      }
       for (const [key, value] of Object.entries(newInstructions)) {
         updateData(key, parseVariableValue(value), newData)
       }
