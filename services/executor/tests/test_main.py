@@ -271,3 +271,221 @@ def test_function_without_return_statement():
         ],
         "output": "",
     }
+
+
+def test_nested_functions():
+    result = execute(
+        {
+            "code": dedent(
+                """\
+                    def func1():
+                        a = 1
+                        def func2():
+                            b = 2
+                            a = 2
+                            def func3():
+                                a = 3
+                            func3()
+                            a = 3
+                        func2()
+                        a = 1
+                    
+                    func1()"""
+            )
+        }
+    )
+
+    assert result == {
+        "executed": True,
+        "data": [
+            {
+                "line_number": 1,
+                "local_variable_changes": {
+                    "func1": {
+                        "type": "function",
+                        "value": MatchesRegex("<function func1 at 0x[0-9a-f]*>"),
+                    }
+                },
+                "global_variable_changes": {},
+                "function_scope": [],
+            },
+            {
+                "line_number": 13,
+                "local_variable_changes": {},
+                "global_variable_changes": {},
+                "function_scope": [],
+            },
+            {
+                "line_number": 2,
+                "local_variable_changes": {"a": {"type": "int", "value": 1}},
+                "global_variable_changes": {},
+                "function_scope": ["func1"],
+            },
+            {
+                "line_number": 3,
+                "local_variable_changes": {
+                    "func2": {
+                        "type": "function",
+                        "value": MatchesRegex(
+                            "<function func1.<locals>.func2 at 0x[0-9a-f]*>"
+                        ),
+                    }
+                },
+                "global_variable_changes": {},
+                "function_scope": ["func1"],
+            },
+            {
+                "line_number": 10,
+                "local_variable_changes": {},
+                "global_variable_changes": {},
+                "function_scope": ["func1"],
+            },
+            {
+                "line_number": 4,
+                "local_variable_changes": {"b": {"type": "int", "value": 2}},
+                "global_variable_changes": {},
+                "function_scope": ["func1", "func2"],
+            },
+            {
+                "line_number": 5,
+                "local_variable_changes": {"a": {"type": "int", "value": 2}},
+                "global_variable_changes": {},
+                "function_scope": ["func1", "func2"],
+            },
+            {
+                "line_number": 6,
+                "local_variable_changes": {
+                    "func3": {
+                        "type": "function",
+                        "value": MatchesRegex(
+                            "<function func1.<locals>.func2.<locals>.func3 at 0x[0-9a-f]*>"
+                        ),
+                    }
+                },
+                "global_variable_changes": {},
+                "function_scope": ["func1", "func2"],
+            },
+            {
+                "line_number": 8,
+                "local_variable_changes": {},
+                "global_variable_changes": {},
+                "function_scope": ["func1", "func2"],
+            },
+            {
+                "line_number": 7,
+                "local_variable_changes": {"a": {"type": "int", "value": 3}},
+                "global_variable_changes": {},
+                "function_scope": ["func1", "func2", "func3"],
+            },
+            {
+                "line_number": 9,
+                "local_variable_changes": {
+                    "a": {"type": "int", "value": 3},
+                },
+                "global_variable_changes": {},
+                "function_scope": ["func1", "func2"],
+            },
+            {
+                "line_number": 11,
+                "local_variable_changes": {},
+                "global_variable_changes": {},
+                "function_scope": ["func1"],
+            },
+        ],
+        "output": "",
+    }
+
+
+def test_global_variables():
+    result = execute(
+        {
+            "code": dedent(
+                """\
+                    a = 1
+                    b = 1
+                    def func1():
+                        global a
+                        a = 2
+                        def func2():
+                            global b
+                            b = 2
+                            a = 3
+                        func2()
+                    
+                    func1()"""
+            )
+        }
+    )
+
+    assert result == {
+        "executed": True,
+        "data": [
+            {
+                "line_number": 1,
+                "local_variable_changes": {},
+                "global_variable_changes": {"a": {"type": "int", "value": 1}},
+                "function_scope": [],
+            },
+            {
+                "line_number": 2,
+                "local_variable_changes": {},
+                "global_variable_changes": {"b": {"type": "int", "value": 1}},
+                "function_scope": [],
+            },
+            {
+                "line_number": 3,
+                "local_variable_changes": {
+                    "func1": {
+                        "type": "function",
+                        "value": MatchesRegex("<function func1 at 0x[0-9a-f]*>"),
+                    }
+                },
+                "global_variable_changes": {},
+                "function_scope": [],
+            },
+            {
+                "line_number": 12,
+                "local_variable_changes": {},
+                "global_variable_changes": {},
+                "function_scope": [],
+            },
+            {
+                "line_number": 5,
+                "local_variable_changes": {},
+                "global_variable_changes": {"a": {"type": "int", "value": 2}},
+                "function_scope": ["func1"],
+            },
+            {
+                "line_number": 6,
+                "local_variable_changes": {
+                    "func2": {
+                        "type": "function",
+                        "value": MatchesRegex(
+                            "<function func1.<locals>.func2 at 0x[0-9a-f]*>"
+                        ),
+                    }
+                },
+                "global_variable_changes": {},
+                "function_scope": ["func1"],
+            },
+            {
+                "line_number": 10,
+                "local_variable_changes": {},
+                "global_variable_changes": {},
+                "function_scope": ["func1"],
+            },
+            {
+                "line_number": 8,
+                "local_variable_changes": {},
+                "global_variable_changes": {"b": {"type": "int", "value": 2}},
+                "function_scope": ["func1", "func2"],
+            },
+            {
+                "line_number": 9,
+                "local_variable_changes": {"a": {"type": "int", "value": 3}},
+                "global_variable_changes": {},
+                "function_scope": ["func1", "func2"],
+            },
+        ],
+        "output": "",
+    }
