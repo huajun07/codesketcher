@@ -39,7 +39,7 @@ class Debugger(bdb.Bdb):
 
                 case _:
                     value = variable.__str__()
-            return {"type": type(value).__name__, "value": value}
+            return {"type": type(variable).__name__, "value": value}
 
         return {key: convert_variable(value) for key, value in variables_dict.items()}
 
