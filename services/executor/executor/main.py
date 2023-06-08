@@ -35,7 +35,7 @@ class Debugger(bdb.Bdb):
                     }
 
                 case list() | set() | tuple():
-                    value = map(convert_variable, variable)
+                    value = list(map(convert_variable, variable))
 
                 case _:
                     value = variable.__str__()
