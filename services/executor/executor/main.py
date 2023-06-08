@@ -16,60 +16,28 @@ class Debugger(bdb.Bdb):
         self.current_variables = {}
         self.done = False
 
-    # This function takes in a dictionary of local variables and clones them
+    # This function takes in a dictionary of variables and clones them
     # into a predefined format that can be serialized into JSON data.
-    def clone_locals(self, locals_dict):
-        def convert_variable(value):
-            match value:
-                case bool():
-                    return {"type": "bool", "value": value}
-
-                case int():
-                    return {"type": "int", "value": value}
-
-                case float():
-                    return {"type": "float", "value": value}
-
-                case str():
-                    return {"type": "str", "value": value}
+    def clone_variables(self, variables_dict):
+        def convert_variable(variable):
+            match variable:
+                case bool() | int() | float() | str():
+                    value = variable
 
                 case dict():
-                    return {
-                        "type": "dict",
-                        "value": {
-                            child_key: convert_variable(child_value)
-                            for child_key, child_value in value.items()
-                        },
+                    value = {
+                        child_key: convert_variable(child_variable)
+                        for child_key, child_variable in variable.items()
                     }
 
-                case list():
-                    return {
-                        "type": "list",
-                        "value": [
-                            convert_variable(child_value) for child_value in value
-                        ],
-                    }
-
-                case set():
-                    return {
-                        "type": "set",
-                        "value": [
-                            convert_variable(child_value) for child_value in value
-                        ],
-                    }
-
-                case tuple():
-                    return {
-                        "type": "tuple",
-                        "value": [
-                            convert_variable(child_value) for child_value in value
-                        ],
-                    }
+                case list() | set() | tuple():
+                    value = map(convert_variable, variable)
 
                 case _:
-                    return {"type": type(value).__name__, "value": value.__str__()}
+                    value = variable.__str__()
+            return {"type": type(value).__name__, "value": value}
 
-        return {key: convert_variable(value) for key, value in locals_dict.items()}
+        return {key: convert_variable(value) for key, value in variables_dict.items()}
 
     def user_return(self, frame, return_value):
         # Since local variables are dropped upon returning, we need to capture them here
