@@ -22,24 +22,34 @@ def test_variable_declaration():
 
     assert result == {
         "executed": True,
-        "output": "",
         "data": [
-            {"line_number": 1, "variable_changes": {"a": {"type": "int", "value": 1}}},
+            {
+                "line_number": 1,
+                "local_variable_changes": {"a": {"type": "int", "value": 1}},
+                "global_variable_changes": {},
+                "function_scope": [],
+            },
             {
                 "line_number": 2,
-                "variable_changes": {"b": {"type": "bool", "value": True}},
+                "local_variable_changes": {"b": {"type": "bool", "value": True}},
+                "global_variable_changes": {},
+                "function_scope": [],
             },
             {
                 "line_number": 3,
-                "variable_changes": {"c": {"type": "str", "value": "string"}},
+                "local_variable_changes": {"c": {"type": "str", "value": "string"}},
+                "global_variable_changes": {},
+                "function_scope": [],
             },
             {
                 "line_number": 4,
-                "variable_changes": {"a": {"type": "float", "value": 1.5}},
+                "local_variable_changes": {"a": {"type": "float", "value": 1.5}},
+                "global_variable_changes": {},
+                "function_scope": [],
             },
             {
                 "line_number": 5,
-                "variable_changes": {
+                "local_variable_changes": {
                     "a": {
                         "type": "list",
                         "value": [
@@ -49,19 +59,23 @@ def test_variable_declaration():
                         ],
                     }
                 },
+                "global_variable_changes": {},
+                "function_scope": [],
             },
             {
                 "line_number": 6,
-                "variable_changes": {
+                "local_variable_changes": {
                     "a": {
                         "type": "dict",
                         "value": {"key": {"type": "str", "value": "value"}},
                     }
                 },
+                "global_variable_changes": {},
+                "function_scope": [],
             },
             {
                 "line_number": 7,
-                "variable_changes": {
+                "local_variable_changes": {
                     "a": {
                         "type": "tuple",
                         "value": [
@@ -71,8 +85,11 @@ def test_variable_declaration():
                         ],
                     }
                 },
+                "global_variable_changes": {},
+                "function_scope": [],
             },
         ],
+        "output": "",
     }
 
 
@@ -96,17 +113,41 @@ def test_input_output():
         }
     )
 
-    print(result)
     assert result == {
         "executed": True,
-        "output": "Value of d is 6\n",
         "data": [
-            {"line_number": 1, "variable_changes": {"a": {"type": "int", "value": 1}}},
-            {"line_number": 2, "variable_changes": {"b": {"type": "int", "value": 2}}},
-            {"line_number": 3, "variable_changes": {"c": {"type": "int", "value": 3}}},
-            {"line_number": 4, "variable_changes": {"d": {"type": "int", "value": 6}}},
-            {"line_number": 5, "variable_changes": {}},
+            {
+                "line_number": 1,
+                "local_variable_changes": {"a": {"type": "int", "value": 1}},
+                "global_variable_changes": {},
+                "function_scope": [],
+            },
+            {
+                "line_number": 2,
+                "local_variable_changes": {"b": {"type": "int", "value": 2}},
+                "global_variable_changes": {},
+                "function_scope": [],
+            },
+            {
+                "line_number": 3,
+                "local_variable_changes": {"c": {"type": "int", "value": 3}},
+                "global_variable_changes": {},
+                "function_scope": [],
+            },
+            {
+                "line_number": 4,
+                "local_variable_changes": {"d": {"type": "int", "value": 6}},
+                "global_variable_changes": {},
+                "function_scope": [],
+            },
+            {
+                "line_number": 5,
+                "local_variable_changes": {},
+                "global_variable_changes": {},
+                "function_scope": [],
+            },
         ],
+        "output": "Value of d is 6\n",
     }
 
 
@@ -145,8 +186,18 @@ def test_divide_by_zero_exception():
     assert result == {
         "executed": True,
         "data": [
-            {"line_number": 1, "variable_changes": {"a": {"type": "int", "value": 1}}},
-            {"line_number": 2, "variable_changes": {}},
+            {
+                "line_number": 1,
+                "local_variable_changes": {"a": {"type": "int", "value": 1}},
+                "global_variable_changes": {},
+                "function_scope": [],
+            },
+            {
+                "line_number": 2,
+                "local_variable_changes": {},
+                "global_variable_changes": {},
+                "function_scope": [],
+            },
         ],
         "output": "",
         "error": "division by zero",
@@ -190,24 +241,32 @@ def test_function_without_return_statement():
         "data": [
             {
                 "line_number": 1,
-                "variable_changes": {
+                "local_variable_changes": {
                     "func": {
                         "type": "function",
                         "value": MatchesRegex("<function func at 0x[a-z0-9_]*>"),
                     }
                 },
+                "global_variable_changes": {},
+                "function_scope": [],
             },
-            {"line_number": 5, "variable_changes": {}},
-            {"line_number": 2, "variable_changes": {"a": {"type": "int", "value": 1}}},
+            {
+                "line_number": 5,
+                "local_variable_changes": {},
+                "global_variable_changes": {},
+                "function_scope": [],
+            },
+            {
+                "line_number": 2,
+                "local_variable_changes": {"a": {"type": "int", "value": 1}},
+                "global_variable_changes": {},
+                "function_scope": ["func"],
+            },
             {
                 "line_number": 3,
-                "variable_changes": {
-                    "b": {"type": "int", "value": 2},
-                    "func": {
-                        "type": "function",
-                        "value": MatchesRegex("<function func at 0x[a-z0-9_]*>"),
-                    },
-                },
+                "local_variable_changes": {"b": {"type": "int", "value": 2}},
+                "global_variable_changes": {},
+                "function_scope": ["func"],
             },
         ],
         "output": "",
