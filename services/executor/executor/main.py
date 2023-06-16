@@ -8,7 +8,8 @@ from contextlib import redirect_stdout
 
 class Debugger(bdb.Bdb):
     def __init__(self):
-        super().__init__()
+        # Skip modules added in AWS Lambda's runtime
+        super().__init__(skip=["awslambdaric.bootstrap"])
         self.root_frame = None
         self.is_tracing = False
         self.done = False
