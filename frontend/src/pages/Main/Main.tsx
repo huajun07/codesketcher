@@ -19,7 +19,7 @@ import {
   CodeIDEButtons,
   ControlBar,
   DataTable,
-  InputIDE,
+  IO,
   VisualArea,
 } from 'components'
 
@@ -38,6 +38,9 @@ export const Main = () => {
   const [curIdx, setCurIdx] = useState(0)
   const [code, setCode] = useState('')
   const [loading, setLoading] = useState(false)
+  const [input, setInput] = useState('')
+  const [output, setOutput] = useState<string | null>(null)
+  const [ioIndex, setIOIndex] = useState(0)
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const updateData = (name: string, value: any, dataArr: dataVal[]) => {
@@ -96,8 +99,11 @@ export const Main = () => {
     if (editing) {
       // Start playing
       setLoading(true)
-      const { instructions: newInstructions, errorMessage } =
-        await getInstructions(code)
+      const {
+        instructions: newInstructions,
+        output: newOutput,
+        errorMessage,
+      } = await getInstructions(code, input)
       if (!newInstructions || errorMessage) {
         setLoading(false)
         toast({
@@ -112,6 +118,8 @@ export const Main = () => {
       setInstructions(newInstructions)
       setCurIdx(0)
       setData([])
+      setIOIndex(1)
+      setOutput(newOutput || '')
       setPlaying(true)
       setWasPlaying(false)
     } else {
@@ -161,7 +169,13 @@ export const Main = () => {
           ) : null}
           <Flex w="500px" borderRightWidth="1px" flexDirection="column">
             <DataTable data={data} />
-            <InputIDE />
+            <IO
+              input={input}
+              setInput={setInput}
+              output={output}
+              index={ioIndex}
+              setIndex={setIOIndex}
+            />
           </Flex>
           <Flex flex={1} flexDirection="column" minW="500px">
             <Flex flex={1}>

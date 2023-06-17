@@ -48,20 +48,22 @@ interface instruction {
 interface instructionRes {
   errorMessage?: string
   instructions?: instruction[]
+  output?: string
 }
 
-const getInstructions = async (code: string): Promise<instructionRes> => {
+const getInstructions = async (code: string, input = ''): Promise<instructionRes> => {
   const defaultErrorMessage = 'An unexpected error has occured'
   try {
     const res = await axios.post(
       process.env.REACT_APP_EXECUTOR_ENDPOINT + '/execute',
       {
         code,
-        input: '',
+        input,
       },
     )
     const ret: instructionRes = {}
-    const instructions = res.data?.data
+    const {data: instructions, output} = res.data
+    ret.output = output as string
     if (instructions) ret.instructions = instructions
     if (!instructions || res.data?.error) {
       ret.errorMessage = res.data?.error || defaultErrorMessage
