@@ -30,20 +30,11 @@ export const IO = (props: IOProps) => {
           index={props.index}
           onChange={props.setIndex}
         >
-          <TabList bg="hsl(0deg 0% 97.5%)">
-            <Tab
-              borderRight="1px"
-              borderColor="gray.200"
-              _selected={{ bg: 'gray.100' }}
-            >
+          <TabList>
+            <Tab borderRight="1px" borderColor="gray.200">
               Input
             </Tab>
-            <Tab
-              _selected={{ bg: 'gray.100' }}
-              isDisabled={props.output === null}
-            >
-              Output
-            </Tab>
+            <Tab isDisabled={props.output === null}>Output</Tab>
           </TabList>
           <TabIndicator
             mt="-1.5px"

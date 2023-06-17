@@ -1,3 +1,5 @@
+import { useColorModeValue } from '@chakra-ui/react'
+import { githubDark, githubLight } from '@uiw/codemirror-theme-github'
 import CodeMirror from '@uiw/react-codemirror'
 
 export interface textIDEProps {
@@ -21,9 +23,11 @@ export const TextIDE = (props: textIDEProps) => {
       basicSetup={{
         lineNumbers: false,
         highlightActiveLine: props.editable,
+        syntaxHighlighting: false,
       }}
       extensions={[]}
       onChange={props.setText}
+      theme={useColorModeValue(githubLight, githubDark)}
     />
   )
 }
