@@ -51,12 +51,14 @@ The executor will return an object with the following properties
 
 Information about variables are returned in the form of variable changes in each line of code execution (to cut down size of returned data). The `data` array will contain elements of the following shape:
 
-| Key              | Type   | Description                                                                  |
-| ---------------- | ------ | ---------------------------------------------------------------------------- |
-| line_number      | number | The line number of the current code execution (first line if multiple lines) |
-| variable_changes | Object | -                                                                            |
+| Key                     | Type     | Description                                                                                                            |
+| ----------------------- | -------- | ---------------------------------------------------------------------------------------------------------------------- |
+| line_number             | number   | The line number of the current code execution (first line if multiple lines)                                           |
+| function_scope          | string[] | An array of function names, representing the call stack (current function is last element). Empty if not in a function |
+| local_variable_changes  | Object   | -                                                                                                                      |
+| global_variable_changes | Object   | -                                                                                                                      |
 
-The `variable_changes` field will be an object, where keys are the name of the variable, and the values are objects containing `type` and `value` keys.
+The `local_variable_changes` and `global_variable_changes` field will be an object, where keys are the name of the variable, and the values are objects containing `type` and `value` keys.
 
 The `type` will be a string representing the type of the variable, and the value is the value of the variable.
 
@@ -73,57 +75,74 @@ Here is an example of what the executor might return:
 
 ```json
 {
-    "executed": True,
-    "output": "",
-    "data": [
-        {"line_number": 1, "variable_changes": {"a": {"type": "int", "value": 1}}},
-        {
-            "line_number": 2,
-            "variable_changes": {"b": {"type": "bool", "value": True}},
-        },
-        {
-            "line_number": 3,
-            "variable_changes": {"c": {"type": "str", "value": "string"}},
-        },
-        {
-            "line_number": 4,
-            "variable_changes": {"a": {"type": "float", "value": 1.5}},
-        },
-        {
-            "line_number": 5,
-            "variable_changes": {
-                "a": {
-                    "type": "list",
-                    "value": [
-                        {"type": "str", "value": "list"},
-                        {"type": "bool", "value": False},
-                        {"type": "int", "value": 123},
-                    ],
-                }
+        "executed": True,
+        "data": [
+            {
+                "line_number": 1,
+                "local_variable_changes": {"a": {"type": "int", "value": 1}},
+                "global_variable_changes": {},
+                "function_scope": [],
             },
-        },
-        {
-            "line_number": 6,
-            "variable_changes": {
-                "a": {
-                    "type": "dict",
-                    "value": {"key": {"type": "str", "value": "value"}},
-                }
+            {
+                "line_number": 2,
+                "local_variable_changes": {"b": {"type": "bool", "value": True}},
+                "global_variable_changes": {},
+                "function_scope": [],
             },
-        },
-        {
-            "line_number": 7,
-            "variable_changes": {
-                "a": {
-                    "type": "tuple",
-                    "value": [
-                        {"type": "int", "value": 1},
-                        {"type": "int", "value": 2},
-                        {"type": "int", "value": 3},
-                    ],
-                }
+            {
+                "line_number": 3,
+                "local_variable_changes": {"c": {"type": "str", "value": "string"}},
+                "global_variable_changes": {},
+                "function_scope": [],
             },
-        },
-    ],
-}
+            {
+                "line_number": 4,
+                "local_variable_changes": {"a": {"type": "float", "value": 1.5}},
+                "global_variable_changes": {},
+                "function_scope": [],
+            },
+            {
+                "line_number": 5,
+                "local_variable_changes": {
+                    "a": {
+                        "type": "list",
+                        "value": [
+                            {"type": "str", "value": "list"},
+                            {"type": "bool", "value": False},
+                            {"type": "int", "value": 123},
+                        ],
+                    }
+                },
+                "global_variable_changes": {},
+                "function_scope": [],
+            },
+            {
+                "line_number": 6,
+                "local_variable_changes": {
+                    "a": {
+                        "type": "dict",
+                        "value": {"key": {"type": "str", "value": "value"}},
+                    }
+                },
+                "global_variable_changes": {},
+                "function_scope": [],
+            },
+            {
+                "line_number": 7,
+                "local_variable_changes": {
+                    "a": {
+                        "type": "tuple",
+                        "value": [
+                            {"type": "int", "value": 1},
+                            {"type": "int", "value": 2},
+                            {"type": "int", "value": 3},
+                        ],
+                    }
+                },
+                "global_variable_changes": {},
+                "function_scope": [],
+            },
+        ],
+        "output": "",
+    }
 ```

@@ -40,7 +40,9 @@ type variableValue =
 
 interface instruction {
   line_number: number
-  variable_changes: Record<string, variableValue>
+  function_scope: string[]
+  local_variable_changes: Record<string, variableValue>
+  global_variable_changes: Record<string, variableValue>
 }
 
 interface instructionRes {
