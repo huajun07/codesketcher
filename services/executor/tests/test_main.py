@@ -489,3 +489,127 @@ def test_global_variables():
         ],
         "output": "",
     }
+
+
+def test_array_mutation():
+    result = execute(
+        {
+            "code": dedent(
+                """\
+                    a = [1, [2, 3], 4]
+                    a[0] = 2
+                    a[1][0] = 3"""
+            )
+        }
+    )
+
+    assert result == {
+        "executed": True,
+        "data": [
+            {
+                "line_number": 1,
+                "local_variable_changes": {
+                    "a": {
+                        "type": "list",
+                        "value": [
+                            {"type": "int", "value": 1},
+                            {
+                                "type": "list",
+                                "value": [
+                                    {"type": "int", "value": 2},
+                                    {"type": "int", "value": 3},
+                                ],
+                            },
+                            {"type": "int", "value": 4},
+                        ],
+                    }
+                },
+                "global_variable_changes": {},
+                "function_scope": [],
+            },
+            {
+                "line_number": 2,
+                "local_variable_changes": {
+                    "a": {
+                        "type": "list",
+                        "value": [
+                            {"type": "int", "value": 2},
+                            {
+                                "type": "list",
+                                "value": [
+                                    {"type": "int", "value": 2},
+                                    {"type": "int", "value": 3},
+                                ],
+                            },
+                            {"type": "int", "value": 4},
+                        ],
+                    }
+                },
+                "global_variable_changes": {},
+                "function_scope": [],
+            },
+            {
+                "line_number": 3,
+                "local_variable_changes": {
+                    "a": {
+                        "type": "list",
+                        "value": [
+                            {"type": "int", "value": 2},
+                            {
+                                "type": "list",
+                                "value": [
+                                    {"type": "int", "value": 3},
+                                    {"type": "int", "value": 3},
+                                ],
+                            },
+                            {"type": "int", "value": 4},
+                        ],
+                    }
+                },
+                "global_variable_changes": {},
+                "function_scope": [],
+            },
+        ],
+        "output": "",
+    }
+
+
+def test_dict_mutation():
+    result = execute(
+        {
+            "code": dedent(
+                """\
+                    a = {'key': 123}
+                    a['key'] = 456"""
+            )
+        }
+    )
+
+    assert result == {
+        "executed": True,
+        "data": [
+            {
+                "line_number": 1,
+                "local_variable_changes": {
+                    "a": {
+                        "type": "dict",
+                        "value": {"key": {"type": "int", "value": 123}},
+                    }
+                },
+                "global_variable_changes": {},
+                "function_scope": [],
+            },
+            {
+                "line_number": 2,
+                "local_variable_changes": {
+                    "a": {
+                        "type": "dict",
+                        "value": {"key": {"type": "int", "value": 456}},
+                    }
+                },
+                "global_variable_changes": {},
+                "function_scope": [],
+            },
+        ],
+        "output": "",
+    }
