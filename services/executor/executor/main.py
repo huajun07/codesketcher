@@ -124,8 +124,10 @@ class Debugger(bdb.Bdb):
 
         self.previous_function_scope = current_scope
         self.previous_line_number = frame.f_lineno
-        self.previous_local_variables_stack[-1] = self.current_local_variables
-        self.previous_global_variables = self.current_global_variables
+        self.previous_local_variables_stack[-1] = copy.deepcopy(
+            self.current_local_variables
+        )
+        self.previous_global_variables = copy.deepcopy(self.current_global_variables)
         self.current_local_variables = {}
         self.current_global_variables = {}
 
