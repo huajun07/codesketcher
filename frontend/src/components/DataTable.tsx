@@ -12,6 +12,7 @@ import {
   Text,
   useColorModeValue,
 } from '@chakra-ui/react'
+import useExecutionStore from 'stores/executionStore'
 
 import { parsedVariable } from 'utils/executor'
 
@@ -23,22 +24,14 @@ const RowData = (props: RowDataProps) => {
   return <Text>{JSON.stringify(props.val)}</Text>
 }
 
-interface dataVal {
-  name: string
-  value: parsedVariable
-}
-
-interface dataTableProps {
-  data: dataVal[]
-}
-
-export const DataTable = (props: dataTableProps) => {
+export const DataTable = () => {
+  const data = useExecutionStore((state) => state.data)
   const [filterVal, setFilterVal] = useState('')
   const columns = [
     { key: 'name', name: 'Name', resizable: true, frozen: true },
     { key: 'value', name: 'Value', resizable: true },
   ]
-  const rows = props.data.map((v) => {
+  const rows = data.map((v) => {
     return { name: v.name, value: <RowData val={v.value} /> }
   })
   return (

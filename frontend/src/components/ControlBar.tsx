@@ -17,9 +17,9 @@ import {
   Text,
   useColorModeValue,
 } from '@chakra-ui/react'
+import useExecutionStore from 'stores/executionStore'
 
 interface ControlBarProps {
-  curIdx: number
   playing: boolean
   length: number
   curSpeed: number
@@ -28,25 +28,28 @@ interface ControlBarProps {
   setSpeed: (speed: number) => void
   togglePlaying: () => void
   setWasPlaying: (newVal: boolean) => void
-  setCurIdx: (idx: number) => void
   moveStep: (forward: boolean) => void
 }
 
 export const ControlBar = (props: ControlBarProps) => {
+  const { currentStep, setStep } = useExecutionStore((state) => ({
+    currentStep: state.currentStep,
+    setStep: state.setStep,
+  }))
   const buttonColor = useColorModeValue('#3182ce', '#90cdf4')
   return (
     <>
       <Flex flexDirection="column">
         <Box px="15px" paddingTop="10px">
           <Slider
-            value={props.curIdx}
+            value={currentStep}
             min={0}
             max={props.length}
             step={1}
             size="lg"
             focusThumbOnChange={false}
             isDisabled={props.disabled}
-            onChange={props.setCurIdx}
+            onChange={setStep}
             onChangeStart={
               props.playing
                 ? () => {
@@ -106,7 +109,7 @@ export const ControlBar = (props: ControlBarProps) => {
               background="none"
               size="lg"
               aria-label="Play/Pause"
-              isDisabled={props.disabled || props.curIdx === props.length}
+              isDisabled={props.disabled || currentStep === props.length}
               icon={
                 props.playing ? (
                   <FaPause color={buttonColor} />
@@ -132,11 +135,11 @@ export const ControlBar = (props: ControlBarProps) => {
             <NumberInput
               maxW="80px"
               mr="2rem"
-              value={props.curIdx}
+              value={currentStep}
               min={0}
               max={props.length}
               isDisabled={props.disabled}
-              onChange={(v) => props.setCurIdx(Number(v))}
+              onChange={(v) => setStep(Number(v))}
             >
               <NumberInputField />
               <NumberInputStepper>
