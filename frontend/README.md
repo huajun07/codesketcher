@@ -26,9 +26,10 @@ See the section about [deployment](https://facebook.github.io/create-react-app/d
 
 # Environment Variables
 
-| Name                        | Description      | Default | Required |
-| --------------------------- | ---------------- | ------- | -------- |
-| REACT_APP_EXECUTOR_ENDPOINT | Backend Endpoint |         | Yes      |
+| Name                        | Description            | Default | Required |
+| --------------------------- | ---------------------- | ------- | -------- |
+| REACT_APP_EXECUTOR_ENDPOINT | Backend Endpoint       |         | Yes      |
+| REACT_APP_GOOGLE_CLIENT_ID  | Google oAuth Client ID |         | Yes      |
 
 ```sh
 cp .env.example .env

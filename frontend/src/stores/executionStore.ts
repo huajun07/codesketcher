@@ -16,7 +16,7 @@ interface ExecutionState {
   allVariableNames: string[]
 }
 
-const useExecutionStore = create<ExecutionState>((set, get) => ({
+export const useExecutionStore = create<ExecutionState>((set, get) => ({
   currentStep: 0,
   setStep: (step: number) => {
     const newData: dataVal[] = []
@@ -60,5 +60,3 @@ const useExecutionStore = create<ExecutionState>((set, get) => ({
   data: [],
   allVariableNames: [],
 }))
-
-export default useExecutionStore

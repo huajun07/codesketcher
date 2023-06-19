@@ -12,7 +12,7 @@ import {
   Text,
   useColorModeValue,
 } from '@chakra-ui/react'
-import useExecutionStore from 'stores/executionStore'
+import { useExecutionStore } from 'stores'
 
 import { parsedVariable } from 'utils/executor'
 
