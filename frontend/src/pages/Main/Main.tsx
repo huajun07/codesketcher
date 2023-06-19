@@ -7,13 +7,9 @@ import {
   useInterval,
   useToast,
 } from '@chakra-ui/react'
+import useExecutionStore from 'stores/executionStore'
 
-import {
-  getInstructions,
-  instruction,
-  parsedVariable,
-  parseVariableValue,
-} from 'utils/executor'
+import { getInstructions } from 'utils/executor'
 import {
   CodeIDE,
   CodeIDEButtons,
@@ -23,19 +19,18 @@ import {
   VisualArea,
 } from 'components'
 
-interface dataVal {
-  name: string
-  value: parsedVariable
-}
-
 export const Main = () => {
-  const [instructions, setInstructions] = useState<instruction[]>([])
+  const { instructions, setInstructions, currentStep, setStep } =
+    useExecutionStore((state) => ({
+      instructions: state.instructions,
+      setInstructions: state.setInstructions,
+      currentStep: state.currentStep,
+      setStep: state.setStep,
+    }))
   const [editing, setEditing] = useState(true)
-  const [data, setData] = useState<dataVal[]>([])
   const [isPlaying, setPlaying] = useState(false)
   const [wasPlaying, setWasPlaying] = useState(false)
   const [speed, setSpeed] = useState<number>(1)
-  const [curIdx, setCurIdx] = useState(0)
   const [code, setCode] = useState('')
   const [loading, setLoading] = useState(false)
   const [input, setInput] = useState('')
@@ -43,38 +38,13 @@ export const Main = () => {
   const [ioIndex, setIOIndex] = useState(0)
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const updateData = (name: string, value: any, dataArr: dataVal[]) => {
-    const idx = dataArr.findIndex((item) => item.name === name)
-    const newData = { name, value }
-    if (idx !== -1) dataArr[idx] = newData
-    else dataArr.push(newData)
-  }
-
-  const setDataIdx = (idx: number) => {
-    const newData: dataVal[] = []
-    for (let i = 0; i < idx; i++) {
-      // local_variable_changes and global_variable_changes will be merged for now,
-      // so that the frontend retains the same behaviour. Will be changed once we decide
-      // how to deal with function scopes in the frontend
-      const newInstructions = {
-        ...instructions[i].local_variable_changes,
-        ...instructions[i].global_variable_changes,
-      }
-      for (const [key, value] of Object.entries(newInstructions)) {
-        updateData(key, parseVariableValue(value), newData)
-      }
-    }
-    setData(newData)
-    setCurIdx(idx)
-  }
-
   useInterval(
     () => {
       // sanity check
-      if (curIdx >= 0 && curIdx < instructions.length) {
-        setDataIdx(curIdx + 1)
+      if (currentStep >= 0 && currentStep < instructions.length) {
+        setStep(currentStep + 1)
       }
-      if (curIdx >= instructions.length - 1) {
+      if (currentStep >= instructions.length - 1) {
         setPlaying(false)
       }
       setLoading(false)
@@ -83,12 +53,12 @@ export const Main = () => {
   )
 
   const moveStep = (forward: boolean) => {
-    const newIdx = Math.min(
+    const newStep = Math.min(
       instructions.length,
-      Math.max(0, (forward ? 1 : -1) * speed + curIdx),
+      Math.max(0, (forward ? 1 : -1) * speed + currentStep),
     )
-    setDataIdx(newIdx)
-    if (newIdx >= instructions.length) {
+    setStep(newStep)
+    if (newStep >= instructions.length) {
       setPlaying(false)
     }
   }
@@ -116,8 +86,6 @@ export const Main = () => {
         return
       }
       setInstructions(newInstructions)
-      setCurIdx(0)
-      setData([])
       setIOIndex(1)
       setOutput(newOutput || '')
       setPlaying(true)
@@ -143,7 +111,7 @@ export const Main = () => {
             setCode={setCode}
             editable={editing}
             lineHighlight={
-              curIdx > 0 ? instructions[curIdx - 1].line_number : 0
+              currentStep > 0 ? instructions[currentStep - 1].line_number : 0
             }
           />
         </Box>
@@ -168,7 +136,7 @@ export const Main = () => {
             </Center>
           ) : null}
           <Flex w="500px" borderRightWidth="1px" flexDirection="column">
-            <DataTable data={data} />
+            <DataTable />
             <IO
               input={input}
               setInput={setInput}
@@ -183,16 +151,14 @@ export const Main = () => {
             </Flex>
             <Box>
               <ControlBar
-                curIdx={curIdx}
                 length={instructions.length}
                 playing={isPlaying}
                 curSpeed={speed}
                 setSpeed={setSpeed}
                 togglePlaying={() => {
-                  if (isPlaying || curIdx < instructions.length)
+                  if (isPlaying || currentStep < instructions.length)
                     setPlaying(!isPlaying)
                 }}
-                setCurIdx={setDataIdx}
                 disabled={editing}
                 wasPlaying={wasPlaying}
                 setWasPlaying={setWasPlaying}
