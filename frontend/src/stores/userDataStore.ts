@@ -1,5 +1,6 @@
-import jwt_decode from 'jwt-decode'
 import { create } from 'zustand'
+
+import { decodeJWT } from 'utils/tokenValidation'
 
 const $LOCAL_GOOGLE_JWT = 'codesketcher_jwt'
 
@@ -13,36 +14,36 @@ const defaultValues = {
   name: 'Guest',
   picture: '',
   sub: '',
-  loggedIn: false
+  loggedIn: false,
 }
-const getInitialValues = () => {
-  const creds = localStorage.getItem($LOCAL_GOOGLE_JWT) || ''
+const getValues = async (token: string) => {
   try {
-    // TODO: Add jwt token validation: following https://developers.google.com/identity/openid-connect/openid-connect#validatinganidtoken
-    const { name, picture, sub } = jwt_decode(creds) as idToken
-    return { name, picture, sub , credentials: creds, loggedIn: true }
+    const { name, picture, sub } = await decodeJWT(token) as idToken
+    return { name, picture, sub, loggedIn: true }
   } catch (err) {
-    return {...defaultValues, credentials: '' }
+    return null
   }
 }
 
 interface UserState extends idToken {
-  credentials: string
-  loggedIn : boolean
-  setCredentials: (creds: string) => void
+  loggedIn: boolean
+  setCredentials: (creds: string) => Promise<void>
   unSetCredentials: () => void
 }
 
 export const useUserDataStore = create<UserState>((set) => ({
-  ...getInitialValues(),
-  setCredentials: (creds: string) => {
-    // TODO: Add jwt token validation: following https://developers.google.com/identity/openid-connect/openid-connect#validatinganidtoken
-    localStorage.setItem($LOCAL_GOOGLE_JWT, creds)
-    const { name, picture, sub } = jwt_decode(creds) as idToken
-    set({ credentials: creds, name, picture, sub, loggedIn: true })
+  ...defaultValues,
+  setCredentials: async (creds: string) => {
+    const newState = await getValues(creds)
+    if(newState){
+      localStorage.setItem($LOCAL_GOOGLE_JWT, creds)
+      set({...newState})
+    }
   },
   unSetCredentials: () => {
     localStorage.removeItem($LOCAL_GOOGLE_JWT)
-    set({...defaultValues})
+    set({ ...defaultValues })
   },
 }))
+
+getValues( localStorage.getItem($LOCAL_GOOGLE_JWT) || '').then((state)=>useUserDataStore.setState({...state}))
