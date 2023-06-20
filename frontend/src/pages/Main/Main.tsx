@@ -7,7 +7,7 @@ import {
   useInterval,
   useToast,
 } from '@chakra-ui/react'
-import useExecutionStore from 'stores/executionStore'
+import { useExecutionStore } from 'stores'
 
 import { getInstructions } from 'utils/executor'
 import {

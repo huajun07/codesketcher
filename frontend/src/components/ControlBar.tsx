@@ -17,7 +17,7 @@ import {
   Text,
   useColorModeValue,
 } from '@chakra-ui/react'
-import useExecutionStore from 'stores/executionStore'
+import { useExecutionStore } from 'stores'
 
 interface ControlBarProps {
   playing: boolean

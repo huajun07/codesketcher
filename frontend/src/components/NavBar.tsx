@@ -14,10 +14,31 @@ import {
   Stack,
   useColorMode,
   useColorModeValue,
+  useToast,
 } from '@chakra-ui/react'
+import { GoogleLogin } from '@react-oauth/google'
+import { useUserDataStore } from 'stores'
 
 export const NavBar = () => {
   const { colorMode, toggleColorMode } = useColorMode()
+  const { name, picture, setCredentials, unSetCredentials, loggedIn } =
+    useUserDataStore((state) => ({
+      name: state.name,
+      picture: state.picture,
+      setCredentials: state.setCredentials,
+      unSetCredentials: state.unSetCredentials,
+      loggedIn: state.loggedIn,
+    }))
+  const toast = useToast()
+  const loginError = () => {
+    toast({
+      title: 'Login Error!',
+      description: 'Please try again later',
+      status: 'error',
+      duration: 2000,
+      isClosable: true,
+    })
+  }
   return (
     <>
       <Box
@@ -50,28 +71,42 @@ export const NavBar = () => {
                   cursor={'pointer'}
                   minW={0}
                 >
-                  <Avatar
-                    size={'sm'}
-                    src={'https://avatars.dicebear.com/api/male/username.svg'}
-                  />
+                  <Avatar size={'sm'} src={picture} />
                 </MenuButton>
                 <MenuList alignItems={'center'}>
                   <br />
                   <Center>
-                    <Avatar
-                      size={'2xl'}
-                      src={'https://avatars.dicebear.com/api/male/username.svg'}
-                    />
+                    <Avatar bg="gray.100" size={'2xl'} src={picture} />
                   </Center>
                   <br />
                   <Center>
-                    <p>Username</p>
+                    <p>{name}</p>
                   </Center>
                   <br />
                   <MenuDivider />
                   <MenuItem>Your Servers</MenuItem>
                   <MenuItem>Account Settings</MenuItem>
-                  <MenuItem>Logout</MenuItem>
+
+                  {!loggedIn ? (
+                    <MenuItem>
+                      <GoogleLogin
+                        onSuccess={(credentialResponse) => {
+                          try {
+                            if (credentialResponse.credential)
+                              setCredentials(credentialResponse.credential)
+                            else throw Error('Login Error')
+                          } catch (err) {
+                            loginError()
+                          }
+                        }}
+                        onError={loginError}
+                      />
+                    </MenuItem>
+                  ) : (
+                    <MenuItem onClick={() => unSetCredentials()}>
+                      Logout
+                    </MenuItem>
+                  )}
                 </MenuList>
               </Menu>
             </Stack>
