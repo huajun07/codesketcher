@@ -90,10 +90,12 @@ export const NavBar = () => {
                   {!loggedIn ? (
                     <MenuItem>
                       <GoogleLogin
-                        onSuccess={(credentialResponse) => {
+                        onSuccess={async (credentialResponse) => {
                           try {
                             if (credentialResponse.credential)
-                              setCredentials(credentialResponse.credential)
+                              await setCredentials(
+                                credentialResponse.credential,
+                              )
                             else throw Error('Login Error')
                           } catch (err) {
                             loginError()
