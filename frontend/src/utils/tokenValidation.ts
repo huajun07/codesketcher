@@ -9,19 +9,18 @@ export const decodeJWT = async (token: string) => {
     )
   ).data
   const jwksURI = openIDConfig?.jwks_uri
- 
+
   const verifier = new IdTokenVerifier({
     issuer: 'https://accounts.google.com',
     audience: process.env.REACT_APP_GOOGLE_CLIENT_ID || '',
-    jwksURI 
+    jwksURI,
   })
-  const decoded = await new Promise((resolve, reject)=>{
-    verifier.verify(token, (err, payload)=>{
-        if(err) return reject(err)
-        resolve(payload)
+  const decoded = await new Promise((resolve, reject) => {
+    verifier.verify(token, (err, payload) => {
+      if (err) return reject(err)
+      resolve(payload)
     })
   })
-  if(!decoded) throw Error('Invalid JWT')
+  if (!decoded) throw Error('Invalid JWT')
   return decoded
 }
-

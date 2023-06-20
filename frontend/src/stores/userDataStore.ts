@@ -18,7 +18,7 @@ const defaultValues = {
 }
 const getValues = async (token: string) => {
   try {
-    const { name, picture, sub } = await decodeJWT(token) as idToken
+    const { name, picture, sub } = (await decodeJWT(token)) as idToken
     return { name, picture, sub, loggedIn: true }
   } catch (err) {
     return null
@@ -35,9 +35,9 @@ export const useUserDataStore = create<UserState>((set) => ({
   ...defaultValues,
   setCredentials: async (creds: string) => {
     const newState = await getValues(creds)
-    if(newState){
+    if (newState) {
       localStorage.setItem($LOCAL_GOOGLE_JWT, creds)
-      set({...newState})
+      set({ ...newState })
     }
   },
   unSetCredentials: () => {
@@ -46,4 +46,6 @@ export const useUserDataStore = create<UserState>((set) => ({
   },
 }))
 
-getValues( localStorage.getItem($LOCAL_GOOGLE_JWT) || '').then((state)=>useUserDataStore.setState({...state}))
+getValues(localStorage.getItem($LOCAL_GOOGLE_JWT) || '').then((state) =>
+  useUserDataStore.setState({ ...state }),
+)
