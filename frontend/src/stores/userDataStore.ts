@@ -38,7 +38,7 @@ export const useUserDataStore = create<UserState>((set) => ({
     if (newState) {
       localStorage.setItem($LOCAL_GOOGLE_JWT, creds)
       set({ ...newState })
-    }
+    } else throw Error('Invalid Token')
   },
   unSetCredentials: () => {
     localStorage.removeItem($LOCAL_GOOGLE_JWT)
