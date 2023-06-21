@@ -1,8 +1,7 @@
 openapi: 3.0.3
 info:
   title: CodeSketcher
-  description: |-
-    Documentation for the backend API of CodeSketcher.
+  description: Documentation for the backend API of CodeSketcher.
   version: 0.0.1
 paths:
   /execute:
@@ -13,14 +12,15 @@ paths:
           application/json:
             schema:
               type: object
-              required: [code]
+              required:
+                - code
               properties:
                 code:
                   type: string
-                  example: 'a = 1\nb = "test"'
+                  example: a = 1\nb = "test"
                 input:
                   type: string
-                  example: '1\n2\n3'
+                  example: 1\n2\n3
         required: true
       responses:
         '200':
@@ -34,6 +34,47 @@ paths:
                     type: boolean
                   data:
                     $ref: '#/components/schemas/ExecutionInformationArray'
+  /{uid}/codes:
+    get:
+      description: Get all previously saved codes of the user.
+      parameters:
+        - name: uid
+          in: path
+          required: true
+          description: User ID of user
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    codename:
+                      type: string
+                    code:
+                      type: string
+                    input:
+                      type: string
+              examples:
+                Sample Response:
+                  value: |-
+                    [
+                        {
+                            "codename": "untitled1.cpp",
+                            "code": "print('hello world')",
+                            "input": null
+                        },
+                        {
+                            "codename": "untitled2.cpp",
+                            "code": "print('hello world2')",
+                            "input": null
+                        }
+                    ]
 components:
   schemas:
     ExecutionInformation:

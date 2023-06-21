@@ -7,6 +7,8 @@ import config from './config'
 import logger from './logger'
 import docsRouter from './docs/docs.route'
 import executeRouter from './execute/execute.route'
+import userRouter from './user/user.route'
+import { sequelizeLoader } from './db/loader'
 
 const app = express()
 
@@ -19,6 +21,7 @@ app.use(bodyParser.json())
 
 app.use(docsRouter)
 app.use(executeRouter)
+app.use(userRouter)
 
 // handles all celebrate errors (i.e. request validation error)
 const celebrateErrorHandler: ErrorRequestHandler = (err, _req, res, next) => {
@@ -44,12 +47,14 @@ const httpErrorHandler: ErrorRequestHandler = (err, _req, res, _next) => {
 		res.status(500).json({ message: 'Something went wrong, please try again.' })
 	}
 }
+
 app.use(httpErrorHandler)
 
-if (config.get('env') === 'local') {
-	app.listen(config.get('port'), () => {
-		logger.info(`App started on port ${config.get('port')}`)
-	})
-}
-
-module.exports.handler = serverlessExpress({ app })
+sequelizeLoader().then(() => {
+	if (config.get('env') === 'local') {
+		app.listen(config.get('port'), () => {
+			logger.info(`App started on port ${config.get('port')}`)
+		})
+	}
+})
+exports.handler = serverlessExpress({ app })
