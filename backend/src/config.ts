@@ -47,6 +47,12 @@ const config = convict({
 		default: 'executor',
 		env: 'EXECUTOR_NAME',
 	},
+	googleClientID: {
+		env: 'GOOGLE_CLIENT_ID',
+		default: '',
+		sensitive: true,
+		format: 'required-string',
+	},
 	db: {
 		host: {
 			env: 'DB_HOST',

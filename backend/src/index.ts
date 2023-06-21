@@ -1,3 +1,4 @@
+require('express-async-errors')
 import express, { ErrorRequestHandler } from 'express'
 import bodyParser from 'body-parser'
 import pinoHttp from 'pino-http'
@@ -9,6 +10,8 @@ import docsRouter from './docs/docs.route'
 import executeRouter from './execute/execute.route'
 import userRouter from './user/user.route'
 import { sequelizeLoader } from './db/loader'
+import { AuthMiddleware } from './middlewares/auth.middleware'
+import { HttpError } from './errors'
 
 const app = express()
 
@@ -21,7 +24,7 @@ app.use(bodyParser.json())
 
 app.use(docsRouter)
 app.use(executeRouter)
-app.use(userRouter)
+app.use('/user', AuthMiddleware.isTokenAuthenticated, userRouter)
 
 // handles all celebrate errors (i.e. request validation error)
 const celebrateErrorHandler: ErrorRequestHandler = (err, _req, res, next) => {
@@ -42,6 +45,10 @@ const httpErrorHandler: ErrorRequestHandler = (err, _req, res, _next) => {
 	if (err instanceof URIError) {
 		// this error happens when someone types a malformed url such as /%c0
 		res.sendStatus(400)
+	}
+	// If error has code and json defined, display it
+	else if (err instanceof HttpError) {
+		res.status(err.status).json({ message: err.message })
 	} else {
 		// generic error, return 500
 		res.status(500).json({ message: 'Something went wrong, please try again.' })

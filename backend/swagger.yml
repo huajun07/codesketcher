@@ -34,16 +34,11 @@ paths:
                     type: boolean
                   data:
                     $ref: '#/components/schemas/ExecutionInformationArray'
-  /{uid}/codes:
+  /user/codes:
     get:
+      security:
+        - googleAuth: []
       description: Get all previously saved codes of the user.
-      parameters:
-        - name: uid
-          in: path
-          required: true
-          description: User ID of user
-          schema:
-            type: string
       responses:
         '200':
           description: Successful operation
@@ -75,8 +70,123 @@ paths:
                             "input": null
                         }
                     ]
+        '401':
+          description: Unauthorized
+    post:
+      security:
+        - googleAuth: []
+      description: Save new code
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - codename
+                - code
+              properties:
+                codename:
+                  type: string
+                  example: untitled.py
+                code:
+                  type: string
+                  example: a = 1\nb = "test"
+                input:
+                  type: string
+                  example: 1\n2\n3
+        required: true
+      responses:
+        '201':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CodeData'
+        '400':
+          description: Bad Request (User Reached Code limit)
+        '401':
+          description: Unauthorized
+        '409':
+          description: Resource Conflict (Codename already exists )
+        '413':
+          description: Request Entity too large
+    put:
+      security:
+        - googleAuth: []
+      description: Update previously saved code
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - codename
+                - code
+              properties:
+                codename:
+                  type: string
+                  example: untitled.py
+                code:
+                  type: string
+                  example: a = 1\nb = "test"
+                input:
+                  type: string
+                  example: 1\n2\n3
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CodeData'
+        '401':
+          description: Unauthorized
+        '404':
+          description: Resource not found
+        '413':
+          description: Request Entity too large
+  /user/codes/{codename}:
+    delete:
+      security:
+        - googleAuth: []
+      description: Delete previously saved code
+      parameters:
+        - name: codename
+          in: path
+          required: true
+          description: User ID of user
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+        '401':
+          description: Unauthorized
+        '404':
+          description: Resource not found
 components:
+  securitySchemes:
+    googleAuth: # arbitrary name for the security scheme
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
   schemas:
+    CodeData:
+      type: object
+      properties:
+        uid:
+          type: string
+        codename:
+          type: string
+        code:
+          type: string
+        input:
+          type: string
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
     ExecutionInformation:
       type: object
       properties:
