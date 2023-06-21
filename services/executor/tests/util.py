@@ -11,3 +11,7 @@ class MatchesRegex:
 
     def __eq__(self, other):
         return isinstance(other, str) and bool(self.regex.match(other))
+
+
+def MatchesFunctionString(name):
+    return MatchesRegex(f"<function {re.escape(name)} at 0x[0-9a-f]*>")

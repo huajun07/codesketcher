@@ -1,7 +1,7 @@
 import pytest
 from textwrap import dedent
 from executor.main import execute
-from util import MatchesRegex
+from util import MatchesFunctionString
 
 
 def test_variable_declaration():
@@ -244,7 +244,7 @@ def test_function_without_return_statement():
                 "local_variable_changes": {
                     "func": {
                         "type": "function",
-                        "value": MatchesRegex("<function func at 0x[0-9a-f]*>"),
+                        "value": MatchesFunctionString("func"),
                     }
                 },
                 "global_variable_changes": {},
@@ -303,7 +303,7 @@ def test_nested_functions():
                 "local_variable_changes": {
                     "func1": {
                         "type": "function",
-                        "value": MatchesRegex("<function func1 at 0x[0-9a-f]*>"),
+                        "value": MatchesFunctionString("func1"),
                     }
                 },
                 "global_variable_changes": {},
@@ -326,9 +326,7 @@ def test_nested_functions():
                 "local_variable_changes": {
                     "func2": {
                         "type": "function",
-                        "value": MatchesRegex(
-                            "<function func1.<locals>.func2 at 0x[0-9a-f]*>"
-                        ),
+                        "value": MatchesFunctionString("func1.<locals>.func2"),
                     }
                 },
                 "global_variable_changes": {},
@@ -357,8 +355,8 @@ def test_nested_functions():
                 "local_variable_changes": {
                     "func3": {
                         "type": "function",
-                        "value": MatchesRegex(
-                            "<function func1.<locals>.func2.<locals>.func3 at 0x[0-9a-f]*>"
+                        "value": MatchesFunctionString(
+                            "func1.<locals>.func2.<locals>.func3"
                         ),
                     }
                 },
@@ -422,14 +420,14 @@ def test_global_variables():
         "data": [
             {
                 "line_number": 1,
-                "local_variable_changes": {},
-                "global_variable_changes": {"a": {"type": "int", "value": 1}},
+                "local_variable_changes": {"a": {"type": "int", "value": 1}},
+                "global_variable_changes": {},
                 "function_scope": [],
             },
             {
                 "line_number": 2,
-                "local_variable_changes": {},
-                "global_variable_changes": {"b": {"type": "int", "value": 1}},
+                "local_variable_changes": {"b": {"type": "int", "value": 1}},
+                "global_variable_changes": {},
                 "function_scope": [],
             },
             {
@@ -437,7 +435,7 @@ def test_global_variables():
                 "local_variable_changes": {
                     "func1": {
                         "type": "function",
-                        "value": MatchesRegex("<function func1 at 0x[0-9a-f]*>"),
+                        "value": MatchesFunctionString("func1"),
                     }
                 },
                 "global_variable_changes": {},
@@ -460,9 +458,7 @@ def test_global_variables():
                 "local_variable_changes": {
                     "func2": {
                         "type": "function",
-                        "value": MatchesRegex(
-                            "<function func1.<locals>.func2 at 0x[0-9a-f]*>"
-                        ),
+                        "value": MatchesFunctionString("func1.<locals>.func2"),
                     }
                 },
                 "global_variable_changes": {},
@@ -609,6 +605,64 @@ def test_dict_mutation():
                 },
                 "global_variable_changes": {},
                 "function_scope": [],
+            },
+        ],
+        "output": "",
+    }
+
+
+def test_global_function_access():
+    result = execute(
+        {
+            "code": dedent(
+                """\
+                    def f1():
+                        a = 1
+                    def f2():
+                        f1()
+                    f2()"""
+            )
+        }
+    )
+
+    print(result)
+
+    assert result == {
+        "executed": True,
+        "data": [
+            {
+                "line_number": 1,
+                "local_variable_changes": {
+                    "f1": {"type": "function", "value": MatchesFunctionString("f1")}
+                },
+                "global_variable_changes": {},
+                "function_scope": [],
+            },
+            {
+                "line_number": 3,
+                "local_variable_changes": {
+                    "f2": {"type": "function", "value": MatchesFunctionString("f2")}
+                },
+                "global_variable_changes": {},
+                "function_scope": [],
+            },
+            {
+                "line_number": 5,
+                "local_variable_changes": {},
+                "global_variable_changes": {},
+                "function_scope": [],
+            },
+            {
+                "line_number": 4,
+                "local_variable_changes": {},
+                "global_variable_changes": {},
+                "function_scope": ["f2"],
+            },
+            {
+                "line_number": 2,
+                "local_variable_changes": {"a": {"type": "int", "value": 1}},
+                "global_variable_changes": {},
+                "function_scope": ["f2", "f1"],
             },
         ],
         "output": "",
