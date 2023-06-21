@@ -72,7 +72,15 @@ paths:
                     ]
         '401':
           description: Unauthorized
+  /user/codes/{codename}:
     post:
+      parameters:
+        - name: codename
+          in: path
+          required: true
+          description: Name of code saved by the user
+          schema:
+            type: string
       security:
         - googleAuth: []
       description: Save new code
@@ -82,12 +90,8 @@ paths:
             schema:
               type: object
               required:
-                - codename
                 - code
               properties:
-                codename:
-                  type: string
-                  example: untitled.py
                 code:
                   type: string
                   example: a = 1\nb = "test"
@@ -111,6 +115,13 @@ paths:
         '413':
           description: Request Entity too large
     put:
+      parameters:
+        - name: codename
+          in: path
+          required: true
+          description: Name of code saved by the user
+          schema:
+            type: string
       security:
         - googleAuth: []
       description: Update previously saved code
@@ -120,12 +131,8 @@ paths:
             schema:
               type: object
               required:
-                - codename
                 - code
               properties:
-                codename:
-                  type: string
-                  example: untitled.py
                 code:
                   type: string
                   example: a = 1\nb = "test"
@@ -146,7 +153,6 @@ paths:
           description: Resource not found
         '413':
           description: Request Entity too large
-  /user/codes/{codename}:
     delete:
       security:
         - googleAuth: []
@@ -155,7 +161,7 @@ paths:
         - name: codename
           in: path
           required: true
-          description: User ID of user
+          description: Name of code saved by the user
           schema:
             type: string
       responses:

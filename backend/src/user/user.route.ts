@@ -4,14 +4,18 @@ import { celebrate, Joi, Segments } from 'celebrate'
 
 const router = express()
 
-export interface TypedRequestBody<T> extends Express.Request {
+export interface TypedRequest<P, T> extends Express.Request {
 	body: T
+	params: P
 }
 
 interface CodeData {
-	codename: string
 	code: string
 	input?: string
+}
+
+interface CodeName {
+	codename?: string
 }
 
 router.get('/codes', async (_req, res) => {
@@ -21,33 +25,39 @@ router.get('/codes', async (_req, res) => {
 })
 
 router.post(
-	'/codes',
+	'/codes/:codename',
 	celebrate({
-		[Segments.BODY]: Joi.object().keys({
+		[Segments.PARAMS]: Joi.object().keys({
 			codename: Joi.string().required(),
+		}),
+		[Segments.BODY]: Joi.object().keys({
 			code: Joi.string().required(),
 			input: Joi.string(),
 		}),
 	}),
-	async (req: TypedRequestBody<CodeData>, res) => {
+	async (req: TypedRequest<CodeName, CodeData>, res) => {
 		const { uid } = res.locals
-		const { codename, code, input } = req.body
+		const codename = req.params.codename as string
+		const { code, input } = req.body
 		const response = await addCode(uid, codename, code, input)
 		res.status(201).json(response)
 	}
 )
 router.put(
-	'/codes',
+	'/codes/:codename',
 	celebrate({
-		[Segments.BODY]: Joi.object().keys({
+		[Segments.PARAMS]: Joi.object().keys({
 			codename: Joi.string().required(),
+		}),
+		[Segments.BODY]: Joi.object().keys({
 			code: Joi.string().required(),
 			input: Joi.string(),
 		}),
 	}),
-	async (req: TypedRequestBody<CodeData>, res) => {
+	async (req: TypedRequest<CodeName, CodeData>, res) => {
 		const { uid } = res.locals
-		const { codename, code, input } = req.body
+		const codename = req.params.codename as string
+		const { code, input } = req.body
 		const response = await updateCode(uid, codename, code, input)
 		res.status(200).json(response)
 	}
@@ -59,7 +69,7 @@ router.delete(
 			codename: Joi.string().required(),
 		}),
 	}),
-	async (req, res) => {
+	async (req: TypedRequest<CodeName, undefined>, res) => {
 		const { uid } = res.locals
 		const codename = req.params.codename as string
 		await deleteCode(uid, codename)
