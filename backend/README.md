@@ -3,6 +3,7 @@
 ## Installing Dependencies
 
 ```bash
+nvm install
 npm install
 ```
 
