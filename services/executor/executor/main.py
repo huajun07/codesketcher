@@ -13,6 +13,7 @@ class Debugger(bdb.Bdb):
         self.root_frame = None
         self.is_tracing = False
         self.done = False
+        self.previous_frame = None
         self.previous_line_number = -1
         self.data = []
         self.previous_function_scope = []  # e.g. ["f1", "f2"]. Empty if not in function
@@ -61,6 +62,7 @@ class Debugger(bdb.Bdb):
             self.set_trace()
             self.root_frame = frame
             self.is_tracing = True
+            self.previous_frame = frame
             self.previous_line_number = frame.f_lineno
             return
 
@@ -83,7 +85,8 @@ class Debugger(bdb.Bdb):
             else:
                 self.current_local_variables |= frame.f_locals
                 self.current_global_variables |= frame.f_globals
-        self.current_global_variables.pop("__builtins__")
+        self.current_global_variables.pop("__builtins__", None)
+        self.current_local_variables.pop("__builtins__", None)
 
         local_variables_info = self.clone_variables(self.current_local_variables)
         global_variables_info = self.clone_variables(self.current_global_variables)
@@ -108,6 +111,12 @@ class Debugger(bdb.Bdb):
             ):
                 continue
             global_variable_changes[var] = global_variables_info[var]
+
+        if self.root_frame == self.previous_frame:
+            # In the root frame, all local variables are also global variables.
+            # Hence we treat all changes as local, to avoid repeated output
+            global_variable_changes = {}
+        self.previous_frame = frame
 
         self.data.append(
             {
@@ -161,7 +170,9 @@ def execute(event):
 
     with redirect_stdout(output):
         try:
-            debugger.run(code, globals={}, locals={})
+            empty_dict = {}
+            # At the top level, globals == locals. Hence both must reference the same dictionary.
+            debugger.run(code, globals=empty_dict, locals=empty_dict)
             return json_size_checker(
                 {
                     "executed": True,
