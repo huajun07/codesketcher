@@ -19,18 +19,23 @@ export const VisualArea = () => {
   const [faqOpen, setFAQOpen] = useState(false)
 
   const [childKeys, setChildKeys] = useState<string[]>([])
+  const [tabIndex, setTabIndex] = useState<number>(0)
 
   const eraseVisualization = (key: string) => {
+    const index = childKeys.findIndex((x) => x === key)
+    if (index === -1) return
+    if (tabIndex >= index) setTabIndex(tabIndex === 0 ? 0 : tabIndex - 1)
     setChildKeys(childKeys.filter((x) => x !== key))
   }
 
   const addVisualization = () => {
+    setTabIndex(childKeys.length)
     setChildKeys([...childKeys, uuidv4()])
   }
 
   return (
     <>
-      <Tabs w="full">
+      <Tabs w="full" index={tabIndex} onChange={(index) => setTabIndex(index)}>
         <TabList>
           <Button borderRadius={0} onClick={() => setFAQOpen(true)}>
             <InfoIcon />

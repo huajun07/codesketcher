@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { DeleteIcon, SettingsIcon } from '@chakra-ui/icons'
 import { Box, Button, Center, Text } from '@chakra-ui/react'
 import { useExecutionStore } from 'stores'
@@ -32,7 +32,7 @@ export const GraphVisualization = (props: GraphVisualizationProps) => {
     edgesVariableName: '',
     displayVariableNames: [],
   })
-  const [settingsOpen, setSettingsOpen] = useState(false)
+  const [settingsOpen, setSettingsOpen] = useState(true)
 
   const data = useExecutionStore((state) => state.data)
 
