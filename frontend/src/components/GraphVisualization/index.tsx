@@ -113,7 +113,14 @@ export const GraphVisualization = (props: GraphVisualizationProps) => {
       >
         <SettingsIcon />
       </Button>
-      <Button onClick={erase} position="absolute" right="0" zIndex={1}>
+      <Button
+        onClick={erase}
+        borderRadius={0}
+        position="absolute"
+        right="0"
+        zIndex={1}
+        colorScheme="red"
+      >
         <DeleteIcon />
       </Button>
 
