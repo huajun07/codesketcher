@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { DeleteIcon, SettingsIcon } from '@chakra-ui/icons'
 import { Box, Button, Center, Text } from '@chakra-ui/react'
 import { useExecutionStore } from 'stores'
