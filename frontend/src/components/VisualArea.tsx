@@ -19,11 +19,8 @@ export const VisualArea = () => {
     <>
       <Flex direction="column" w="full">
         {childKeys.map((key) => (
-          <Center borderBottom="2px" borderColor="gray.300">
-            <GraphVisualization
-              key={key}
-              erase={() => eraseVisualization(key)}
-            />
+          <Center borderBottom="2px" borderColor="gray.300" key={key}>
+            <GraphVisualization erase={() => eraseVisualization(key)} />
           </Center>
         ))}
 
