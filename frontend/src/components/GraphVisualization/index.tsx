@@ -1,35 +1,6 @@
 import { useState } from 'react'
-import {
-  AddIcon,
-  DeleteIcon,
-  QuestionIcon,
-  SettingsIcon,
-} from '@chakra-ui/icons'
-import {
-  Box,
-  Button,
-  Center,
-  Checkbox,
-  Flex,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalHeader,
-  ModalOverlay,
-  Radio,
-  RadioGroup,
-  Stack,
-  Text,
-  Tooltip,
-  useDisclosure,
-} from '@chakra-ui/react'
-import {
-  AutoComplete,
-  AutoCompleteInput,
-  AutoCompleteItem,
-  AutoCompleteList,
-} from '@choc-ui/chakra-autocomplete'
+import { DeleteIcon, SettingsIcon } from '@chakra-ui/icons'
+import { Box, Button, Center, Text } from '@chakra-ui/react'
 import { useExecutionStore } from 'stores'
 
 import {
@@ -40,6 +11,7 @@ import {
 } from 'utils/graph'
 
 import { Graph } from './Graph'
+import { GraphSettings, GraphSettingsModal } from './GraphSettingsModal'
 
 enum EdgeFormat {
   AdjacencyMatrix = 'Adjacency Matrix',
@@ -52,20 +24,18 @@ interface GraphVisualizationProps {
 
 export const GraphVisualization = (props: GraphVisualizationProps) => {
   const { erase } = props
-  const { data, allVariableNames } = useExecutionStore((state) => ({
-    data: state.data,
-    allVariableNames: state.allVariableNames,
-    currentStep: state.currentStep,
-  }))
-  const { isOpen, onOpen, onClose } = useDisclosure()
 
-  const [edgeFormat, setEdgeFormat] = useState<EdgeFormat>(
-    EdgeFormat.AdjacencyList,
-  )
-  const [directed, setDirected] = useState(false)
-  const [weighted, setWeighted] = useState(false)
-  const [edgesVariableName, setEdgesVariableName] = useState('')
-  const [displayVariableNames, setDisplayVariableNames] = useState<string[]>([])
+  const [settings, setSettings] = useState<GraphSettings>({
+    directed: false,
+    weighted: false,
+    edgeFormat: EdgeFormat.AdjacencyList,
+    edgesVariableName: '',
+    displayVariableNames: [],
+  })
+  const [settingsOpen, setSettingsOpen] = useState(false)
+
+  const data = useExecutionStore((state) => state.data)
+
   const [error, setError] = useState('')
   const updateErrorMessage = (newError: string) => {
     if (newError === error) return
@@ -73,11 +43,11 @@ export const GraphVisualization = (props: GraphVisualizationProps) => {
   }
 
   const edgesVariable = data.find(
-    (item) => item.name === edgesVariableName,
+    (item) => item.name === settings.edgesVariableName,
   )?.value
 
   let adjacencyList: number[][] | [number, number][][] | undefined = undefined
-  if (edgesVariableName === '') {
+  if (settings.edgesVariableName === '') {
     updateErrorMessage(
       'Please configure this visualization by clicking the settings icon',
     )
@@ -85,8 +55,8 @@ export const GraphVisualization = (props: GraphVisualizationProps) => {
     updateErrorMessage('Chosen adjacency matrix/list is currently undefined')
   } else {
     if (edgesVariable !== undefined) {
-      if (edgeFormat === EdgeFormat.AdjacencyList) {
-        if (!weighted) {
+      if (settings.edgeFormat === EdgeFormat.AdjacencyList) {
+        if (!settings.weighted) {
           // unweighted adjacency list
           if (!assertAdjacencyListUnweighted(edgesVariable))
             updateErrorMessage(
@@ -112,14 +82,17 @@ export const GraphVisualization = (props: GraphVisualizationProps) => {
         if (!assertAdjacencyMatrix(edgesVariable))
           updateErrorMessage('Given variable is not a adjacency matrix')
         else {
-          adjacencyList = adjacencyMatrixToList(edgesVariable, weighted)
+          adjacencyList = adjacencyMatrixToList(
+            edgesVariable,
+            settings.weighted,
+          )
           updateErrorMessage('')
         }
       }
     }
   }
   const displayData: { name: string; array: string[] }[] = []
-  for (const displayVariableName of displayVariableNames) {
+  for (const displayVariableName of settings.displayVariableNames) {
     const variable = data.find(
       (item) => item.name === displayVariableName,
     )?.value
@@ -132,7 +105,12 @@ export const GraphVisualization = (props: GraphVisualizationProps) => {
 
   return (
     <Box width="full" minH="400px">
-      <Button onClick={onOpen} borderRadius={0} position="absolute" zIndex={1}>
+      <Button
+        onClick={() => setSettingsOpen(!settingsOpen)}
+        borderRadius={0}
+        position="absolute"
+        zIndex={1}
+      >
         <SettingsIcon />
       </Button>
       <Button onClick={erase} position="absolute" right="0" zIndex={1}>
@@ -150,130 +128,19 @@ export const GraphVisualization = (props: GraphVisualizationProps) => {
             // If there is no error, then adjacencyList must be defined
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             adjacencyList={adjacencyList!}
-            directed={directed}
-            weighted={weighted}
+            directed={settings.directed}
+            weighted={settings.weighted}
             displayData={displayData}
           ></Graph>
         </Box>
       )}
 
-      <Modal isOpen={isOpen} onClose={onClose}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Title</ModalHeader>
-          <ModalCloseButton />
-
-          <ModalBody>
-            <Box>
-              <Text as="b">Edge Format</Text>
-              <RadioGroup
-                onChange={(value: EdgeFormat) => setEdgeFormat(value)}
-                value={edgeFormat}
-              >
-                <Stack direction="row">
-                  <Radio value={EdgeFormat.AdjacencyList}>
-                    {EdgeFormat.AdjacencyList}
-                  </Radio>
-                  <Radio value={EdgeFormat.AdjacencyMatrix}>
-                    {EdgeFormat.AdjacencyMatrix}
-                  </Radio>
-                </Stack>
-              </RadioGroup>
-            </Box>
-
-            <Box mt={4}>
-              <Stack direction="row" align="baseline">
-                <Text as="b">Edge Variable</Text>
-                <Tooltip label="Name of the variable storing information about the edges">
-                  <QuestionIcon />
-                </Tooltip>
-              </Stack>
-              <AutoComplete
-                openOnFocus
-                value={edgesVariableName}
-                onChange={setEdgesVariableName}
-                defaultValues={[edgesVariableName]}
-                freeSolo
-              >
-                <AutoCompleteInput />
-                <AutoCompleteList>
-                  {allVariableNames.map((name) => (
-                    <AutoCompleteItem key={name} value={name} />
-                  ))}
-                </AutoCompleteList>
-              </AutoComplete>
-            </Box>
-
-            <Box mt={4}>
-              <Text as="b">Graph Properties</Text>
-              <Flex direction="column">
-                <Checkbox
-                  defaultChecked={directed}
-                  onChange={() => setDirected(!directed)}
-                >
-                  Directed
-                </Checkbox>
-                <Checkbox
-                  defaultChecked={weighted}
-                  onChange={() => setWeighted(!weighted)}
-                >
-                  Weighted
-                </Checkbox>
-              </Flex>
-            </Box>
-
-            <Box mt={4}>
-              <Stack direction="row" align="baseline">
-                <Text as="b">Display Data</Text>
-                <Tooltip label="Display some data about nodes as a node label (e.g. distance from source)">
-                  <QuestionIcon />
-                </Tooltip>
-              </Stack>
-              {displayVariableNames.map((name, index) => (
-                <Flex>
-                  <AutoComplete
-                    key={index}
-                    openOnFocus
-                    value={name}
-                    onChange={(newName) => {
-                      displayVariableNames[index] = newName
-                      setDisplayVariableNames([...displayVariableNames])
-                    }}
-                    defaultValues={[name]}
-                    freeSolo
-                    placeholder="Enter a variable name"
-                  >
-                    <AutoCompleteInput />
-                    <AutoCompleteList>
-                      {allVariableNames.map((name) => (
-                        <AutoCompleteItem key={name} value={name} />
-                      ))}
-                    </AutoCompleteList>
-                  </AutoComplete>
-                  <Button
-                    colorScheme="red"
-                    onClick={() => {
-                      setDisplayVariableNames([
-                        ...displayVariableNames.slice(0, index),
-                        ...displayVariableNames.slice(index + 1),
-                      ])
-                    }}
-                  >
-                    <DeleteIcon />
-                  </Button>
-                </Flex>
-              ))}
-              <Button
-                onClick={() =>
-                  setDisplayVariableNames([...displayVariableNames, ''])
-                }
-              >
-                <AddIcon />
-              </Button>
-            </Box>
-          </ModalBody>
-        </ModalContent>
-      </Modal>
+      <GraphSettingsModal
+        settings={settings}
+        setSettings={setSettings}
+        open={settingsOpen}
+        toggle={() => setSettingsOpen(!settingsOpen)}
+      />
     </Box>
   )
 }
