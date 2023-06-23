@@ -141,7 +141,7 @@ export const GraphSettingsModal = (props: GraphSettingsProps) => {
                 <QuestionIcon />
               </Tooltip>
             </Stack>
-            <Flex direction="column">
+            <Flex direction="column" gap={2}>
               {settings.displayVariableNames.map((name, index) => (
                 <Flex key={displayVariableKeys[index]}>
                   <AutoCompleteVariables
@@ -153,6 +153,7 @@ export const GraphSettingsModal = (props: GraphSettingsProps) => {
                         displayVariableNames: newSettings,
                       })
                     }}
+                    inputProps={{ borderRightRadius: 0 }}
                   />
                   <Button
                     colorScheme="red"
@@ -168,6 +169,7 @@ export const GraphSettingsModal = (props: GraphSettingsProps) => {
                         ...displayVariableKeys.slice(index + 1),
                       ])
                     }}
+                    borderLeftRadius={0}
                   >
                     <DeleteIcon />
                   </Button>
@@ -196,7 +198,7 @@ export const GraphSettingsModal = (props: GraphSettingsProps) => {
                 updateSettings()
                 toggle()
               }}
-              colorScheme="green"
+              colorScheme="blue"
             >
               Save
             </Button>
@@ -210,9 +212,10 @@ export const GraphSettingsModal = (props: GraphSettingsProps) => {
 interface AutoCompleteVariablesProps {
   value: string
   update: (newValue: string) => void
+  inputProps?: React.ComponentProps<typeof AutoCompleteInput>
 }
 const AutoCompleteVariables = (props: AutoCompleteVariablesProps) => {
-  const { value, update } = props
+  const { value, update, inputProps } = props
   const allVariableNames = useExecutionStore((state) => state.allVariableNames)
   return (
     <AutoComplete
@@ -230,6 +233,7 @@ const AutoCompleteVariables = (props: AutoCompleteVariablesProps) => {
       <AutoCompleteInput
         placeholder="Search..."
         onChange={(event) => update(event.target.value)}
+        {...inputProps}
       />
       <AutoCompleteList>
         {allVariableNames.map((name) => (
