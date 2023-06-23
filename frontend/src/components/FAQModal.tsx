@@ -35,8 +35,8 @@ export const FAQModal = (props: FAQModalProps) => {
             Welcome to the graph visualization component of codesketcher!
           </Text>
           <Text>
-            To get started, add a visualization by clicking the "+" icon.
-            Visualizations are stored in tabs for easy navigation.
+            To get started, add a visualization by clicking the <Code>+</Code>{' '}
+            icon. Visualizations are stored in tabs for easy navigation.
           </Text>
 
           <Heading as="h3" size="lg" mt={4}>
@@ -51,10 +51,13 @@ export const FAQModal = (props: FAQModalProps) => {
           <Text>
             You need to enter the name of your variable containing all the
             edges. Note that the data must be 0-indexed (i.e. vertices are
-            labelled 0 to <Code>n - 1</Code>). A few formats are supported:
+            labelled <Code>0</Code> to <Code>n - 1</Code>). The number of
+            vertices, <Code>n</Code>, is automatically inferred from the size of
+            the adjacency list/matrix. A few formats are supported for the edge
+            variable:
           </Text>
 
-          <Accordion defaultIndex={[0]} allowMultiple mt={4}>
+          <Accordion defaultIndex={[]} allowMultiple mt={4}>
             <AccordionItem>
               <Text as="h3" size="md">
                 <AccordionButton>
@@ -130,7 +133,7 @@ export const FAQModal = (props: FAQModalProps) => {
           </Heading>
           <Text>
             Data about vertices can be displayed beside each vertex. Simply
-            supply a <Code>list</Code> (of <Code>size n</Code>), and{' '}
+            supply a <Code>list</Code> (of size <Code>n</Code>), and{' '}
             <Code>list[i]</Code> will be displayed by vertex <Code>i</Code>.
             This can be helpful to debug state changes as your algorithm runs
             (e.g. distance from the source node in Dijkstra's Algorithm).
