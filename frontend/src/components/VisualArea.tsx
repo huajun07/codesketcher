@@ -40,12 +40,9 @@ export const VisualArea = () => {
       {childKeys.length > 0 ? (
         <TabPanels h="full">
           {childKeys.map((key) => (
-            <TabPanel h="full" p={0}>
-              <Flex h="full" alignItems="stretch">
-                <GraphVisualization
-                  key={key}
-                  erase={() => eraseVisualization(key)}
-                />
+            <TabPanel p={0} key={key}>
+              <Flex h="calc(100vh - 189px)" alignItems="stretch">
+                <GraphVisualization erase={() => eraseVisualization(key)} />
               </Flex>
             </TabPanel>
           ))}

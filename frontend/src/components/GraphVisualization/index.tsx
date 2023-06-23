@@ -104,7 +104,7 @@ export const GraphVisualization = (props: GraphVisualizationProps) => {
   }
 
   return (
-    <Box width="full" minH="400px">
+    <Box w="full">
       <Button
         onClick={() => setSettingsOpen(!settingsOpen)}
         borderRadius={0}
@@ -125,21 +125,19 @@ export const GraphVisualization = (props: GraphVisualizationProps) => {
       </Button>
 
       {error && (
-        <Center h="100%" minH="inherit">
+        <Center h="full" w="full">
           <Text>{error}</Text>
         </Center>
       )}
       {!error && (
-        <Box>
-          <Graph
-            // If there is no error, then adjacencyList must be defined
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            adjacencyList={adjacencyList!}
-            directed={settings.directed}
-            weighted={settings.weighted}
-            displayData={displayData}
-          ></Graph>
-        </Box>
+        <Graph
+          // If there is no error, then adjacencyList must be defined
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          adjacencyList={adjacencyList!}
+          directed={settings.directed}
+          weighted={settings.weighted}
+          displayData={displayData}
+        />
       )}
 
       <GraphSettingsModal

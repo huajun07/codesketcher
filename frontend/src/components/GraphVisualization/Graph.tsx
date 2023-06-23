@@ -63,7 +63,7 @@ export const Graph = (props: GraphProps) => {
     <CytoscapeComponent
       elements={elements}
       layout={{ name: 'cola' }}
-      style={{ height: '400px', width: '100%' }}
+      style={{ height: '100%', width: '100%' }}
       stylesheet={[
         {
           selector: 'edge',
