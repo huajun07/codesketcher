@@ -1,8 +1,6 @@
-import { useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { AddIcon, DeleteIcon, QuestionIcon } from '@chakra-ui/icons'
 import {
-  Alert,
-  AlertIcon,
   Box,
   Button,
   Center,
@@ -10,7 +8,6 @@ import {
   Flex,
   Modal,
   ModalBody,
-  ModalCloseButton,
   ModalContent,
   ModalHeader,
   ModalOverlay,
@@ -50,25 +47,28 @@ interface GraphSettingsProps {
 }
 
 export const GraphSettingsModal = (props: GraphSettingsProps) => {
-  const { settings, setSettings, open, toggle } = props
+  const {
+    settings: parentSettings,
+    setSettings: setParentSettings,
+    open,
+    toggle,
+  } = props
+  const [settings, setSettings] = useState({
+    ...parentSettings,
+  })
+
+  useEffect(() => {
+    setSettings({ ...parentSettings })
+  }, [open, parentSettings])
 
   const [displayVariableKeys, setDisplayVariableKeys] = useState(
     settings.displayVariableNames.map((_) => uuidv4()),
   )
 
-  const [showUpdated, setShowUpdated] = useState(false)
-  const showUpdatedTimeout = useRef<number | null>(null)
+  const updateSettings = () => setParentSettings({ ...settings })
 
-  const updateSettings = (updates: Partial<GraphSettings>) => {
-    setShowUpdated(true)
-    if (showUpdatedTimeout.current !== null) {
-      window.clearTimeout(showUpdatedTimeout.current)
-    }
-    showUpdatedTimeout.current = window.setTimeout(
-      () => setShowUpdated(false),
-      1500,
-    )
-    setSettings({ ...settings, ...updates })
+  const modifySettings = (modifications: Partial<GraphSettings>) => {
+    setSettings({ ...settings, ...modifications })
   }
 
   return (
@@ -76,14 +76,13 @@ export const GraphSettingsModal = (props: GraphSettingsProps) => {
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>Graph Settings</ModalHeader>
-        <ModalCloseButton />
 
         <ModalBody>
           <Box>
             <Text as="b">Edge Format</Text>
             <RadioGroup
               onChange={(value: EdgeFormat) =>
-                updateSettings({ edgeFormat: value })
+                modifySettings({ edgeFormat: value })
               }
               value={settings.edgeFormat}
             >
@@ -108,7 +107,7 @@ export const GraphSettingsModal = (props: GraphSettingsProps) => {
             <AutoCompleteVariables
               value={settings.edgesVariableName}
               update={(value) => {
-                updateSettings({ edgesVariableName: value })
+                modifySettings({ edgesVariableName: value })
               }}
             />
           </Box>
@@ -119,7 +118,7 @@ export const GraphSettingsModal = (props: GraphSettingsProps) => {
               <Checkbox
                 defaultChecked={settings.directed}
                 onChange={() =>
-                  updateSettings({ directed: !settings.directed })
+                  modifySettings({ directed: !settings.directed })
                 }
               >
                 Directed
@@ -127,7 +126,7 @@ export const GraphSettingsModal = (props: GraphSettingsProps) => {
               <Checkbox
                 defaultChecked={settings.weighted}
                 onChange={() =>
-                  updateSettings({ weighted: !settings.weighted })
+                  modifySettings({ weighted: !settings.weighted })
                 }
               >
                 Weighted
@@ -150,7 +149,7 @@ export const GraphSettingsModal = (props: GraphSettingsProps) => {
                     update={(value) => {
                       const newSettings = [...settings.displayVariableNames]
                       newSettings[index] = value
-                      updateSettings({
+                      modifySettings({
                         displayVariableNames: newSettings,
                       })
                     }}
@@ -158,7 +157,7 @@ export const GraphSettingsModal = (props: GraphSettingsProps) => {
                   <Button
                     colorScheme="red"
                     onClick={() => {
-                      updateSettings({
+                      modifySettings({
                         displayVariableNames: [
                           ...settings.displayVariableNames.slice(0, index),
                           ...settings.displayVariableNames.slice(index + 1),
@@ -176,7 +175,7 @@ export const GraphSettingsModal = (props: GraphSettingsProps) => {
               ))}
               <Button
                 onClick={() => {
-                  updateSettings({
+                  modifySettings({
                     displayVariableNames: [
                       ...settings.displayVariableNames,
                       '',
@@ -190,14 +189,18 @@ export const GraphSettingsModal = (props: GraphSettingsProps) => {
             </Flex>
           </Box>
 
-          <Box py={5} height="5em">
-            {showUpdated && (
-              <Alert py={2} status="success" borderRadius={4}>
-                <AlertIcon />
-                Settings updated
-              </Alert>
-            )}
-          </Box>
+          <Flex mt={4} justifyContent="space-between">
+            <Button onClick={toggle}>Cancel</Button>
+            <Button
+              onClick={() => {
+                updateSettings()
+                toggle()
+              }}
+              colorScheme="green"
+            >
+              Save
+            </Button>
+          </Flex>
         </ModalBody>
       </ModalContent>
     </Modal>
