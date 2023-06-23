@@ -9,6 +9,7 @@ import {
   TabPanel,
   TabPanels,
   Tabs,
+  Tooltip,
 } from '@chakra-ui/react'
 import { v4 as uuidv4 } from 'uuid'
 
@@ -37,17 +38,21 @@ export const VisualArea = () => {
     <>
       <Tabs w="full" index={tabIndex} onChange={(index) => setTabIndex(index)}>
         <TabList>
-          <Button borderRadius={0} onClick={() => setFAQOpen(true)}>
-            <InfoIcon />
-          </Button>
+          <Tooltip label="FAQ">
+            <Button borderRadius={0} onClick={() => setFAQOpen(true)}>
+              <InfoIcon />
+            </Button>
+          </Tooltip>
 
           {childKeys.map((key, index) => (
             <Tab key={key}>{index}</Tab>
           ))}
 
-          <Button borderRadius={0} onClick={addVisualization}>
-            <AddIcon />
-          </Button>
+          <Tooltip label="Add visualization">
+            <Button borderRadius={0} onClick={addVisualization}>
+              <AddIcon />
+            </Button>
+          </Tooltip>
         </TabList>
 
         {childKeys.length > 0 ? (
