@@ -53,7 +53,7 @@ export const GraphSettingsModal = (props: GraphSettingsProps) => {
   const { settings, setSettings, open, toggle } = props
 
   const [displayVariableKeys, setDisplayVariableKeys] = useState(
-    settings.displayVariableNames.map((x) => uuidv4()),
+    settings.displayVariableNames.map((_) => uuidv4()),
   )
 
   const [showUpdated, setShowUpdated] = useState(false)
