@@ -62,7 +62,7 @@ export const FAQModal = (props: FAQModalProps) => {
             .
           </Text>
           <Text mt={2}>
-            For a adjacency matrix, it should be a 2-dimensional{' '}
+            For an adjacency matrix, it should be a 2-dimensional{' '}
             <Code>list</Code> of size <Code>n x n</Code> (where <Code>n</Code>{' '}
             is the number of vertices). <Code>list[u][v]</Code> denotes the edge
             from vertex <Code>u</Code> to vertex <Code>v</Code>, which is{' '}
@@ -87,7 +87,7 @@ export const FAQModal = (props: FAQModalProps) => {
             supply a <Code>list</Code> (of <Code>size n</Code>), and{' '}
             <Code>list[i]</Code> will be displayed by vertex <Code>i</Code>.
             This can be helpful to debug state changes as your algorithm runs
-            (e.g. distance from source node in Dijkstra's Algorithm).
+            (e.g. distance from the source node in Dijkstra's Algorithm).
           </Text>
         </ModalBody>
       </ModalContent>
