@@ -9,10 +9,11 @@ interface GraphProps {
   weighted: boolean
   adjacencyList: number[][] | [number, number][][]
   displayData: { name: string; array: string[] }[]
+  cyRef: React.MutableRefObject<cytoscape.Core | null>
 }
 
 export const Graph = (props: GraphProps) => {
-  const { directed, weighted, adjacencyList, displayData } = props
+  const { directed, weighted, adjacencyList, displayData, cyRef } = props
 
   const n = adjacencyList.length
   const elements: cytoscape.ElementDefinition[] = []
@@ -61,6 +62,7 @@ export const Graph = (props: GraphProps) => {
 
   return (
     <CytoscapeComponent
+      cy={(cy) => (cyRef.current = cy)}
       elements={elements}
       layout={{ name: 'cola' }}
       style={{ height: '100%', width: '100%' }}

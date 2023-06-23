@@ -1,6 +1,7 @@
-import { useState } from 'react'
-import { DeleteIcon, SettingsIcon } from '@chakra-ui/icons'
-import { Box, Button, Center, Text } from '@chakra-ui/react'
+import { useRef, useState } from 'react'
+import { AddIcon, DeleteIcon, MinusIcon, SettingsIcon } from '@chakra-ui/icons'
+import { Box, Button, Center, Text, Tooltip } from '@chakra-ui/react'
+import cytoscape from 'cytoscape'
 import { useExecutionStore } from 'stores'
 
 import {
@@ -40,6 +41,20 @@ export const GraphVisualization = (props: GraphVisualizationProps) => {
   const updateErrorMessage = (newError: string) => {
     if (newError === error) return
     setError(newError)
+  }
+
+  const cyRef = useRef<cytoscape.Core>(null)
+  const zoom = (zoomIn: boolean) => {
+    if (cyRef.current === null) return
+    const cy = cyRef.current
+    const newZoomLevel = cy.zoom() * (zoomIn ? 1.5 : 1 / 1.5)
+    cy.animate(
+      {
+        zoom: newZoomLevel,
+        center: { eles: '$nodes' },
+      },
+      { duration: 80 },
+    )
   }
 
   const edgesVariable = data.find(
@@ -104,10 +119,9 @@ export const GraphVisualization = (props: GraphVisualizationProps) => {
   }
 
   return (
-    <Box w="full">
+    <Box w="full" position="relative">
       <Button
         onClick={() => setSettingsOpen(!settingsOpen)}
-        borderRadius={8}
         mt={4}
         ml={4}
         position="absolute"
@@ -115,9 +129,9 @@ export const GraphVisualization = (props: GraphVisualizationProps) => {
       >
         <SettingsIcon />
       </Button>
+
       <Button
         onClick={erase}
-        borderRadius={8}
         mt={4}
         mr={4}
         position="absolute"
@@ -127,6 +141,39 @@ export const GraphVisualization = (props: GraphVisualizationProps) => {
       >
         <DeleteIcon />
       </Button>
+
+      <Tooltip label="Zoom in">
+        <Button
+          onClick={() => zoom(true)}
+          borderBottomRadius={0}
+          mb={12}
+          mr={4}
+          position="absolute"
+          bottom="0"
+          right="0"
+          size="sm"
+          borderBottom="1px"
+          borderBottomColor="gray.300"
+          zIndex={1}
+        >
+          <AddIcon />
+        </Button>
+      </Tooltip>
+      <Tooltip label="Zoom out">
+        <Button
+          onClick={() => zoom(false)}
+          borderTopRadius={0}
+          mb={4}
+          mr={4}
+          position="absolute"
+          bottom="0"
+          right="0"
+          size="sm"
+          zIndex={1}
+        >
+          <MinusIcon />
+        </Button>
+      </Tooltip>
 
       {error && (
         <Center h="full" w="full">
@@ -141,6 +188,7 @@ export const GraphVisualization = (props: GraphVisualizationProps) => {
           directed={settings.directed}
           weighted={settings.weighted}
           displayData={displayData}
+          cyRef={cyRef}
         />
       )}
 
