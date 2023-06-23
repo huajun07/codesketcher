@@ -107,7 +107,9 @@ export const GraphVisualization = (props: GraphVisualizationProps) => {
     <Box w="full">
       <Button
         onClick={() => setSettingsOpen(!settingsOpen)}
-        borderRadius={0}
+        borderRadius={8}
+        mt={4}
+        ml={4}
         position="absolute"
         zIndex={1}
       >
@@ -115,7 +117,9 @@ export const GraphVisualization = (props: GraphVisualizationProps) => {
       </Button>
       <Button
         onClick={erase}
-        borderRadius={0}
+        borderRadius={8}
+        mt={4}
+        mr={4}
         position="absolute"
         right="0"
         zIndex={1}
