@@ -24,7 +24,7 @@ import styles from './DataTable.module.css'
 const columns: React.ComponentProps<typeof DataGrid>['columns'] = [
   {
     key: 'pin',
-    name: 'Pin',
+    name: '',
     frozen: true,
     width: 36,
     minWidth: 36,

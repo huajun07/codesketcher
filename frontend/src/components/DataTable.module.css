@@ -12,4 +12,5 @@
   width: 36px;
   display: flex;
   justify-content: center;
+  outline: none;
 }
