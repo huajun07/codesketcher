@@ -1,17 +1,17 @@
-import { MoonIcon, SunIcon } from '@chakra-ui/icons'
+import { ChevronDownIcon, MoonIcon, SunIcon } from '@chakra-ui/icons'
 import {
   Avatar,
   Box,
   Button,
-  Center,
   Flex,
   Heading,
+  HStack,
   Menu,
   MenuButton,
-  MenuDivider,
   MenuItem,
   MenuList,
   Stack,
+  Text,
   useColorMode,
   useColorModeValue,
   useToast,
@@ -62,55 +62,42 @@ export const NavBar = () => {
               >
                 {colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
               </Button>
-
-              <Menu>
-                <MenuButton
-                  as={Button}
-                  rounded={'full'}
-                  variant={'link'}
-                  cursor={'pointer'}
-                  minW={0}
-                >
-                  <Avatar size={'sm'} src={picture} />
-                </MenuButton>
-                <MenuList alignItems={'center'}>
-                  <br />
-                  <Center>
-                    <Avatar bg="gray.100" size={'2xl'} src={picture} />
-                  </Center>
-                  <br />
-                  <Center>
-                    <p>{name}</p>
-                  </Center>
-                  <br />
-                  <MenuDivider />
-                  <MenuItem>Your Servers</MenuItem>
-                  <MenuItem>Account Settings</MenuItem>
-
-                  {!loggedIn ? (
-                    <MenuItem>
-                      <GoogleLogin
-                        onSuccess={async (credentialResponse) => {
-                          try {
-                            if (credentialResponse.credential)
-                              await setCredentials(
-                                credentialResponse.credential,
-                              )
-                            else throw Error('Login Error')
-                          } catch (err) {
-                            loginError()
-                          }
-                        }}
-                        onError={loginError}
-                      />
-                    </MenuItem>
-                  ) : (
+              {loggedIn ? (
+                <Menu>
+                  <MenuButton
+                    h={16}
+                    as={Button}
+                    variant={'ghost'}
+                    cursor={'pointer'}
+                    minW={0}
+                    borderRadius={0}
+                    rightIcon={<ChevronDownIcon />}
+                  >
+                    <HStack>
+                      <Text fontSize="sm">{name}</Text>
+                      <Avatar size={'sm'} src={picture} />
+                    </HStack>
+                  </MenuButton>
+                  <MenuList>
                     <MenuItem onClick={() => unSetCredentials()}>
                       Logout
                     </MenuItem>
-                  )}
-                </MenuList>
-              </Menu>
+                  </MenuList>
+                </Menu>
+              ) : (
+                <GoogleLogin
+                  onSuccess={async (credentialResponse) => {
+                    try {
+                      if (credentialResponse.credential)
+                        await setCredentials(credentialResponse.credential)
+                      else throw Error('Login Error')
+                    } catch (err) {
+                      loginError()
+                    }
+                  }}
+                  onError={loginError}
+                />
+              )}
             </Stack>
           </Flex>
         </Flex>
