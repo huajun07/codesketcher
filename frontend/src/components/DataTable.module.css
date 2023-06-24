@@ -1,0 +1,16 @@
+.datagridPinHeader {
+  padding-left: 0;
+  padding-right: 0;
+  width: 36px;
+  display: flex;
+  justify-content: center;
+}
+
+.datagridPinCell {
+  padding-left: 0;
+  padding-right: 0;
+  width: 36px;
+  display: flex;
+  justify-content: center;
+  outline: none;
+}
