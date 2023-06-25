@@ -1,5 +1,6 @@
 import bdb
 import copy
+import inspect
 import json
 import sys
 from io import StringIO
@@ -12,6 +13,7 @@ class Debugger(bdb.Bdb):
         super().__init__(skip=["awslambdaric.bootstrap"])
         self.root_frame = None
         self.is_tracing = False
+        self.is_importing = False
         self.done = False
         self.previous_frame = None
         self.previous_line_number = -1
@@ -40,7 +42,10 @@ class Debugger(bdb.Bdb):
                     value = list(map(convert_variable, variable))
 
                 case _:
-                    value = variable.__str__()
+                    try:
+                        value = variable.__str__()
+                    except Exception:
+                        value = "error: could not convert to string"
             return {"type": type(variable).__name__, "value": value}
 
         return {key: convert_variable(value) for key, value in variables_dict.items()}
@@ -70,6 +75,17 @@ class Debugger(bdb.Bdb):
             # Code has finished executing, any further lines are from caller's frame and should be ignored
             return
 
+        # Once we start importing, ignore all frames until we are done.
+        # Check for done by checking if we have returned to the previous frame.
+        if self.is_importing:
+            if frame == self.previous_frame:
+                self.is_importing = False
+            else:
+                return
+        if "importlib" in frame.f_globals.get("__name__", ""):
+            self.is_importing = True
+            return
+
         current_scope = self.previous_function_scope
         while len(current_scope) + 1 < len(self.previous_local_variables_stack):
             self.previous_local_variables_stack.pop()
@@ -87,6 +103,21 @@ class Debugger(bdb.Bdb):
                 self.current_global_variables |= frame.f_globals
         self.current_global_variables.pop("__builtins__", None)
         self.current_local_variables.pop("__builtins__", None)
+
+        def filter_variable(x):
+            if inspect.ismodule(x):
+                return True
+            if "importlib" in type(x).__module__:
+                return True
+            return False
+
+        for name in list(self.current_global_variables.keys()):
+            if filter_variable(self.current_global_variables[name]):
+                self.current_global_variables.pop(name, None)
+        for name in list(self.current_local_variables.keys()):
+            if filter_variable(self.current_local_variables[name]):
+                self.current_local_variables.pop(name, None)
+        frame.f_code.co_name
 
         local_variables_info = self.clone_variables(self.current_local_variables)
         global_variables_info = self.clone_variables(self.current_global_variables)
