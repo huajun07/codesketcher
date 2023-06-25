@@ -16,13 +16,14 @@ import cors from 'cors'
 
 const app = express()
 
+app.use(cors())
+
 app.use(
 	pinoHttp({
 		logger: logger,
 	})
 )
 
-app.options('*', cors())
 app.use(bodyParser.json())
 
 app.use(docsRouter)

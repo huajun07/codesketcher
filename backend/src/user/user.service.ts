@@ -14,7 +14,7 @@ const getAllCodes = async (uid: string) => {
 
 const USER_CODE_LIMIT = 10
 const NAME_LEN_LIMIT = 100
-const LEN_LIMIT = 1000
+const LEN_LIMIT = 10000
 
 const addCode = async (
 	uid: string,

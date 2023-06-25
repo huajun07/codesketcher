@@ -38,7 +38,7 @@ router.post(
 		}),
 		[Segments.BODY]: Joi.object().keys({
 			code: Joi.string().required(),
-			input: Joi.string().allow(undefined),
+			input: Joi.string().allow(''),
 		}),
 	}),
 	async (req: TypedRequest<CodeName, CodeData>, res) => {
@@ -57,7 +57,7 @@ router.put(
 		}),
 		[Segments.BODY]: Joi.object().keys({
 			code: Joi.string().required(),
-			input: Joi.string().allow(undefined),
+			input: Joi.string().allow(''),
 		}),
 	}),
 	async (req: TypedRequest<CodeName, CodeData>, res) => {
