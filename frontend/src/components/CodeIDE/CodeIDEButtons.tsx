@@ -111,76 +111,89 @@ export const CodeIDEButtons = (props: CodeIDEButtonProps) => {
         gap="2"
         h="60px"
       >
-        <ButtonGroup isAttached variant="outline">
-          <Menu>
-            <MenuButton
-              marginLeft={5}
-              paddingX={2}
-              borderRadius="md"
-              borderWidth="1px"
-              bg={loggedIn && !loading ? 'white' : 'gray.100'}
-              cursor={loggedIn && !loading ? 'pointer' : 'not-allowed'}
-              disabled={!loggedIn || loading}
-            >
-              <HStack>
-                <Text
-                  fontSize="xs"
-                  minW="120px"
-                  maxW="120px"
-                  align="left"
-                  paddingX="3px"
-                  noOfLines={1}
-                >
-                  {loading
-                    ? 'Loading...'
-                    : loggedIn
-                    ? codenames[curIdx]
-                    : 'Login to save / load'}
-                </Text>
-                <ChevronDownIcon />
-              </HStack>
-            </MenuButton>
-            <MenuList>
-              {curIdx !== 0 && (
-                <>
-                  <MenuItem onClick={() => setIdx(0)}>Clear Code</MenuItem>
-                  <MenuDivider />
-                </>
-              )}
-              {codenames.length > 1 && (
-                <>
-                  {codenames.slice(1).map((codename, index) => (
-                    <MenuItem onClick={() => setIdx(index + 1)} key={index}>
-                      {codename}
-                    </MenuItem>
-                  ))}
-                  <MenuDivider />
-                </>
-              )}
-              <MenuItem icon={<AddIcon />} onClick={createFunc}>
-                New File
-              </MenuItem>
-            </MenuList>
-          </Menu>
-          <Menu>
-            <MenuButton as={IconButton} bg="white">
-              <Center>
-                <HamburgerIcon />
-              </Center>
-            </MenuButton>
-            <MenuList>
-              {curIdx !== 0 && (
-                <>
-                  <MenuItem onClick={renameFunc}>Rename</MenuItem>
-                  <MenuItem onClick={reload}>Reload</MenuItem>
-                  <MenuItem onClick={deleteFunc}>Delete</MenuItem>
-                </>
-              )}
-              <MenuItem>Share</MenuItem>
-              <MenuItem>Download</MenuItem>
-            </MenuList>
-          </Menu>
-        </ButtonGroup>
+        <Tooltip label={props.editing ? '' : 'Press the edit button to edit'}>
+          <ButtonGroup isAttached variant="outline">
+            <Menu>
+              <MenuButton
+                marginLeft={5}
+                paddingX={2}
+                borderRadius="md"
+                borderWidth="1px"
+                bg={
+                  loggedIn && !loading && props.editing ? 'white' : 'gray.100'
+                }
+                cursor={
+                  loggedIn && !loading && props.editing
+                    ? 'pointer'
+                    : 'not-allowed'
+                }
+                disabled={!loggedIn || loading || !props.editing}
+              >
+                <HStack>
+                  <Text
+                    fontSize="xs"
+                    minW="120px"
+                    maxW="120px"
+                    align="left"
+                    paddingX="3px"
+                    noOfLines={1}
+                  >
+                    {loading
+                      ? 'Loading...'
+                      : loggedIn
+                      ? codenames[curIdx]
+                      : 'Login to save / load'}
+                  </Text>
+                  <ChevronDownIcon />
+                </HStack>
+              </MenuButton>
+              <MenuList>
+                {curIdx !== 0 && (
+                  <>
+                    <MenuItem onClick={() => setIdx(0)}>Clear Code</MenuItem>
+                    <MenuDivider />
+                  </>
+                )}
+                {codenames.length > 1 && (
+                  <>
+                    {codenames.slice(1).map((codename, index) => (
+                      <MenuItem onClick={() => setIdx(index + 1)} key={index}>
+                        {codename}
+                      </MenuItem>
+                    ))}
+                    <MenuDivider />
+                  </>
+                )}
+                <MenuItem icon={<AddIcon />} onClick={createFunc}>
+                  New File
+                </MenuItem>
+              </MenuList>
+            </Menu>
+            <Menu>
+              <MenuButton
+                as={IconButton}
+                bg={props.editing ? 'white' : 'gray.100'}
+                isDisabled={!props.editing}
+                cursor={props.editing ? 'pointer' : 'not-allowed'}
+              >
+                <Center>
+                  <HamburgerIcon />
+                </Center>
+              </MenuButton>
+              <MenuList>
+                {curIdx !== 0 && (
+                  <>
+                    <MenuItem onClick={renameFunc}>Rename</MenuItem>
+                    <MenuItem onClick={reload}>Reload</MenuItem>
+                    <MenuItem onClick={deleteFunc}>Delete</MenuItem>
+                  </>
+                )}
+                <MenuItem>Share</MenuItem>
+                <MenuItem>Download</MenuItem>
+              </MenuList>
+            </Menu>
+          </ButtonGroup>
+        </Tooltip>
         {loggedIn ? (
           <Tooltip label={isDiff && 'Save your code and input'}>
             <IconButton
