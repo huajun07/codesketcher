@@ -1,4 +1,6 @@
 {
+  "name": "executor",
+  "license": "ISC",
   "scripts": {
     "deploy:dev": "serverless deploy --stage dev",
     "deploy:prod": "serverless deploy --stage prod"
