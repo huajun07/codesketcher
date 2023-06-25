@@ -1,6 +1,5 @@
 {
   "name": "codesketcher-frontend",
-  "version": "1.0.0",
   "description": "",
   "scripts": {
     "start": "react-scripts start",
