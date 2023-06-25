@@ -139,8 +139,8 @@ export const CodeIDEButtons = (props: CodeIDEButtonProps) => {
                 <HStack>
                   <Text
                     fontSize="xs"
-                    minW="100px"
-                    maxW="100px"
+                    minW="120px"
+                    maxW="120px"
                     align="left"
                     paddingX="3px"
                     noOfLines={1}
@@ -244,7 +244,8 @@ export const CodeIDEButtons = (props: CodeIDEButtonProps) => {
           }
         >
           <Button
-            margin="10px"
+            marginRight="10px"
+            size="sm"
             rightIcon={<Icon as={props.editing ? AiFillCaretRight : MdEdit} />}
             colorScheme="blue"
             variant="solid"

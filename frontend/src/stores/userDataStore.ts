@@ -110,8 +110,9 @@ export const useUserDataStore = create<UserState>((set, get) => ({
     return
   },
   create: async (name: string, useCur = false) => {
-    let code = '', input = ''
-    if(useCur) {
+    let code = '',
+      input = ''
+    if (useCur) {
       code = get().code
       input = get().input
     }
@@ -159,7 +160,7 @@ export const useUserDataStore = create<UserState>((set, get) => ({
   },
   setInput: (input: string) => {
     set({ input })
-  }
+  },
 }))
 
 getValues(localStorage.getItem($LOCAL_GOOGLE_JWT) || '').then(async (state) => {
