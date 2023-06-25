@@ -24,6 +24,7 @@ import {
   useToast,
 } from '@chakra-ui/react'
 import { useUserDataStore } from 'stores'
+import { shallow } from 'zustand/shallow'
 
 import { getErrorMessage } from 'utils/error'
 
@@ -47,18 +48,21 @@ export const CodeIDEButtons = (props: CodeIDEButtonProps) => {
     curFile,
     code,
     input,
-  } = useUserDataStore((state) => ({
-    codenames: state.codenames,
-    loggedIn: state.loggedIn,
-    curIdx: state.curIdx,
-    setIdx: state.setIdx,
-    reload: state.reload,
-    update: state.update,
-    loading: state.loading,
-    curFile: state.curFile,
-    code: state.code,
-    input: state.input,
-  }))
+  } = useUserDataStore(
+    (state) => ({
+      codenames: state.codenames,
+      loggedIn: state.loggedIn,
+      curIdx: state.curIdx,
+      setIdx: state.setIdx,
+      reload: state.reload,
+      update: state.update,
+      loading: state.loading,
+      curFile: state.curFile,
+      code: state.code,
+      input: state.input,
+    }),
+    shallow,
+  )
   const { isOpen, onToggle } = useDisclosure()
   const [variant, setVariant] = useState<'create' | 'rename' | 'delete'>(
     'create',

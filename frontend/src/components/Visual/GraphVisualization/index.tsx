@@ -3,6 +3,7 @@ import { AddIcon, DeleteIcon, MinusIcon, SettingsIcon } from '@chakra-ui/icons'
 import { Box, Button, Center, Text, Tooltip } from '@chakra-ui/react'
 import cytoscape from 'cytoscape'
 import { useExecutionStore } from 'stores'
+import { shallow } from 'zustand/shallow'
 
 import {
   adjacencyMatrixToList,
@@ -35,7 +36,7 @@ export const GraphVisualization = (props: GraphVisualizationProps) => {
   })
   const [settingsOpen, setSettingsOpen] = useState(true)
 
-  const data = useExecutionStore((state) => state.data)
+  const data = useExecutionStore((state) => state.data, shallow)
 
   const [error, setError] = useState('')
   const updateErrorMessage = (newError: string) => {

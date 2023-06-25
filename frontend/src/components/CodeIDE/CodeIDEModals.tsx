@@ -14,6 +14,7 @@ import {
   Tooltip,
 } from '@chakra-ui/react'
 import { useUserDataStore } from 'stores'
+import { shallow } from 'zustand/shallow'
 
 import { getErrorMessage } from 'utils/error'
 
@@ -35,6 +36,7 @@ export const CodeIDEModal = (props: ModalProps) => {
       codenames: state.codenames,
       curIdx: state.curIdx,
     }),
+    shallow,
   )
   const { open, toggle, triggerError, variant } = props
   const [input, setInput] = useState('')

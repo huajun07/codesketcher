@@ -4,6 +4,7 @@ import { zebraStripes } from '@uiw/codemirror-extensions-zebra-stripes'
 import { githubDark, githubLight } from '@uiw/codemirror-theme-github'
 import CodeMirror from '@uiw/react-codemirror'
 import { useUserDataStore } from 'stores'
+import { shallow } from 'zustand/shallow'
 
 interface codeIDEProps {
   editable: boolean
@@ -11,10 +12,13 @@ interface codeIDEProps {
 }
 
 export const CodeIDE = (props: codeIDEProps) => {
-  const { code, setCode } = useUserDataStore((state) => ({
-    code: state.code,
-    setCode: state.setCode,
-  }))
+  const { code, setCode } = useUserDataStore(
+    (state) => ({
+      code: state.code,
+      setCode: state.setCode,
+    }),
+    shallow,
+  )
   const placeholder = 'Enter your python code here!\nE.g. a = [1, 2, 3]'
   return (
     <CodeMirror

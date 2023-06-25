@@ -8,6 +8,7 @@ import {
   Tabs,
 } from '@chakra-ui/react'
 import { useUserDataStore } from 'stores'
+import { shallow } from 'zustand/shallow'
 
 import { TextIDE } from './TextIDE'
 
@@ -18,10 +19,13 @@ interface IOProps {
 }
 
 export const IO = (props: IOProps) => {
-  const { input, setInput } = useUserDataStore((state) => ({
-    input: state.input,
-    setInput: state.setInput,
-  }))
+  const { input, setInput } = useUserDataStore(
+    (state) => ({
+      input: state.input,
+      setInput: state.setInput,
+    }),
+    shallow,
+  )
   return (
     <>
       <Box flex={1} borderTop="1px" borderColor="gray.300">

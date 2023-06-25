@@ -15,6 +15,7 @@ import {
   useColorModeValue,
 } from '@chakra-ui/react'
 import { useExecutionStore } from 'stores'
+import { shallow } from 'zustand/shallow'
 
 import { useSet } from 'hooks/useSet'
 import { parsedVariable } from 'utils/executor'
@@ -65,7 +66,7 @@ const RowPin = (props: RowPinProps) => {
 }
 
 export const DataTable = () => {
-  const data = useExecutionStore((state) => state.data)
+  const data = useExecutionStore((state) => state.data, shallow)
   const [filterVal, setFilterVal] = useState('')
   const pinned = useSet<string>()
   const togglePinned = (name: string) => {

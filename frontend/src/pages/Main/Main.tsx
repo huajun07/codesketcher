@@ -8,6 +8,7 @@ import {
   useToast,
 } from '@chakra-ui/react'
 import { useExecutionStore, useUserDataStore } from 'stores'
+import { shallow } from 'zustand/shallow'
 
 import { getInstructions } from 'utils/executor'
 import {
@@ -24,17 +25,23 @@ export const LoaderContext = createContext<
 >(undefined)
 
 export const Main = () => {
-  const { code, input } = useUserDataStore((state) => ({
-    code: state.code,
-    input: state.input,
-  }))
+  const { code, input } = useUserDataStore(
+    (state) => ({
+      code: state.code,
+      input: state.input,
+    }),
+    shallow,
+  )
   const { instructions, setInstructions, currentStep, setStep } =
-    useExecutionStore((state) => ({
-      instructions: state.instructions,
-      setInstructions: state.setInstructions,
-      currentStep: state.currentStep,
-      setStep: state.setStep,
-    }))
+    useExecutionStore(
+      (state) => ({
+        instructions: state.instructions,
+        setInstructions: state.setInstructions,
+        currentStep: state.currentStep,
+        setStep: state.setStep,
+      }),
+      shallow,
+    )
   const [editing, setEditing] = useState(true)
   const [isPlaying, setPlaying] = useState(false)
   const [wasPlaying, setWasPlaying] = useState(false)
