@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { createContext, useState } from 'react'
 import {
   Box,
   Center,
@@ -7,7 +7,8 @@ import {
   useInterval,
   useToast,
 } from '@chakra-ui/react'
-import { useExecutionStore } from 'stores'
+import { useExecutionStore, useUserDataStore } from 'stores'
+import { shallow } from 'zustand/shallow'
 
 import { getInstructions } from 'utils/executor'
 import {
@@ -19,25 +20,36 @@ import {
   VisualArea,
 } from 'components'
 
+export const LoaderContext = createContext<
+  React.Dispatch<React.SetStateAction<boolean>> | undefined
+>(undefined)
+
 export const Main = () => {
+  const { code, input } = useUserDataStore(
+    (state) => ({
+      code: state.code,
+      input: state.input,
+    }),
+    shallow,
+  )
   const { instructions, setInstructions, currentStep, setStep } =
-    useExecutionStore((state) => ({
-      instructions: state.instructions,
-      setInstructions: state.setInstructions,
-      currentStep: state.currentStep,
-      setStep: state.setStep,
-    }))
+    useExecutionStore(
+      (state) => ({
+        instructions: state.instructions,
+        setInstructions: state.setInstructions,
+        currentStep: state.currentStep,
+        setStep: state.setStep,
+      }),
+      shallow,
+    )
   const [editing, setEditing] = useState(true)
   const [isPlaying, setPlaying] = useState(false)
   const [wasPlaying, setWasPlaying] = useState(false)
   const [speed, setSpeed] = useState<number>(1)
-  const [code, setCode] = useState('')
   const [loading, setLoading] = useState(false)
-  const [input, setInput] = useState('')
   const [output, setOutput] = useState<string | null>(null)
   const [ioIndex, setIOIndex] = useState(0)
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   useInterval(
     () => {
       // sanity check
@@ -64,11 +76,25 @@ export const Main = () => {
   }
 
   const toast = useToast()
+  const makeToast = (msg: string | undefined) => {
+    toast({
+      title: 'An Error Has Occured',
+      description: msg,
+      status: 'error',
+      duration: 2000,
+      isClosable: true,
+    })
+  }
 
   const toggleEditing = async () => {
     if (editing) {
       // Start playing
       setLoading(true)
+      if (code === '') {
+        setLoading(false)
+        makeToast('Code cannot be empty!')
+        return
+      }
       const {
         instructions: newInstructions,
         output: newOutput,
@@ -76,13 +102,7 @@ export const Main = () => {
       } = await getInstructions(code, input)
       if (!newInstructions || errorMessage) {
         setLoading(false)
-        toast({
-          title: 'An Error Has Occured',
-          description: errorMessage,
-          status: 'error',
-          duration: 2000,
-          isClosable: true,
-        })
+        makeToast(errorMessage)
         return
       }
       setInstructions(newInstructions)
@@ -98,7 +118,26 @@ export const Main = () => {
   }
 
   return (
-    <>
+    <LoaderContext.Provider value={setLoading}>
+      {loading ? (
+        <Center
+          position="absolute"
+          h="100%"
+          w="100%"
+          bg="rgba(0, 0, 0, .5)"
+          zIndex={3000}
+        >
+          <Spinner
+            thickness="10px"
+            speed="0.65s"
+            emptyColor="gray.200"
+            color="blue.500"
+            h="calc(20vh)"
+            w="calc(20vh)"
+            opacity={1}
+          />
+        </Center>
+      ) : null}
       <Flex>
         <Box minW="500px" borderRightWidth="1px">
           <CodeIDEButtons
@@ -107,8 +146,6 @@ export const Main = () => {
             isDisabled={loading}
           />
           <CodeIDE
-            code={code}
-            setCode={setCode}
             editable={editing}
             lineHighlight={
               currentStep > 0 ? instructions[currentStep - 1].line_number : 0
@@ -116,34 +153,9 @@ export const Main = () => {
           />
         </Box>
         <Flex position="relative" flex={1}>
-          {loading ? (
-            <Center
-              position="absolute"
-              h="100%"
-              w="100%"
-              bg="rgba(0, 0, 0, .5)"
-              zIndex={10}
-            >
-              <Spinner
-                thickness="10px"
-                speed="0.65s"
-                emptyColor="gray.200"
-                color="blue.500"
-                h="calc(20vh)"
-                w="calc(20vh)"
-                opacity={1}
-              />
-            </Center>
-          ) : null}
           <Flex w="500px" borderRightWidth="1px" flexDirection="column">
             <DataTable />
-            <IO
-              input={input}
-              setInput={setInput}
-              output={output}
-              index={ioIndex}
-              setIndex={setIOIndex}
-            />
+            <IO output={output} index={ioIndex} setIndex={setIOIndex} />
           </Flex>
           <Flex flex={1} flexDirection="column" minW="500px">
             <Flex flex={1}>
@@ -168,6 +180,6 @@ export const Main = () => {
           </Flex>
         </Flex>
       </Flex>
-    </>
+    </LoaderContext.Provider>
   )
 }

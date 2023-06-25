@@ -7,18 +7,26 @@ import {
   TabPanels,
   Tabs,
 } from '@chakra-ui/react'
+import { useUserDataStore } from 'stores'
+import { shallow } from 'zustand/shallow'
 
 import { TextIDE } from './TextIDE'
 
 interface IOProps {
-  input: string
-  setInput: (text: string) => void
   output?: string | null
   index: number
   setIndex: (newIndex: number) => void
 }
 
 export const IO = (props: IOProps) => {
+  const { input, setInput, curFile } = useUserDataStore(
+    (state) => ({
+      input: state.input,
+      setInput: state.setInput,
+      curFile: state.curFile,
+    }),
+    shallow,
+  )
   return (
     <>
       <Box flex={1} borderTop="1px" borderColor="gray.300">
@@ -36,7 +44,7 @@ export const IO = (props: IOProps) => {
               borderColor="gray.200"
               _selected={{ bg: 'hsl(0deg 0% 97.5%)' }}
             >
-              Input
+              Input{input !== curFile.input && <sup>*</sup>}
             </Tab>
             <Tab
               _selected={{ bg: 'hsl(0deg 0% 97.5%)' }}
@@ -56,8 +64,8 @@ export const IO = (props: IOProps) => {
               <Box height="100%">
                 <TextIDE
                   placeholder="Enter your input here (if any) "
-                  text={props.input}
-                  setText={props.setInput}
+                  text={input}
+                  setText={setInput}
                   editable={true}
                 />
               </Box>

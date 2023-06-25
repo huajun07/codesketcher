@@ -20,13 +20,13 @@ export class Code extends Model {
 	codename!: string
 
 	@Column({
-		type: DataType.STRING,
+		type: DataType.TEXT,
 		allowNull: false,
 	})
 	code!: string
 
 	@Column({
-		type: DataType.STRING,
+		type: DataType.TEXT,
 	})
 	input?: string
 }

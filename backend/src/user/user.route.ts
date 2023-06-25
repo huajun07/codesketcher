@@ -1,5 +1,11 @@
 import express from 'express'
-import { addCode, deleteCode, getAllCodes, updateCode } from './user.service'
+import {
+	addCode,
+	deleteCode,
+	getAllCodes,
+	updateCode,
+	updateCodename,
+} from './user.service'
 import { celebrate, Joi, Segments } from 'celebrate'
 
 const router = express()
@@ -31,8 +37,8 @@ router.post(
 			codename: Joi.string().required(),
 		}),
 		[Segments.BODY]: Joi.object().keys({
-			code: Joi.string().required(),
-			input: Joi.string(),
+			code: Joi.string().required().allow(''),
+			input: Joi.string().allow(''),
 		}),
 	}),
 	async (req: TypedRequest<CodeName, CodeData>, res) => {
@@ -50,8 +56,8 @@ router.put(
 			codename: Joi.string().required(),
 		}),
 		[Segments.BODY]: Joi.object().keys({
-			code: Joi.string().required(),
-			input: Joi.string(),
+			code: Joi.string().required().allow(''),
+			input: Joi.string().allow(''),
 		}),
 	}),
 	async (req: TypedRequest<CodeName, CodeData>, res) => {
@@ -62,6 +68,23 @@ router.put(
 		res.status(200).json(response)
 	}
 )
+
+router.put(
+	'/codes/:codename/rename',
+	celebrate({
+		[Segments.PARAMS]: Joi.object().keys({
+			codename: Joi.string().required(),
+		}),
+	}),
+	async (req: TypedRequest<CodeName, { codename: string }>, res) => {
+		const { uid } = res.locals
+		const codename = req.params.codename as string
+		const { codename: name } = req.body
+		const response = await updateCodename(uid, codename, name)
+		res.status(200).json(response)
+	}
+)
+
 router.delete(
 	'/codes/:codename',
 	celebrate({

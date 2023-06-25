@@ -18,17 +18,21 @@ import {
 } from '@chakra-ui/react'
 import { GoogleLogin } from '@react-oauth/google'
 import { useUserDataStore } from 'stores'
+import { shallow } from 'zustand/shallow'
 
 export const NavBar = () => {
   const { colorMode, toggleColorMode } = useColorMode()
   const { name, picture, setCredentials, unSetCredentials, loggedIn } =
-    useUserDataStore((state) => ({
-      name: state.name,
-      picture: state.picture,
-      setCredentials: state.setCredentials,
-      unSetCredentials: state.unSetCredentials,
-      loggedIn: state.loggedIn,
-    }))
+    useUserDataStore(
+      (state) => ({
+        name: state.name,
+        picture: state.picture,
+        setCredentials: state.setCredentials,
+        unSetCredentials: state.unSetCredentials,
+        loggedIn: state.loggedIn,
+      }),
+      shallow,
+    )
   const toast = useToast()
   const loginError = () => {
     toast({
@@ -74,7 +78,9 @@ export const NavBar = () => {
                     rightIcon={<ChevronDownIcon />}
                   >
                     <HStack>
-                      <Text fontSize="sm">{name}</Text>
+                      <Text color="blue.700" fontSize="sm">
+                        {name}
+                      </Text>
                       <Avatar size={'sm'} src={picture} />
                     </HStack>
                   </MenuButton>

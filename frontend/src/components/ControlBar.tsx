@@ -18,6 +18,7 @@ import {
   useColorModeValue,
 } from '@chakra-ui/react'
 import { useExecutionStore } from 'stores'
+import { shallow } from 'zustand/shallow'
 
 interface ControlBarProps {
   playing: boolean
@@ -32,10 +33,13 @@ interface ControlBarProps {
 }
 
 export const ControlBar = (props: ControlBarProps) => {
-  const { currentStep, setStep } = useExecutionStore((state) => ({
-    currentStep: state.currentStep,
-    setStep: state.setStep,
-  }))
+  const { currentStep, setStep } = useExecutionStore(
+    (state) => ({
+      currentStep: state.currentStep,
+      setStep: state.setStep,
+    }),
+    shallow,
+  )
   const buttonColor = useColorModeValue('#3182ce', '#90cdf4')
   return (
     <>
