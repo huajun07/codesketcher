@@ -76,10 +76,10 @@ router.put(
 			codename: Joi.string().required(),
 		}),
 	}),
-	async (req: TypedRequest<CodeName, { name: string }>, res) => {
+	async (req: TypedRequest<CodeName, { codename: string }>, res) => {
 		const { uid } = res.locals
 		const codename = req.params.codename as string
-		const { name } = req.body
+		const { codename: name } = req.body
 		const response = await updateCodename(uid, codename, name)
 		res.status(200).json(response)
 	}
