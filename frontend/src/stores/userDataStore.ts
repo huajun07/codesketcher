@@ -55,11 +55,11 @@ interface UserState extends idToken {
   codename: string
   setIdx: (idx: number) => void
   rename: (name: string) => Promise<void>
-  updateFile: () => Promise<void>
+  update: () => Promise<void>
   reload: () => void
-  addFile: (name: string) => Promise<void>
-  deleteFile: () => Promise<void>
-  loadFiles: () => Promise<void>
+  create: (name: string) => Promise<void>
+  drop: () => Promise<void>
+  load: () => Promise<void>
   setCode: (code: string) => void
   setInput: (input:string) => void
 }
@@ -108,7 +108,7 @@ export const useUserDataStore = create<UserState>((set, get) => ({
     set({ code, input })
     return
   },
-  addFile: async (name: string) => {
+  create: async (name: string) => {
     const { code, input } = get()
     await createCode(name, code, input)
     const { files, codenames } = get()
@@ -118,18 +118,18 @@ export const useUserDataStore = create<UserState>((set, get) => ({
     get().setIdx(files.length - 1)
     return
   },
-  deleteFile: async () => {
+  drop: async () => {
     const codename = get().codenames[get().curIdx]
     await deleteCode(codename)
     const { curIdx } = get()
-    let { codenames, files } = get()
-    codenames = codenames.splice(curIdx, 1)
-    files = files.splice(curIdx, 1)
+    const { codenames, files } = get()
+    codenames.splice(curIdx, 1)
+    files.splice(curIdx, 1)
     set({ codenames, files })
     get().setIdx(0)
     return
   },
-  updateFile: async () => {
+  update: async () => {
     const { code, input, codename } = get()
     await updateCode(codename, code, input)
     const { files, curIdx } = get()
@@ -137,7 +137,7 @@ export const useUserDataStore = create<UserState>((set, get) => ({
     set({ files })
     return
   },
-  loadFiles: async () => {
+  load: async () => {
     const data = await getCodes()
     const codenames = [''].concat(data.map((val) => val.codename))
     const files = get()

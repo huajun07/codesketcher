@@ -34,14 +34,14 @@ interface CodeIDEButtonProps {
 }
 
 export const CodeIDEButtons = (props: CodeIDEButtonProps) => {
-  const { codenames, loggedIn, curIdx, setIdx, reload, updateFile } =
+  const { codenames, loggedIn, curIdx, setIdx, reload, update } =
     useUserDataStore((state) => ({
       codenames: state.codenames,
       loggedIn: state.loggedIn,
       curIdx: state.curIdx,
       setIdx: state.setIdx,
       reload: state.reload,
-      updateFile: state.updateFile,
+      update: state.update,
     }))
   const { isOpen, onToggle } = useDisclosure()
   const [variant, setVariant] = useState<'create' | 'rename' | 'delete'>(
@@ -161,7 +161,7 @@ export const CodeIDEButtons = (props: CodeIDEButtonProps) => {
             colorScheme="blue"
             icon={<BiSave size={26} />}
             aria-label="save"
-            onClick={curIdx === 0 ? createFunc : updateFile}
+            onClick={curIdx === 0 ? createFunc : update}
           />
         ) : null}
         <Spacer />

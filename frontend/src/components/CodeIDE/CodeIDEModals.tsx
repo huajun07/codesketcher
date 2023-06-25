@@ -28,11 +28,11 @@ function getErrorMessage(error: unknown) {
 }
 
 export const CodeIDEModal = (props: ModalProps) => {
-  const { addFile, rename, deleteFile, codenames, curIdx } = useUserDataStore(
+  const { create, rename, drop, codenames, curIdx } = useUserDataStore(
     (state) => ({
-      addFile: state.addFile,
+      create: state.create,
       rename: state.rename,
-      deleteFile: state.deleteFile,
+      drop: state.drop,
       codenames: state.codenames,
       curIdx: state.curIdx,
     }),
@@ -54,14 +54,14 @@ export const CodeIDEModal = (props: ModalProps) => {
   }
 
   const close = () => {
-    setInput('')
     toggle()
+    setInput('')
   }
 
   const action = async () => {
-    if (variant === 'create') return await addFile(input)
+    if (variant === 'create') return await create(input)
     if (variant === 'rename') return await rename(input)
-    if (variant === 'delete') return await deleteFile()
+    if (variant === 'delete') return await drop()
   }
 
   const handleSubmit = () => {
@@ -110,7 +110,7 @@ export const CodeIDEModal = (props: ModalProps) => {
           <ModalFooter>
             <Button
               colorScheme="blue"
-              isDisabled={checkError().err}
+              isDisabled={checkError().err && variant !== 'delete'}
               mr={3}
               onClick={handleSubmit}
             >
