@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useContext, useState } from 'react'
 import {
   Button,
   FormControl,
@@ -11,8 +11,11 @@ import {
   ModalContent,
   ModalFooter,
   ModalHeader,
+  Tooltip,
 } from '@chakra-ui/react'
 import { useUserDataStore } from 'stores'
+
+import { LoaderContext } from 'pages/Main'
 
 interface ModalProps {
   variant: 'create' | 'rename' | 'delete'
@@ -64,17 +67,22 @@ export const CodeIDEModal = (props: ModalProps) => {
     if (variant === 'delete') return await drop()
   }
 
+  const setLoading = useContext(LoaderContext) as React.Dispatch<
+    React.SetStateAction<boolean>
+  >
+
   const handleSubmit = () => {
-    // add loader
+    setFocused(true) // To prevent error from showing
+    setLoading(true)
     action()
       .then(() => {
         close()
-        // remove loader
+        setLoading(false)
       })
       .catch((err) => {
         triggerError(getErrorMessage(err))
         close()
-        // remove loader
+        setLoading(false)
       })
   }
 
@@ -108,14 +116,22 @@ export const CodeIDEModal = (props: ModalProps) => {
             </ModalBody>
           ) : null}
           <ModalFooter>
-            <Button
-              colorScheme="blue"
-              isDisabled={checkError().err && variant !== 'delete'}
-              mr={3}
-              onClick={handleSubmit}
+            <Tooltip
+              label={
+                checkError().err && variant !== 'delete'
+                  ? checkError().errorMsg
+                  : ''
+              }
             >
-              Confirm
-            </Button>
+              <Button
+                colorScheme="blue"
+                isDisabled={checkError().err && variant !== 'delete'}
+                mr={3}
+                onClick={handleSubmit}
+              >
+                Confirm
+              </Button>
+            </Tooltip>
             <Button onClick={close}>Cancel</Button>
           </ModalFooter>
         </ModalContent>

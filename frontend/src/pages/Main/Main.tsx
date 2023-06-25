@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { createContext, useState } from 'react'
 import {
   Box,
   Center,
@@ -18,6 +18,10 @@ import {
   IO,
   VisualArea,
 } from 'components'
+
+export const LoaderContext = createContext<
+  React.Dispatch<React.SetStateAction<boolean>> | undefined
+>(undefined)
 
 export const Main = () => {
   const { code, input } = useUserDataStore((state) => ({
@@ -99,7 +103,26 @@ export const Main = () => {
   }
 
   return (
-    <>
+    <LoaderContext.Provider value={setLoading}>
+      {loading ? (
+        <Center
+          position="absolute"
+          h="100%"
+          w="100%"
+          bg="rgba(0, 0, 0, .5)"
+          zIndex={3000}
+        >
+          <Spinner
+            thickness="10px"
+            speed="0.65s"
+            emptyColor="gray.200"
+            color="blue.500"
+            h="calc(20vh)"
+            w="calc(20vh)"
+            opacity={1}
+          />
+        </Center>
+      ) : null}
       <Flex>
         <Box minW="500px" borderRightWidth="1px">
           <CodeIDEButtons
@@ -115,25 +138,6 @@ export const Main = () => {
           />
         </Box>
         <Flex position="relative" flex={1}>
-          {loading ? (
-            <Center
-              position="absolute"
-              h="100%"
-              w="100%"
-              bg="rgba(0, 0, 0, .5)"
-              zIndex={10}
-            >
-              <Spinner
-                thickness="10px"
-                speed="0.65s"
-                emptyColor="gray.200"
-                color="blue.500"
-                h="calc(20vh)"
-                w="calc(20vh)"
-                opacity={1}
-              />
-            </Center>
-          ) : null}
           <Flex w="500px" borderRightWidth="1px" flexDirection="column">
             <DataTable />
             <IO output={output} index={ioIndex} setIndex={setIOIndex} />
@@ -161,6 +165,6 @@ export const Main = () => {
           </Flex>
         </Flex>
       </Flex>
-    </>
+    </LoaderContext.Provider>
   )
 }
