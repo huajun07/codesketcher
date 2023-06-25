@@ -74,7 +74,9 @@ export const NavBar = () => {
                     rightIcon={<ChevronDownIcon />}
                   >
                     <HStack>
-                      <Text fontSize="sm">{name}</Text>
+                      <Text color="blue.700" fontSize="sm">
+                        {name}
+                      </Text>
                       <Avatar size={'sm'} src={picture} />
                     </HStack>
                   </MenuButton>

@@ -12,6 +12,7 @@ import userRouter from './user/user.route'
 import { sequelizeLoader } from './db/loader'
 import { AuthMiddleware } from './middlewares/auth.middleware'
 import { HttpError } from './errors'
+import cors from 'cors'
 
 const app = express()
 
@@ -20,6 +21,8 @@ app.use(
 		logger: logger,
 	})
 )
+
+app.options('*', cors())
 app.use(bodyParser.json())
 
 app.use(docsRouter)

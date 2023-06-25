@@ -1,5 +1,11 @@
 import express from 'express'
-import { addCode, deleteCode, getAllCodes, updateCode } from './user.service'
+import {
+	addCode,
+	deleteCode,
+	getAllCodes,
+	updateCode,
+	updateCodename,
+} from './user.service'
 import { celebrate, Joi, Segments } from 'celebrate'
 
 const router = express()
@@ -32,7 +38,7 @@ router.post(
 		}),
 		[Segments.BODY]: Joi.object().keys({
 			code: Joi.string().required(),
-			input: Joi.string(),
+			input: Joi.string().allow(undefined),
 		}),
 	}),
 	async (req: TypedRequest<CodeName, CodeData>, res) => {
@@ -51,7 +57,7 @@ router.put(
 		}),
 		[Segments.BODY]: Joi.object().keys({
 			code: Joi.string().required(),
-			input: Joi.string(),
+			input: Joi.string().allow(undefined),
 		}),
 	}),
 	async (req: TypedRequest<CodeName, CodeData>, res) => {
@@ -62,6 +68,23 @@ router.put(
 		res.status(200).json(response)
 	}
 )
+
+router.put(
+	'/codes/:codename/rename',
+	celebrate({
+		[Segments.PARAMS]: Joi.object().keys({
+			codename: Joi.string().required(),
+		}),
+	}),
+	async (req: TypedRequest<CodeName, { name: string }>, res) => {
+		const { uid } = res.locals
+		const codename = req.params.codename as string
+		const { name } = req.body
+		const response = await updateCodename(uid, codename, name)
+		res.status(200).json(response)
+	}
+)
+
 router.delete(
 	'/codes/:codename',
 	celebrate({

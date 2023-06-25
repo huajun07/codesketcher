@@ -7,7 +7,7 @@ import {
   useInterval,
   useToast,
 } from '@chakra-ui/react'
-import { useExecutionStore } from 'stores'
+import { useExecutionStore, useUserDataStore } from 'stores'
 
 import { getInstructions } from 'utils/executor'
 import {
@@ -20,6 +20,10 @@ import {
 } from 'components'
 
 export const Main = () => {
+  const { code, input } = useUserDataStore((state) => ({
+    code: state.code,
+    input: state.input,
+  }))
   const { instructions, setInstructions, currentStep, setStep } =
     useExecutionStore((state) => ({
       instructions: state.instructions,
@@ -31,13 +35,10 @@ export const Main = () => {
   const [isPlaying, setPlaying] = useState(false)
   const [wasPlaying, setWasPlaying] = useState(false)
   const [speed, setSpeed] = useState<number>(1)
-  const [code, setCode] = useState('')
   const [loading, setLoading] = useState(false)
-  const [input, setInput] = useState('')
   const [output, setOutput] = useState<string | null>(null)
   const [ioIndex, setIOIndex] = useState(0)
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   useInterval(
     () => {
       // sanity check
@@ -107,8 +108,6 @@ export const Main = () => {
             isDisabled={loading}
           />
           <CodeIDE
-            code={code}
-            setCode={setCode}
             editable={editing}
             lineHighlight={
               currentStep > 0 ? instructions[currentStep - 1].line_number : 0
@@ -137,13 +136,7 @@ export const Main = () => {
           ) : null}
           <Flex w="500px" borderRightWidth="1px" flexDirection="column">
             <DataTable />
-            <IO
-              input={input}
-              setInput={setInput}
-              output={output}
-              index={ioIndex}
-              setIndex={setIOIndex}
-            />
+            <IO output={output} index={ioIndex} setIndex={setIOIndex} />
           </Flex>
           <Flex flex={1} flexDirection="column" minW="500px">
             <Flex flex={1}>

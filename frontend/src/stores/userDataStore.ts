@@ -1,8 +1,15 @@
 import { create } from 'zustand'
 
+import {
+  createCode,
+  deleteCode,
+  getCodes,
+  updateCode,
+  updateName,
+} from 'utils/files'
 import { decodeJWT } from 'utils/tokenValidation'
 
-const $LOCAL_GOOGLE_JWT = 'codesketcher_jwt'
+export const $LOCAL_GOOGLE_JWT = 'codesketcher_jwt'
 
 interface idToken {
   name: string
@@ -15,23 +22,49 @@ const defaultValues = {
   picture: '',
   sub: '',
   loggedIn: false,
+  files: [{ input: '', code: '' }],
+  codenames: ['Load your codes'],
+  codename: '',
+  code: '',
+  input: '',
+  curIdx: 0,
 }
 const getValues = async (token: string) => {
   try {
     const { name, picture, sub } = (await decodeJWT(token)) as idToken
-    return { name, picture, sub, loggedIn: true }
+    return { name, picture, sub, loggedIn: true, curIdx: 0 }
   } catch (err) {
     return null
   }
+}
+
+interface File {
+  code: string
+  input: string
 }
 
 interface UserState extends idToken {
   loggedIn: boolean
   setCredentials: (creds: string) => Promise<void>
   unSetCredentials: () => void
+  files: File[]
+  codenames: string[]
+  code: string
+  input: string
+  curIdx: number
+  codename: string
+  setIdx: (idx: number) => void
+  rename: (name: string) => Promise<void>
+  updateFile: () => Promise<void>
+  reload: () => void
+  addFile: (name: string) => Promise<void>
+  deleteFile: () => Promise<void>
+  loadFiles: () => Promise<void>
+  setCode: (code: string) => void
+  setInput: (input:string) => void
 }
 
-export const useUserDataStore = create<UserState>((set) => ({
+export const useUserDataStore = create<UserState>((set, get) => ({
   ...defaultValues,
   setCredentials: async (creds: string) => {
     const newState = await getValues(creds)
@@ -44,8 +77,98 @@ export const useUserDataStore = create<UserState>((set) => ({
     localStorage.removeItem($LOCAL_GOOGLE_JWT)
     set(defaultValues)
   },
+  setIdx: (idx: number) => {
+    if (idx < 0 || idx >= get().files.length) throw Error('Invalid Action')
+    let update: { files: File[] } | null = null
+    if (get().curIdx === 0) {
+      // Update default code
+      update = { files: get().files }
+      update.files[0] = {
+        code: get().code,
+        input: get().input,
+      }
+    }
+    const { code, input } = get().files[idx]
+    set({
+      curIdx: idx,
+      code,
+      input,
+      codename: get().codenames[idx],
+      ...update,
+    })
+  },
+  rename: async (name: string) => {
+    await updateName(get().codename, name)
+    const codenames = get().codenames
+    codenames[get().curIdx] = name
+    set({ codename: name, codenames })
+  },
+  reload: () => {
+    const { code, input } = get().files[get().curIdx]
+    set({ code, input })
+    return
+  },
+  addFile: async (name: string) => {
+    const { code, input } = get()
+    await createCode(name, code, input)
+    const { files, codenames } = get()
+    codenames.push(name)
+    files.push({ code, input })
+    set({ codenames, files })
+    get().setIdx(files.length - 1)
+    return
+  },
+  deleteFile: async () => {
+    const codename = get().codenames[get().curIdx]
+    await deleteCode(codename)
+    const { curIdx } = get()
+    let { codenames, files } = get()
+    codenames = codenames.splice(curIdx, 1)
+    files = files.splice(curIdx, 1)
+    set({ codenames, files })
+    get().setIdx(0)
+    return
+  },
+  updateFile: async () => {
+    const { code, input, codename } = get()
+    await updateCode(codename, code, input)
+    const { files, curIdx } = get()
+    files[curIdx] = { code, input }
+    set({ files })
+    return
+  },
+  loadFiles: async () => {
+    const data = await getCodes()
+    const codenames = [''].concat(data.map((val) => val.codename))
+    const files = get()
+      .files.slice(0, 1)
+      .concat(data.map((val) => ({ code: val.code, input: val.input || '' })))
+    set({ files, codenames })
+    get().setIdx(-1)
+    return
+  },
+  setCode: (code: string)=>{
+    set({code})
+  },
+  setInput: (input:string) =>{
+    set({input})
+  }
 }))
 
-getValues(localStorage.getItem($LOCAL_GOOGLE_JWT) || '').then((state) =>
-  useUserDataStore.setState({ ...state }),
-)
+getValues(localStorage.getItem($LOCAL_GOOGLE_JWT) || '').then(async (state) => {
+  if (state) {
+    try {
+      const data = await getCodes()
+      const codenames = defaultValues.codenames.concat(
+        data.map((val) => val.codename),
+      )
+      const files = defaultValues.files.concat(
+        data.map((val) => ({ code: val.code, input: val.input || '' })),
+      )
+      useUserDataStore.setState({ codenames, files })
+    } catch (err) {
+      console.log(err)
+    }
+  }
+  useUserDataStore.setState({ ...state })
+})
