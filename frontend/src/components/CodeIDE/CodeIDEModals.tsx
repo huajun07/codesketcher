@@ -15,6 +15,8 @@ import {
 } from '@chakra-ui/react'
 import { useUserDataStore } from 'stores'
 
+import { getErrorMessage } from 'utils/error'
+
 import { LoaderContext } from 'pages/Main'
 
 interface ModalProps {
@@ -22,12 +24,6 @@ interface ModalProps {
   open: boolean
   toggle: () => void
   triggerError: (message: string) => void
-}
-
-function getErrorMessage(error: unknown) {
-  console.log(error)
-  if (error instanceof Error) return error.message
-  return String(error)
 }
 
 export const CodeIDEModal = (props: ModalProps) => {
@@ -98,7 +94,7 @@ export const CodeIDEModal = (props: ModalProps) => {
         <ModalContent>
           <ModalHeader>{header()}</ModalHeader>
           <ModalCloseButton />
-          {variant !== 'delete' ? (
+          {variant !== 'delete' && (
             <ModalBody>
               <FormControl isInvalid={checkError().err && !focused}>
                 <FormLabel>File Name</FormLabel>
@@ -109,12 +105,12 @@ export const CodeIDEModal = (props: ModalProps) => {
                   onBlur={() => setFocused(false)}
                   autoFocus={true}
                 />
-                {checkError().err && !focused ? (
+                {checkError().err && !focused && (
                   <FormErrorMessage>{checkError().errorMsg}</FormErrorMessage>
-                ) : null}
+                )}
               </FormControl>
             </ModalBody>
-          ) : null}
+          )}
           <ModalFooter>
             <Tooltip
               label={

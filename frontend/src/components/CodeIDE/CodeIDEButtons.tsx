@@ -25,6 +25,8 @@ import {
 } from '@chakra-ui/react'
 import { useUserDataStore } from 'stores'
 
+import { getErrorMessage } from 'utils/error'
+
 import { CodeIDEModal } from './CodeIDEModals'
 
 interface CodeIDEButtonProps {
@@ -34,16 +36,29 @@ interface CodeIDEButtonProps {
 }
 
 export const CodeIDEButtons = (props: CodeIDEButtonProps) => {
-  const { codenames, loggedIn, curIdx, setIdx, reload, update, loading } =
-    useUserDataStore((state) => ({
-      codenames: state.codenames,
-      loggedIn: state.loggedIn,
-      curIdx: state.curIdx,
-      setIdx: state.setIdx,
-      reload: state.reload,
-      update: state.update,
-      loading: state.loading,
-    }))
+  const {
+    codenames,
+    loggedIn,
+    curIdx,
+    setIdx,
+    reload,
+    update,
+    loading,
+    curFile,
+    code,
+    input,
+  } = useUserDataStore((state) => ({
+    codenames: state.codenames,
+    loggedIn: state.loggedIn,
+    curIdx: state.curIdx,
+    setIdx: state.setIdx,
+    reload: state.reload,
+    update: state.update,
+    loading: state.loading,
+    curFile: state.curFile,
+    code: state.code,
+    input: state.input,
+  }))
   const { isOpen, onToggle } = useDisclosure()
   const [variant, setVariant] = useState<'create' | 'rename' | 'delete'>(
     'create',
@@ -74,6 +89,8 @@ export const CodeIDEButtons = (props: CodeIDEButtonProps) => {
     setVariant('rename')
     onToggle()
   }
+
+  const isDiff = code !== curFile.code || input !== curFile.input
 
   return (
     <>
@@ -120,13 +137,13 @@ export const CodeIDEButtons = (props: CodeIDEButtonProps) => {
               </HStack>
             </MenuButton>
             <MenuList>
-              {curIdx !== 0 ? (
+              {curIdx !== 0 && (
                 <>
                   <MenuItem onClick={() => setIdx(0)}>Clear Code</MenuItem>
                   <MenuDivider />
                 </>
-              ) : null}
-              {codenames.length > 1 ? (
+              )}
+              {codenames.length > 1 && (
                 <>
                   {codenames.slice(1).map((codename, index) => (
                     <MenuItem onClick={() => setIdx(index + 1)} key={index}>
@@ -135,7 +152,7 @@ export const CodeIDEButtons = (props: CodeIDEButtonProps) => {
                   ))}
                   <MenuDivider />
                 </>
-              ) : null}
+              )}
               <MenuItem icon={<AddIcon />} onClick={createFunc}>
                 New File
               </MenuItem>
@@ -148,26 +165,39 @@ export const CodeIDEButtons = (props: CodeIDEButtonProps) => {
               </Center>
             </MenuButton>
             <MenuList>
-              {curIdx !== 0 ? (
+              {curIdx !== 0 && (
                 <>
                   <MenuItem onClick={renameFunc}>Rename</MenuItem>
                   <MenuItem onClick={reload}>Reload</MenuItem>
                   <MenuItem onClick={deleteFunc}>Delete</MenuItem>
                 </>
-              ) : null}
+              )}
               <MenuItem>Share</MenuItem>
               <MenuItem>Download</MenuItem>
             </MenuList>
           </Menu>
         </ButtonGroup>
         {loggedIn ? (
-          <IconButton
-            variant="outline"
-            colorScheme="blue"
-            icon={<BiSave size={26} />}
-            aria-label="save"
-            onClick={curIdx === 0 ? createFunc : update}
-          />
+          <Tooltip label={isDiff && 'Save your code and input'}>
+            <IconButton
+              variant="ghost"
+              colorScheme="teal"
+              isDisabled={!isDiff}
+              icon={<BiSave size={32} />}
+              aria-label="save"
+              onClick={
+                curIdx === 0
+                  ? createFunc
+                  : () => {
+                      update()
+                        .then()
+                        .catch((err) => {
+                          triggerError(getErrorMessage(err))
+                        })
+                    }
+              }
+            />
+          </Tooltip>
         ) : null}
         <Spacer />
         <Tooltip

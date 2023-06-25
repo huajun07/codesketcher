@@ -24,6 +24,7 @@ const defaultValues = {
   loggedIn: false,
   files: [{ input: '', code: '' }],
   codenames: ['Load your codes'],
+  curFile: { input: '', code: '' },
   codename: '',
   code: '',
   input: '',
@@ -50,6 +51,7 @@ interface UserState extends idToken {
   setCredentials: (creds: string) => Promise<void>
   unSetCredentials: () => void
   files: File[]
+  curFile: File
   codenames: string[]
   code: string
   input: string
@@ -101,6 +103,7 @@ export const useUserDataStore = create<UserState>((set, get) => ({
       curIdx: idx,
       code,
       input,
+      curFile: { code, input },
       codename: get().codenames[idx],
       ...update,
     })
@@ -112,7 +115,7 @@ export const useUserDataStore = create<UserState>((set, get) => ({
     set({ codename: name, codenames })
   },
   reload: () => {
-    const { code, input } = get().files[get().curIdx]
+    const { code, input } = get().curFile
     set({ code, input })
     return
   },
@@ -142,7 +145,7 @@ export const useUserDataStore = create<UserState>((set, get) => ({
     await updateCode(codename, code, input)
     const { files, curIdx } = get()
     files[curIdx] = { code, input }
-    set({ files })
+    set({ files, curFile: { code, input } })
     return
   },
   load: async () => {
@@ -162,7 +165,7 @@ export const useUserDataStore = create<UserState>((set, get) => ({
   },
   setInput: (input: string) => {
     set({ input })
-  },
+  }
 }))
 
 getValues(localStorage.getItem($LOCAL_GOOGLE_JWT) || '').then(async (state) => {
