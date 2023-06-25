@@ -5,6 +5,7 @@ import {
   AccordionItem,
   AccordionPanel,
   Box,
+  Center,
   Code,
   Heading,
   Image,
@@ -82,21 +83,23 @@ export const FAQModal = (props: FAQModalProps) => {
 
                 <Code>adj = [ [1], [0, 2, 4], [1, 3, 4], [2], [1, 2], ]</Code>
                 <br />
-                <Image
-                  src="faq/unweighted_adj_list_settings.png"
-                  alt="Unweighted adjacency list settings"
-                  width="50%"
-                  display="inline"
-                />
-                <Image
-                  src="faq/unweighted_adj_list_graph.png"
-                  alt="Unweighted adjacency list graph"
-                  width="35%"
-                  display="inline"
-                  borderLeft="1px"
-                  borderLeftColor="blackAlpha.400"
-                  paddingLeft={4}
-                />
+                <Center>
+                  <Image
+                    src="faq/unweighted_adj_list_settings.png"
+                    alt="Unweighted adjacency list settings"
+                    width="50%"
+                    display="inline"
+                  />
+                  <Image
+                    src="faq/unweighted_adj_list_graph.png"
+                    alt="Unweighted adjacency list graph"
+                    width="35%"
+                    display="inline"
+                    borderLeft="1px"
+                    borderLeftColor="blackAlpha.400"
+                    paddingLeft={4}
+                  />
+                </Center>
                 <br />
               </AccordionPanel>
             </AccordionItem>
@@ -126,21 +129,23 @@ export const FAQModal = (props: FAQModalProps) => {
                   ]
                 </Code>
                 <br />
-                <Image
-                  src="faq/weighted_adj_list_settings.png"
-                  alt="Weighted adjacency list settings"
-                  width="50%"
-                  display="inline"
-                />
-                <Image
-                  src="faq/weighted_adj_list_graph.png"
-                  alt="Weighted adjacency list graph"
-                  width="35%"
-                  display="inline"
-                  borderLeft="1px"
-                  borderLeftColor="blackAlpha.400"
-                  paddingLeft={4}
-                />
+                <Center>
+                  <Image
+                    src="faq/weighted_adj_list_settings.png"
+                    alt="Weighted adjacency list settings"
+                    width="50%"
+                    display="inline"
+                  />
+                  <Image
+                    src="faq/weighted_adj_list_graph.png"
+                    alt="Weighted adjacency list graph"
+                    width="35%"
+                    display="inline"
+                    borderLeft="1px"
+                    borderLeftColor="blackAlpha.400"
+                    paddingLeft={4}
+                  />
+                </Center>
                 <br />
               </AccordionPanel>
             </AccordionItem>
@@ -169,21 +174,23 @@ export const FAQModal = (props: FAQModalProps) => {
 
                 <Code>adj = [ [0, 10, 20], [10, 0, 30], [20, 30, 0] ]</Code>
                 <br />
-                <Image
-                  src="faq/adj_matrix_settings.png"
-                  alt="Adjacency matrix settings"
-                  width="50%"
-                  display="inline"
-                />
-                <Image
-                  src="faq/adj_matrix_graph.png"
-                  alt="Adjacency matrix graph"
-                  width="35%"
-                  display="inline"
-                  borderLeft="1px"
-                  borderLeftColor="blackAlpha.400"
-                  paddingLeft={4}
-                />
+                <Center>
+                  <Image
+                    src="faq/adj_matrix_settings.png"
+                    alt="Adjacency matrix settings"
+                    width="50%"
+                    display="inline"
+                  />
+                  <Image
+                    src="faq/adj_matrix_graph.png"
+                    alt="Adjacency matrix graph"
+                    width="35%"
+                    display="inline"
+                    borderLeft="1px"
+                    borderLeftColor="blackAlpha.400"
+                    paddingLeft={4}
+                  />
+                </Center>
                 <br />
               </AccordionPanel>
             </AccordionItem>
@@ -196,11 +203,13 @@ export const FAQModal = (props: FAQModalProps) => {
             Select whether the graph is directed/undirected and
             weighted/unweighted.
           </Text>
-          <Image
-            src="faq/graph_properties.png"
-            width="50%"
-            alt="Graph properties outline"
-          />
+          <Center>
+            <Image
+              src="faq/graph_properties.png"
+              width="50%"
+              alt="Graph properties outline"
+            />
+          </Center>
 
           <Heading as="h4" size="md" mt={2}>
             Vertex Metadata
@@ -222,19 +231,21 @@ export const FAQModal = (props: FAQModalProps) => {
 
           <Code>distance = [0, -1, -1]</Code>
           <br />
-          <Image
-            src="faq/metadata_settings.png"
-            alt="Metadata settings"
-            width="40%"
-            borderBottom="1px"
-            borderBottomColor="blackAlpha.400"
-          />
-          <Image
-            src="faq/metadata_graph.png"
-            alt="Metadata graph"
-            width="35%"
-            paddingTop={4}
-          />
+          <Center>
+            <Image
+              src="faq/metadata_settings.png"
+              alt="Metadata settings"
+              width="40%"
+            />
+            <Image
+              src="faq/metadata_graph.png"
+              alt="Metadata graph"
+              width="35%"
+              borderLeft="1px"
+              borderLeftColor="blackAlpha.400"
+              paddingLeft={4}
+            />
+          </Center>
           <br />
         </ModalBody>
       </ModalContent>
