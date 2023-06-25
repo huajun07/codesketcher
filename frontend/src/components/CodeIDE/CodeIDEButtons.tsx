@@ -34,7 +34,7 @@ interface CodeIDEButtonProps {
 }
 
 export const CodeIDEButtons = (props: CodeIDEButtonProps) => {
-  const { codenames, loggedIn, curIdx, setIdx, reload, update } =
+  const { codenames, loggedIn, curIdx, setIdx, reload, update, loading } =
     useUserDataStore((state) => ({
       codenames: state.codenames,
       loggedIn: state.loggedIn,
@@ -42,6 +42,7 @@ export const CodeIDEButtons = (props: CodeIDEButtonProps) => {
       setIdx: state.setIdx,
       reload: state.reload,
       update: state.update,
+      loading: state.loading,
     }))
   const { isOpen, onToggle } = useDisclosure()
   const [variant, setVariant] = useState<'create' | 'rename' | 'delete'>(
@@ -96,9 +97,9 @@ export const CodeIDEButtons = (props: CodeIDEButtonProps) => {
               paddingX={2}
               borderRadius="md"
               borderWidth="1px"
-              bg={loggedIn ? 'white' : 'gray.100'}
-              cursor={loggedIn ? 'pointer' : 'not-allowed'}
-              disabled={!loggedIn}
+              bg={loggedIn && !loading ? 'white' : 'gray.100'}
+              cursor={loggedIn && !loading ? 'pointer' : 'not-allowed'}
+              disabled={!loggedIn || loading}
             >
               <HStack>
                 <Text
@@ -109,7 +110,11 @@ export const CodeIDEButtons = (props: CodeIDEButtonProps) => {
                   paddingX="3px"
                   noOfLines={1}
                 >
-                  {loggedIn ? codenames[curIdx] : 'Login to save / load'}
+                  {loading
+                    ? 'Loading...'
+                    : loggedIn
+                    ? codenames[curIdx]
+                    : 'Login to save / load'}
                 </Text>
                 <ChevronDownIcon />
               </HStack>

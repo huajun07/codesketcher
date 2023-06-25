@@ -28,6 +28,7 @@ const defaultValues = {
   code: '',
   input: '',
   curIdx: 0,
+  loading: false,
 }
 const getValues = async (token: string) => {
   try {
@@ -45,6 +46,7 @@ interface File {
 
 interface UserState extends idToken {
   loggedIn: boolean
+  loading: boolean
   setCredentials: (creds: string) => Promise<void>
   unSetCredentials: () => void
   files: File[]
@@ -61,7 +63,7 @@ interface UserState extends idToken {
   drop: () => Promise<void>
   load: () => Promise<void>
   setCode: (code: string) => void
-  setInput: (input:string) => void
+  setInput: (input: string) => void
 }
 
 export const useUserDataStore = create<UserState>((set, get) => ({
@@ -70,7 +72,13 @@ export const useUserDataStore = create<UserState>((set, get) => ({
     const newState = await getValues(creds)
     if (newState) {
       localStorage.setItem($LOCAL_GOOGLE_JWT, creds)
-      set(newState)
+      set({ ...newState, loading: true })
+      try {
+        await get().load()
+      } catch (err) {
+        console.log(err)
+      }
+      set({ loading: false })
     } else throw Error('Invalid Token')
   },
   unSetCredentials: () => {
@@ -139,7 +147,9 @@ export const useUserDataStore = create<UserState>((set, get) => ({
   },
   load: async () => {
     const data = await getCodes()
-    const codenames = [''].concat(data.map((val) => val.codename))
+    const codenames = get()
+      .codenames.slice(0, 1)
+      .concat(data.map((val) => val.codename))
     const files = get()
       .files.slice(0, 1)
       .concat(data.map((val) => ({ code: val.code, input: val.input || '' })))
@@ -147,16 +157,18 @@ export const useUserDataStore = create<UserState>((set, get) => ({
     get().setIdx(-1)
     return
   },
-  setCode: (code: string)=>{
-    set({code})
+  setCode: (code: string) => {
+    set({ code })
   },
-  setInput: (input:string) =>{
-    set({input})
-  }
+  setInput: (input: string) => {
+    set({ input })
+  },
 }))
 
 getValues(localStorage.getItem($LOCAL_GOOGLE_JWT) || '').then(async (state) => {
+  useUserDataStore.setState({ ...state })
   if (state) {
+    useUserDataStore.setState({ loading: true })
     try {
       const data = await getCodes()
       const codenames = defaultValues.codenames.concat(
@@ -169,6 +181,6 @@ getValues(localStorage.getItem($LOCAL_GOOGLE_JWT) || '').then(async (state) => {
     } catch (err) {
       console.log(err)
     }
+    useUserDataStore.setState({ loading: false })
   }
-  useUserDataStore.setState({ ...state })
 })
