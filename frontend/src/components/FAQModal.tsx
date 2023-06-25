@@ -100,7 +100,7 @@ export const FAQModal = (props: FAQModalProps) => {
 
           <Accordion defaultIndex={[]} allowMultiple mt={4}>
             <AccordionItem>
-              <Text as="h3" size="md">
+              <Text as="h5" size="md">
                 <AccordionButton>
                   <Box as="b" flex="1" textAlign="left">
                     Unweighted adjacency list
@@ -144,7 +144,7 @@ export const FAQModal = (props: FAQModalProps) => {
             </AccordionItem>
 
             <AccordionItem>
-              <Text as="h3" size="md">
+              <Text as="h5" size="md">
                 <AccordionButton>
                   <Box as="b" flex="1" textAlign="left">
                     Weighted adjacency list
@@ -190,7 +190,7 @@ export const FAQModal = (props: FAQModalProps) => {
             </AccordionItem>
 
             <AccordionItem>
-              <Text as="h3" size="md">
+              <Text as="h5" size="md">
                 <AccordionButton>
                   <Box as="b" flex="1" textAlign="left">
                     Adjacency matrix
