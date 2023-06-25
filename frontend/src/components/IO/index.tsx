@@ -19,10 +19,11 @@ interface IOProps {
 }
 
 export const IO = (props: IOProps) => {
-  const { input, setInput } = useUserDataStore(
+  const { input, setInput, curFile } = useUserDataStore(
     (state) => ({
       input: state.input,
       setInput: state.setInput,
+      curFile: state.curFile,
     }),
     shallow,
   )
@@ -43,7 +44,7 @@ export const IO = (props: IOProps) => {
               borderColor="gray.200"
               _selected={{ bg: 'hsl(0deg 0% 97.5%)' }}
             >
-              Input
+              Input{input !== curFile.input && <sup>*</sup>}
             </Tab>
             <Tab
               _selected={{ bg: 'hsl(0deg 0% 97.5%)' }}

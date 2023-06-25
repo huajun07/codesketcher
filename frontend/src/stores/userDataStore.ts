@@ -61,7 +61,7 @@ interface UserState extends idToken {
   rename: (name: string) => Promise<void>
   update: () => Promise<void>
   reload: () => void
-  create: (name: string) => Promise<void>
+  create: (name: string, useCur?: boolean) => Promise<void>
   drop: () => Promise<void>
   load: () => Promise<void>
   setCode: (code: string) => void
@@ -89,15 +89,6 @@ export const useUserDataStore = create<UserState>((set, get) => ({
   },
   setIdx: (idx: number) => {
     if (idx < 0 || idx >= get().files.length) throw Error('Invalid Action')
-    let update: { files: File[] } | null = null
-    if (get().curIdx === 0) {
-      // Update default code
-      update = { files: get().files }
-      update.files[0] = {
-        code: get().code,
-        input: get().input,
-      }
-    }
     const { code, input } = get().files[idx]
     set({
       curIdx: idx,
@@ -105,7 +96,6 @@ export const useUserDataStore = create<UserState>((set, get) => ({
       input,
       curFile: { code, input },
       codename: get().codenames[idx],
-      ...update,
     })
   },
   rename: async (name: string) => {
@@ -119,8 +109,12 @@ export const useUserDataStore = create<UserState>((set, get) => ({
     set({ code, input })
     return
   },
-  create: async (name: string) => {
-    const { code, input } = get()
+  create: async (name: string, useCur = false) => {
+    let code = '', input = ''
+    if(useCur) {
+      code = get().code
+      input = get().input
+    }
     await createCode(name, code, input)
     const { files, codenames } = get()
     codenames.push(name)

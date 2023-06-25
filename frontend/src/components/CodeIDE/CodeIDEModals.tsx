@@ -21,7 +21,7 @@ import { getErrorMessage } from 'utils/error'
 import { LoaderContext } from 'pages/Main'
 
 interface ModalProps {
-  variant: 'create' | 'rename' | 'delete'
+  variant: 'create' | 'rename' | 'delete' | 'save'
   open: boolean
   toggle: () => void
   triggerError: (message: string) => void
@@ -61,6 +61,7 @@ export const CodeIDEModal = (props: ModalProps) => {
 
   const action = async () => {
     if (variant === 'create') return await create(input)
+    if (variant === 'save') return await create(input, true)
     if (variant === 'rename') return await rename(input)
     if (variant === 'delete') return await drop()
   }

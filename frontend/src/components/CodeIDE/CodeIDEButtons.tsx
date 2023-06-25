@@ -17,6 +17,8 @@ import {
   MenuItem,
   MenuList,
   Spacer,
+  Tag,
+  TagLabel,
   Text,
   Tooltip,
   useColorModeValue,
@@ -64,9 +66,9 @@ export const CodeIDEButtons = (props: CodeIDEButtonProps) => {
     shallow,
   )
   const { isOpen, onToggle } = useDisclosure()
-  const [variant, setVariant] = useState<'create' | 'rename' | 'delete'>(
-    'create',
-  )
+  const [variant, setVariant] = useState<
+    'create' | 'rename' | 'delete' | 'save'
+  >('create')
 
   const toast = useToast()
   const triggerError = (msg: string) => {
@@ -81,6 +83,11 @@ export const CodeIDEButtons = (props: CodeIDEButtonProps) => {
 
   const createFunc = () => {
     setVariant('create')
+    onToggle()
+  }
+
+  const saveFunc = () => {
+    setVariant('save')
     onToggle()
   }
 
@@ -132,8 +139,8 @@ export const CodeIDEButtons = (props: CodeIDEButtonProps) => {
                 <HStack>
                   <Text
                     fontSize="xs"
-                    minW="120px"
-                    maxW="120px"
+                    minW="100px"
+                    maxW="100px"
                     align="left"
                     paddingX="3px"
                     noOfLines={1}
@@ -195,26 +202,38 @@ export const CodeIDEButtons = (props: CodeIDEButtonProps) => {
           </ButtonGroup>
         </Tooltip>
         {loggedIn ? (
-          <Tooltip label={isDiff && 'Save your code and input'}>
-            <IconButton
-              variant="ghost"
-              colorScheme="teal"
-              isDisabled={!isDiff}
-              icon={<BiSave size={32} />}
-              aria-label="save"
-              onClick={
-                curIdx === 0
-                  ? createFunc
-                  : () => {
-                      update()
-                        .then()
-                        .catch((err) => {
-                          triggerError(getErrorMessage(err))
-                        })
-                    }
-              }
-            />
-          </Tooltip>
+          <>
+            <Tooltip label={isDiff && 'Save your code and input'}>
+              <IconButton
+                variant="ghost"
+                colorScheme="teal"
+                isDisabled={!isDiff}
+                icon={<BiSave size={28} />}
+                aria-label="save"
+                onClick={
+                  curIdx === 0
+                    ? saveFunc
+                    : () => {
+                        update()
+                          .then()
+                          .catch((err) => {
+                            triggerError(getErrorMessage(err))
+                          })
+                      }
+                }
+              />
+            </Tooltip>
+            {isDiff && (
+              <Tag
+                size="sm"
+                borderRadius="full"
+                variant="solid"
+                colorScheme="yellow"
+              >
+                <TagLabel> Unsaved Changes</TagLabel>
+              </Tag>
+            )}
+          </>
         ) : null}
         <Spacer />
         <Tooltip
