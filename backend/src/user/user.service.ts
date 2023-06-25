@@ -12,6 +12,7 @@ const getAllCodes = async (uid: string) => {
 	return codes
 }
 
+const SEQUELIZE_UNIQUE_ERROR = 'SequelizeUniqueConstraintError'
 const USER_CODE_LIMIT = 10
 const NAME_LEN_LIMIT = 100
 const LEN_LIMIT = 10000
@@ -79,13 +80,7 @@ const updateCode = async (
 const updateCodename = async (uid: string, codename: string, name: string) => {
 	if (codename.length > NAME_LEN_LIMIT)
 		throw new LargePayload('Code name exceed limit')
-	const transaction = await sequelize.transaction()
 	try {
-		const exist = await Code.findOne({
-			where: { uid, codename: name },
-			transaction,
-		})
-		if (exist) throw new ResourceConflict('Code name already exists')
 		const [affectedCount, data] = await Code.update(
 			{ codename: name },
 			{
@@ -94,14 +89,16 @@ const updateCodename = async (uid: string, codename: string, name: string) => {
 					codename,
 				},
 				returning: true,
-				transaction,
 			}
 		)
 		if (affectedCount == 0) throw new NotFound()
-		transaction.commit()
 		return data[0]
 	} catch (err) {
-		transaction.rollback()
+		if (err instanceof Error) {
+			if (err.name === SEQUELIZE_UNIQUE_ERROR) {
+				throw new ResourceConflict('Code name already exists')
+			}
+		}
 		throw err
 	}
 }
