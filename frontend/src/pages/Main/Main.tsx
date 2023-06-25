@@ -69,11 +69,25 @@ export const Main = () => {
   }
 
   const toast = useToast()
+  const makeToast = (msg: string | undefined) => {
+    toast({
+      title: 'An Error Has Occured',
+      description: msg,
+      status: 'error',
+      duration: 2000,
+      isClosable: true,
+    })
+  }
 
   const toggleEditing = async () => {
     if (editing) {
       // Start playing
       setLoading(true)
+      if (code === '') {
+        setLoading(false)
+        makeToast('Code cannot be empty!')
+        return
+      }
       const {
         instructions: newInstructions,
         output: newOutput,
@@ -81,13 +95,7 @@ export const Main = () => {
       } = await getInstructions(code, input)
       if (!newInstructions || errorMessage) {
         setLoading(false)
-        toast({
-          title: 'An Error Has Occured',
-          description: errorMessage,
-          status: 'error',
-          duration: 2000,
-          isClosable: true,
-        })
+        makeToast(errorMessage)
         return
       }
       setInstructions(newInstructions)
