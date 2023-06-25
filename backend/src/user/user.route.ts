@@ -37,7 +37,7 @@ router.post(
 			codename: Joi.string().required(),
 		}),
 		[Segments.BODY]: Joi.object().keys({
-			code: Joi.string().required(),
+			code: Joi.string().required().allow(''),
 			input: Joi.string().allow(''),
 		}),
 	}),
@@ -56,7 +56,7 @@ router.put(
 			codename: Joi.string().required(),
 		}),
 		[Segments.BODY]: Joi.object().keys({
-			code: Joi.string().required(),
+			code: Joi.string().required().allow(''),
 			input: Joi.string().allow(''),
 		}),
 	}),
