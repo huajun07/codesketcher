@@ -29,4 +29,9 @@ functions:
       - httpApi:
           method: '*'
           path: /{any+}
-    
+    environment:
+      DB_HOST: ${env:DB_DEV_HOST}
+      DB_NAME: ${env:DB_DEV_NAME}
+      DB_USERNAME: ${env:DB_DEV_USERNAME}
+      DB_PASSWORD: ${env:DB_DEV_PASSWORD}
+      GOOGLE_CLIENT_ID: ${env:GOOGLE_CLIENT_ID}
