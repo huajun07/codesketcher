@@ -667,3 +667,60 @@ def test_global_function_access():
         ],
         "output": "",
     }
+
+
+def test_imports():
+    result = execute(
+        {
+            "code": dedent(
+                """\
+                    import heapq"""
+            )
+        }
+    )
+
+    assert result == {
+        "executed": True,
+        "data": [
+            {
+                "line_number": 1,
+                "local_variable_changes": {},
+                "global_variable_changes": {},
+                "function_scope": [],
+            },
+        ],
+        "output": "",
+    }
+
+
+def test_from_imports():
+    result = execute(
+        {
+            "code": dedent(
+                """\
+                    from heapq import heappush, heappop"""
+            )
+        }
+    )
+
+    assert result == {
+        "executed": True,
+        "data": [
+            {
+                "line_number": 1,
+                "local_variable_changes": {
+                    "heappush": {
+                        "type": "builtin_function_or_method",
+                        "value": "<built-in function heappush>",
+                    },
+                    "heappop": {
+                        "type": "builtin_function_or_method",
+                        "value": "<built-in function heappop>",
+                    },
+                },
+                "global_variable_changes": {},
+                "function_scope": [],
+            }
+        ],
+        "output": "",
+    }
