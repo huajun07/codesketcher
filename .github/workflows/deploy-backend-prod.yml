@@ -1,5 +1,8 @@
 name: Deploy Backend (Prod)
-on: workflow_dispatch
+on:
+  push:
+    branches:
+      - main
 
 jobs:
   test:
@@ -11,6 +14,11 @@ jobs:
     env:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_PROD_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_PROD_SECRET_ACCESS_KEY }}
+      DB_HOST: ${{ secrets.DB_PROD_HOST }}
+      DB_NAME: ${{ secrets.DB_PROD_NAME }}
+      DB_USERNAME: ${{ secrets.DB_PROD_USERNAME }}
+      DB_PASSWORD: ${{ secrets.DB_PROD_PASSWORD }}
+      GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
 
     steps:
       # checkout code

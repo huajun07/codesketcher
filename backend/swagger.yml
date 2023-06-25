@@ -1,8 +1,7 @@
 openapi: 3.0.3
 info:
   title: CodeSketcher
-  description: |-
-    Documentation for the backend API of CodeSketcher.
+  description: Documentation for the backend API of CodeSketcher.
   version: 0.0.1
 paths:
   /execute:
@@ -13,10 +12,15 @@ paths:
           application/json:
             schema:
               type: object
+              required:
+                - code
               properties:
                 code:
                   type: string
-                  example: 'a = 1\nb = 2'
+                  example: a = 1\nb = "test"
+                input:
+                  type: string
+                  example: 1\n2\n3
         required: true
       responses:
         '200':
@@ -30,8 +34,165 @@ paths:
                     type: boolean
                   data:
                     $ref: '#/components/schemas/ExecutionInformationArray'
+  /user/codes:
+    get:
+      security:
+        - googleAuth: []
+      description: Get all previously saved codes of the user.
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    codename:
+                      type: string
+                    code:
+                      type: string
+                    input:
+                      type: string
+              examples:
+                Sample Response:
+                  value: |-
+                    [
+                        {
+                            "codename": "untitled1.cpp",
+                            "code": "print('hello world')",
+                            "input": null
+                        },
+                        {
+                            "codename": "untitled2.cpp",
+                            "code": "print('hello world2')",
+                            "input": null
+                        }
+                    ]
+        '401':
+          description: Unauthorized
+  /user/codes/{codename}:
+    post:
+      parameters:
+        - name: codename
+          in: path
+          required: true
+          description: Name of code saved by the user
+          schema:
+            type: string
+      security:
+        - googleAuth: []
+      description: Save new code
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - code
+              properties:
+                code:
+                  type: string
+                  example: a = 1\nb = "test"
+                input:
+                  type: string
+                  example: 1\n2\n3
+        required: true
+      responses:
+        '201':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CodeData'
+        '400':
+          description: Bad Request (User Reached Code limit)
+        '401':
+          description: Unauthorized
+        '409':
+          description: Resource Conflict (Codename already exists )
+        '413':
+          description: Request Entity too large
+    put:
+      parameters:
+        - name: codename
+          in: path
+          required: true
+          description: Name of code saved by the user
+          schema:
+            type: string
+      security:
+        - googleAuth: []
+      description: Update previously saved code
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - code
+              properties:
+                code:
+                  type: string
+                  example: a = 1\nb = "test"
+                input:
+                  type: string
+                  example: 1\n2\n3
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CodeData'
+        '401':
+          description: Unauthorized
+        '404':
+          description: Resource not found
+        '413':
+          description: Request Entity too large
+    delete:
+      security:
+        - googleAuth: []
+      description: Delete previously saved code
+      parameters:
+        - name: codename
+          in: path
+          required: true
+          description: Name of code saved by the user
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+        '401':
+          description: Unauthorized
+        '404':
+          description: Resource not found
 components:
+  securitySchemes:
+    googleAuth: # arbitrary name for the security scheme
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
   schemas:
+    CodeData:
+      type: object
+      properties:
+        uid:
+          type: string
+        codename:
+          type: string
+        code:
+          type: string
+        input:
+          type: string
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
     ExecutionInformation:
       type: object
       properties:
@@ -42,7 +203,11 @@ components:
           type: object
           description: A mapping from every changed variable to their new value.
           example:
-            a: 1
+            a:
+              type: object
+              properties:
+                type: int
+                value: 1
     ExecutionInformationArray:
       type: array
       items:
