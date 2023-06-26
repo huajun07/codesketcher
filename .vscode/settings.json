@@ -3,5 +3,6 @@
     "source.fixAll.eslint": true
   },
   "editor.formatOnSave": true,
-  "eslint.validate": ["javascript"]
+  "eslint.validate": ["javascript"],
+  "python.formatting.provider": "black"
 }

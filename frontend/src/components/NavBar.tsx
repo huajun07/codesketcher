@@ -1,23 +1,48 @@
-import { MoonIcon, SunIcon } from '@chakra-ui/icons'
+import { ChevronDownIcon, MoonIcon, SunIcon } from '@chakra-ui/icons'
 import {
   Avatar,
   Box,
   Button,
-  Center,
   Flex,
   Heading,
+  HStack,
   Menu,
   MenuButton,
-  MenuDivider,
   MenuItem,
   MenuList,
   Stack,
+  Text,
   useColorMode,
   useColorModeValue,
+  useToast,
 } from '@chakra-ui/react'
+import { GoogleLogin } from '@react-oauth/google'
+import { useUserDataStore } from 'stores'
+import { shallow } from 'zustand/shallow'
 
 export const NavBar = () => {
   const { colorMode, toggleColorMode } = useColorMode()
+  const { name, picture, setCredentials, unSetCredentials, loggedIn } =
+    useUserDataStore(
+      (state) => ({
+        name: state.name,
+        picture: state.picture,
+        setCredentials: state.setCredentials,
+        unSetCredentials: state.unSetCredentials,
+        loggedIn: state.loggedIn,
+      }),
+      shallow,
+    )
+  const toast = useToast()
+  const loginError = () => {
+    toast({
+      title: 'Login Error!',
+      description: 'Please try again later',
+      status: 'error',
+      duration: 2000,
+      isClosable: true,
+    })
+  }
   return (
     <>
       <Box
@@ -34,45 +59,51 @@ export const NavBar = () => {
           <Flex alignItems={'center'}>
             <Stack direction={'row'} spacing={7}>
               <Button
+                display="none"
                 onClick={toggleColorMode}
                 bg={useColorModeValue('blue.100', 'blue.900')}
                 _hover={{ bg: useColorModeValue('blue.200', 'blue.800') }}
               >
                 {colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
               </Button>
-
-              <Menu>
-                <MenuButton
-                  as={Button}
-                  rounded={'full'}
-                  variant={'link'}
-                  cursor={'pointer'}
-                  minW={0}
-                >
-                  <Avatar
-                    size={'sm'}
-                    src={'https://avatars.dicebear.com/api/male/username.svg'}
-                  />
-                </MenuButton>
-                <MenuList alignItems={'center'}>
-                  <br />
-                  <Center>
-                    <Avatar
-                      size={'2xl'}
-                      src={'https://avatars.dicebear.com/api/male/username.svg'}
-                    />
-                  </Center>
-                  <br />
-                  <Center>
-                    <p>Username</p>
-                  </Center>
-                  <br />
-                  <MenuDivider />
-                  <MenuItem>Your Servers</MenuItem>
-                  <MenuItem>Account Settings</MenuItem>
-                  <MenuItem>Logout</MenuItem>
-                </MenuList>
-              </Menu>
+              {loggedIn ? (
+                <Menu>
+                  <MenuButton
+                    h={16}
+                    as={Button}
+                    variant={'ghost'}
+                    cursor={'pointer'}
+                    minW={0}
+                    borderRadius={0}
+                    rightIcon={<ChevronDownIcon />}
+                  >
+                    <HStack>
+                      <Text color="blue.700" fontSize="sm">
+                        {name}
+                      </Text>
+                      <Avatar size={'sm'} src={picture} />
+                    </HStack>
+                  </MenuButton>
+                  <MenuList>
+                    <MenuItem onClick={() => unSetCredentials()}>
+                      Logout
+                    </MenuItem>
+                  </MenuList>
+                </Menu>
+              ) : (
+                <GoogleLogin
+                  onSuccess={async (credentialResponse) => {
+                    try {
+                      if (credentialResponse.credential)
+                        await setCredentials(credentialResponse.credential)
+                      else throw Error('Login Error')
+                    } catch (err) {
+                      loginError()
+                    }
+                  }}
+                  onError={loginError}
+                />
+              )}
             </Stack>
           </Flex>
         </Flex>

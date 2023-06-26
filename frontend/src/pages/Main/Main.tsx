@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { createContext, useState } from 'react'
 import {
   Box,
   Center,
@@ -7,60 +7,56 @@ import {
   useInterval,
   useToast,
 } from '@chakra-ui/react'
+import { useExecutionStore, useUserDataStore } from 'stores'
+import { shallow } from 'zustand/shallow'
 
-import { getInstructions, instruction } from 'utils/executor'
+import { getInstructions } from 'utils/executor'
 import {
   CodeIDE,
   CodeIDEButtons,
   ControlBar,
   DataTable,
-  InputIDE,
+  IO,
   VisualArea,
 } from 'components'
 
-interface dataVal {
-  name: string
-  value: string | number
-}
+export const LoaderContext = createContext<
+  React.Dispatch<React.SetStateAction<boolean>> | undefined
+>(undefined)
 
 export const Main = () => {
-  const [instructions, setInstructions] = useState<instruction[]>([])
+  const { code, input } = useUserDataStore(
+    (state) => ({
+      code: state.code,
+      input: state.input,
+    }),
+    shallow,
+  )
+  const { instructions, setInstructions, currentStep, setStep } =
+    useExecutionStore(
+      (state) => ({
+        instructions: state.instructions,
+        setInstructions: state.setInstructions,
+        currentStep: state.currentStep,
+        setStep: state.setStep,
+      }),
+      shallow,
+    )
   const [editing, setEditing] = useState(true)
-  const [data, setData] = useState<dataVal[]>([])
   const [isPlaying, setPlaying] = useState(false)
   const [wasPlaying, setWasPlaying] = useState(false)
   const [speed, setSpeed] = useState<number>(1)
-  const [curIdx, setCurIdx] = useState(0)
-  const [code, setCode] = useState('')
   const [loading, setLoading] = useState(false)
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const updateData = (name: string, value: any, dataArr: dataVal[]) => {
-    const idx = dataArr.findIndex((item) => item.name === name)
-    const newData = { name, value }
-    if (idx !== -1) dataArr[idx] = newData
-    else dataArr.push(newData)
-  }
-
-  const setDataIdx = (idx: number) => {
-    const newData: dataVal[] = []
-    for (let i = 0; i < idx; i++) {
-      const newInstructions = instructions[i].variable_changes
-      for (const [key, value] of Object.entries(newInstructions)) {
-        updateData(key, value, newData)
-      }
-    }
-    setData(newData)
-    setCurIdx(idx)
-  }
+  const [output, setOutput] = useState<string | null>(null)
+  const [ioIndex, setIOIndex] = useState(0)
 
   useInterval(
     () => {
       // sanity check
-      if (curIdx >= 0 && curIdx < instructions.length) {
-        setDataIdx(curIdx + 1)
+      if (currentStep >= 0 && currentStep < instructions.length) {
+        setStep(currentStep + 1)
       }
-      if (curIdx >= instructions.length - 1) {
+      if (currentStep >= instructions.length - 1) {
         setPlaying(false)
       }
       setLoading(false)
@@ -69,38 +65,49 @@ export const Main = () => {
   )
 
   const moveStep = (forward: boolean) => {
-    const newIdx = Math.min(
+    const newStep = Math.min(
       instructions.length,
-      Math.max(0, (forward ? 1 : -1) * speed + curIdx),
+      Math.max(0, (forward ? 1 : -1) * speed + currentStep),
     )
-    setDataIdx(newIdx)
-    if (newIdx >= instructions.length) {
+    setStep(newStep)
+    if (newStep >= instructions.length) {
       setPlaying(false)
     }
   }
 
   const toast = useToast()
+  const makeToast = (msg: string | undefined) => {
+    toast({
+      title: 'An Error Has Occured',
+      description: msg,
+      status: 'error',
+      duration: 2000,
+      isClosable: true,
+    })
+  }
 
   const toggleEditing = async () => {
     if (editing) {
       // Start playing
       setLoading(true)
-      const { instructions: newInstructions, errorMessage } =
-        await getInstructions(code)
-      if (!newInstructions) {
+      if (code === '') {
         setLoading(false)
-        toast({
-          title: 'An Error Has Occured',
-          description: errorMessage,
-          status: 'error',
-          duration: 2000,
-          isClosable: true,
-        })
+        makeToast('Code cannot be empty!')
+        return
+      }
+      const {
+        instructions: newInstructions,
+        output: newOutput,
+        errorMessage,
+      } = await getInstructions(code, input)
+      if (!newInstructions || errorMessage) {
+        setLoading(false)
+        makeToast(errorMessage)
         return
       }
       setInstructions(newInstructions)
-      setCurIdx(0)
-      setData([])
+      setIOIndex(1)
+      setOutput(newOutput || '')
       setPlaying(true)
       setWasPlaying(false)
     } else {
@@ -111,7 +118,26 @@ export const Main = () => {
   }
 
   return (
-    <>
+    <LoaderContext.Provider value={setLoading}>
+      {loading ? (
+        <Center
+          position="absolute"
+          h="100%"
+          w="100%"
+          bg="rgba(0, 0, 0, .5)"
+          zIndex={3000}
+        >
+          <Spinner
+            thickness="10px"
+            speed="0.65s"
+            emptyColor="gray.200"
+            color="blue.500"
+            h="calc(20vh)"
+            w="calc(20vh)"
+            opacity={1}
+          />
+        </Center>
+      ) : null}
       <Flex>
         <Box minW="500px" borderRightWidth="1px">
           <CodeIDEButtons
@@ -120,37 +146,16 @@ export const Main = () => {
             isDisabled={loading}
           />
           <CodeIDE
-            code={code}
-            setCode={setCode}
             editable={editing}
             lineHighlight={
-              curIdx > 0 ? instructions[curIdx - 1].line_number : 0
+              currentStep > 0 ? instructions[currentStep - 1].line_number : 0
             }
           />
         </Box>
         <Flex position="relative" flex={1}>
-          {loading ? (
-            <Center
-              position="absolute"
-              h="100%"
-              w="100%"
-              bg="rgba(0, 0, 0, .5)"
-              zIndex={10}
-            >
-              <Spinner
-                thickness="10px"
-                speed="0.65s"
-                emptyColor="gray.200"
-                color="blue.500"
-                h="calc(20vh)"
-                w="calc(20vh)"
-                opacity={1}
-              />
-            </Center>
-          ) : null}
           <Flex w="500px" borderRightWidth="1px" flexDirection="column">
-            <DataTable data={data} />
-            <InputIDE />
+            <DataTable />
+            <IO output={output} index={ioIndex} setIndex={setIOIndex} />
           </Flex>
           <Flex flex={1} flexDirection="column" minW="500px">
             <Flex flex={1}>
@@ -158,16 +163,14 @@ export const Main = () => {
             </Flex>
             <Box>
               <ControlBar
-                curIdx={curIdx}
                 length={instructions.length}
                 playing={isPlaying}
                 curSpeed={speed}
                 setSpeed={setSpeed}
                 togglePlaying={() => {
-                  if (isPlaying || curIdx < instructions.length)
+                  if (isPlaying || currentStep < instructions.length)
                     setPlaying(!isPlaying)
                 }}
-                setCurIdx={setDataIdx}
                 disabled={editing}
                 wasPlaying={wasPlaying}
                 setWasPlaying={setWasPlaying}
@@ -177,6 +180,6 @@ export const Main = () => {
           </Flex>
         </Flex>
       </Flex>
-    </>
+    </LoaderContext.Provider>
   )
 }

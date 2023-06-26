@@ -1,7 +1,28 @@
 import 'dotenv/config'
 import convict from 'convict'
 
+convict.addFormats({
+	'required-string': {
+		validate: (val: string): void => {
+			if (val === '') {
+				throw new Error('Required value cannot be empty')
+			}
+		},
+		coerce: (val: string | null): string | undefined => {
+			if (val === null) {
+				return undefined
+			}
+			return val
+		},
+	},
+})
+
 const config = convict({
+	tz: {
+		env: 'TZ',
+		default: 'Asia/Singapore',
+		format: 'required-string',
+	},
 	env: {
 		doc: 'The application environment.',
 		format: ['production', 'development', 'local'],
@@ -14,18 +35,67 @@ const config = convict({
 		default: 8000,
 		env: 'PORT',
 	},
-    executorRegion: {
-        doc: 'The region hosting the executor service\'s Lambda',
-        format: '*',
-        default: 'ap-southeast-1',
-        env: 'EXECUTOR_REGION'
-    },
-    executorName: {
-        doc: 'Name of the executor service\'s Lambda',
-        format: '*',
-        default: 'executor',
-        env: 'EXECUTOR_NAME'
-    }
+	executorRegion: {
+		doc: "The region hosting the executor service's Lambda",
+		format: '*',
+		default: 'ap-southeast-1',
+		env: 'EXECUTOR_REGION',
+	},
+	executorName: {
+		doc: "Name of the executor service's Lambda",
+		format: '*',
+		default: 'executor',
+		env: 'EXECUTOR_NAME',
+	},
+	googleClientID: {
+		env: 'GOOGLE_CLIENT_ID',
+		default: '',
+		sensitive: true,
+		format: 'required-string',
+	},
+	db: {
+		host: {
+			env: 'DB_HOST',
+			default: '127.0.0.1',
+			sensitive: true,
+			format: 'required-string',
+		},
+		username: {
+			env: 'DB_USERNAME',
+			default: '',
+			sensitive: true,
+			format: String,
+		},
+		password: {
+			env: 'DB_PASSWORD',
+			default: '',
+			sensitive: true,
+			format: String,
+		},
+		name: {
+			env: 'DB_NAME',
+			default: '',
+			sensitive: true,
+			format: 'required-string',
+		},
+		port: {
+			env: 'DB_PORT',
+			default: 5432,
+			format: 'port',
+		},
+		minPoolSize: {
+			env: 'DB_MIN_POOL_SIZE',
+			default: 50,
+		},
+		maxPoolSize: {
+			env: 'DB_MAX_POOL_SIZE',
+			default: 200,
+		},
+		logging: {
+			env: 'DB_ENABLE_LOGGING',
+			default: false,
+		},
+	},
 })
 
 export default config
