@@ -1,4 +1,4 @@
-import { MdContentCopy } from 'react-icons/md'
+import { CopyIcon } from '@chakra-ui/icons'
 import {
   Accordion,
   AccordionButton,
@@ -15,6 +15,7 @@ import {
   Image,
   Spacer,
   Text,
+  useToast,
 } from '@chakra-ui/react'
 import { useUserDataStore } from 'stores'
 import { shallow } from 'zustand/shallow'
@@ -67,6 +68,16 @@ export const CodeExamples = (props: { toggle: () => void }) => {
     }),
     shallow,
   )
+  const toast = useToast()
+  const copyToast = () => {
+    toast.closeAll()
+    toast({
+      title: 'Copied To Clipboard',
+      status: 'success',
+      position: 'top',
+      duration: 800,
+    })
+  }
   return (
     <>
       <Heading as="h3" size="lg" mt={4}>
@@ -88,12 +99,13 @@ export const CodeExamples = (props: { toggle: () => void }) => {
             <HStack spacing={0} marginBottom={2}>
               <Center>Code: </Center>
               <IconButton
-                icon={<MdContentCopy />}
+                icon={<CopyIcon />}
                 aria-label="copy"
                 size="sm"
-                variant="ghost"
+                variant="link"
                 onClick={() => {
-                  navigator.clipboard.writeText(dijkstraInput)
+                  navigator.clipboard.writeText(dijkstraCode)
+                  copyToast()
                 }}
               />
               <Spacer />
@@ -112,15 +124,16 @@ export const CodeExamples = (props: { toggle: () => void }) => {
             <Code display="block" whiteSpace="pre">
               {dijkstraCode}
             </Code>
-            <HStack spacing={0}>
+            <HStack spacing={0} marginY={2}>
               <Center>Input: </Center>
               <IconButton
-                icon={<MdContentCopy />}
+                icon={<CopyIcon />}
                 aria-label="copy"
-                variant="ghost"
+                variant="link"
                 size="sm"
                 onClick={() => {
                   navigator.clipboard.writeText(dijkstraInput)
+                  copyToast()
                 }}
               />
             </HStack>
