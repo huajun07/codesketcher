@@ -68,8 +68,8 @@ export const VisualArea = () => {
           </TabPanels>
         ) : (
           <Center h="full" w="full">
-            Click the <Code>+</Code> button above to add a visualization and get
-            started!
+            Click the&nbsp; <Code>+</Code>&nbsp; button above to add a
+            visualization and get started!
           </Center>
         )}
       </Tabs>
