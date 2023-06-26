@@ -19,8 +19,9 @@ interface IOProps {
 }
 
 export const IO = (props: IOProps) => {
-  const { input, setInput, curFile } = useUserDataStore(
+  const { input, setInput, curFile, loggedIn } = useUserDataStore(
     (state) => ({
+      loggedIn: state.loggedIn,
       input: state.input,
       setInput: state.setInput,
       curFile: state.curFile,
@@ -44,7 +45,7 @@ export const IO = (props: IOProps) => {
               borderColor="gray.200"
               _selected={{ bg: 'hsl(0deg 0% 97.5%)' }}
             >
-              Input{input !== curFile.input && <sup>*</sup>}
+              Input{input !== curFile.input && loggedIn && <sup>*</sup>}
             </Tab>
             <Tab
               _selected={{ bg: 'hsl(0deg 0% 97.5%)' }}

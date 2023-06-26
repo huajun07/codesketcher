@@ -86,7 +86,7 @@ export const CodeIDEModal = (props: ModalProps) => {
   }
 
   const header = () => {
-    if (variant === 'create') return 'Create new file'
+    if (variant === 'create' || variant === 'save') return 'Create new file'
     if (variant === 'rename') return 'Rename file'
     if (variant === 'delete') return 'Delete file?'
     return ''
