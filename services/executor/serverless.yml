@@ -1,14 +1,20 @@
 service: executor
-frameworkVersion: '3'
+frameworkVersion: "3"
 
 provider:
   name: aws
   runtime: python3.10
   region: ap-southeast-1
+  iam:
+    role: !Sub arn:aws:iam::${AWS::AccountId}:role/codesketcher-executor-lambda-no-perms
+  vpc:
+    subnetIds:
+      - ${ssm:/codesketcher-${sls:stage}/vpc/subnet-executor-id}
+    securityGroupIds:
+      - ${ssm:/codesketcher-${sls:stage}/vpc/security-group-id}
 
 functions:
   executor:
     handler: executor/main.handler
     name: executor-${sls:stage}
     timeout: 1
-    
