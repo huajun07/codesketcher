@@ -1,5 +1,4 @@
 import bdb
-import copy
 import inspect
 import json
 import sys
@@ -22,8 +21,8 @@ class Debugger(bdb.Bdb):
         self.previous_function_scope = []  # e.g. ["f1", "f2"]. Empty if not in function
         self.previous_local_variables_stack = [{}]
         self.previous_global_variables = {}
-        self.current_local_variables = {}
-        self.current_global_variables = {}
+        self.current_raw_local_variables = {}
+        self.current_raw_global_variables = {}
 
     # This function takes in a dictionary of variables and clones them
     # into a predefined format that can be serialized into JSON data.
@@ -65,8 +64,8 @@ class Debugger(bdb.Bdb):
     def user_return(self, frame, return_value):
         # Since local variables are dropped upon returning, we need to capture them here
         if len(self.get_scope(frame)) == len(self.previous_function_scope):
-            self.current_local_variables |= frame.f_locals
-            self.current_global_variables |= frame.f_globals
+            self.current_raw_local_variables |= frame.f_locals
+            self.current_raw_global_variables |= frame.f_globals
 
     def user_line(self, frame):
         if not self.is_tracing:
@@ -95,14 +94,14 @@ class Debugger(bdb.Bdb):
         if len(self.previous_function_scope) <= len(self.get_scope(frame)):
             if "__name__" in frame.f_globals and frame.f_globals["__name__"] == "bdb":
                 # Code has finished executing, frame is caller's frame, hence we take frame.f_locals["locals"] instead
-                self.current_local_variables |= frame.f_locals["locals"]
-                self.current_global_variables |= frame.f_locals["globals"]
+                self.current_raw_local_variables |= frame.f_locals["locals"]
+                self.current_raw_global_variables |= frame.f_locals["globals"]
                 self.done = True
             else:
-                self.current_local_variables |= frame.f_locals
-                self.current_global_variables |= frame.f_globals
-        self.current_global_variables.pop("__builtins__", None)
-        self.current_local_variables.pop("__builtins__", None)
+                self.current_raw_local_variables |= frame.f_locals
+                self.current_raw_global_variables |= frame.f_globals
+        self.current_raw_global_variables.pop("__builtins__", None)
+        self.current_raw_local_variables.pop("__builtins__", None)
 
         def filter_variable(x):
             if inspect.ismodule(x):
@@ -111,37 +110,35 @@ class Debugger(bdb.Bdb):
                 return True
             return False
 
-        for name in list(self.current_global_variables.keys()):
-            if filter_variable(self.current_global_variables[name]):
-                self.current_global_variables.pop(name, None)
-        for name in list(self.current_local_variables.keys()):
-            if filter_variable(self.current_local_variables[name]):
-                self.current_local_variables.pop(name, None)
-        frame.f_code.co_name
+        for name in list(self.current_raw_global_variables.keys()):
+            if filter_variable(self.current_raw_global_variables[name]):
+                self.current_raw_global_variables.pop(name, None)
+        for name in list(self.current_raw_local_variables.keys()):
+            if filter_variable(self.current_raw_local_variables[name]):
+                self.current_raw_local_variables.pop(name, None)
 
-        local_variables_info = self.clone_variables(self.current_local_variables)
-        global_variables_info = self.clone_variables(self.current_global_variables)
+        local_variables = self.clone_variables(self.current_raw_local_variables)
+        global_variables = self.clone_variables(self.current_raw_global_variables)
 
         local_variable_changes = {}
         global_variable_changes = {}
 
         previous_local_variables = self.previous_local_variables_stack[-1]
-        for var in self.current_local_variables:
+        for var in self.current_raw_local_variables:
             if (
                 var in previous_local_variables
-                and previous_local_variables[var] == self.current_local_variables[var]
+                and previous_local_variables[var] == local_variables[var]
             ):
                 continue
-            local_variable_changes[var] = local_variables_info[var]
+            local_variable_changes[var] = local_variables[var]
 
-        for var in self.current_global_variables:
+        for var in self.current_raw_global_variables:
             if (
                 var in self.previous_global_variables
-                and self.previous_global_variables[var]
-                == self.current_global_variables[var]
+                and self.previous_global_variables[var] == global_variables[var]
             ):
                 continue
-            global_variable_changes[var] = global_variables_info[var]
+            global_variable_changes[var] = global_variables[var]
 
         if self.root_frame == self.previous_frame:
             # In the root frame, all local variables are also global variables.
@@ -164,12 +161,10 @@ class Debugger(bdb.Bdb):
 
         self.previous_function_scope = current_scope
         self.previous_line_number = frame.f_lineno
-        self.previous_local_variables_stack[-1] = copy.deepcopy(
-            self.current_local_variables
-        )
-        self.previous_global_variables = copy.deepcopy(self.current_global_variables)
-        self.current_local_variables = {}
-        self.current_global_variables = {}
+        self.previous_local_variables_stack[-1] = local_variables
+        self.previous_global_variables = global_variables
+        self.current_raw_local_variables = {}
+        self.current_raw_global_variables = {}
 
 
 def json_size_checker(return_data):
