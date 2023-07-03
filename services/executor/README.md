@@ -22,10 +22,6 @@ Before deploying, ensure that you have setup the following:
 
 ### Deployment
 
-- Configure your shell to use the correct IAM user as the AWS profile. You can do so by:
-  - Setting the `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` environment variables manually OR
-  - Saving the credentials in `~/.aws/credentials` (details [here](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-configure.html))
-- The chosen IAM user should have the appropriate permissions to deploy the required resources.
 - Run `npm run deploy:dev` or `npm run deploy:prod` to deploy.
 
 ## Running Tests

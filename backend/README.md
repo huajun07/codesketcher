@@ -11,7 +11,7 @@ npm install
 
 To run the server locally:
 
-- Ensure that you have permissions to invoke the executor lambda. For example, set your `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` environment variables to an IAM user with the correct permissions.
+- Ensure that you have permissions to invoke the executor lambda.
 - Ensure that the following SSM parameters have been setup and the IAM user has access to them:
   - `/codesketcher-$stage/rds/host`
   - `/codesketcher-$stage/rds/name`

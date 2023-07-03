@@ -31,10 +31,10 @@ Configuration is obtained from SSM, but can be overwritten in a local `.env` fil
 - `/codesketcher-$stage/api/endpoint`
 - `/codesketcher-$stage/google/client-id`
 
-| Name                        | Description            | Default                                 | Required |
-| --------------------------- | ---------------------- | --------------------------------------- | -------- |
-| REACT_APP_EXECUTOR_ENDPOINT | Backend Endpoint       | `ssm:/codesketcher-$stage/api/endpoint` | Yes      |
-| REACT_APP_GOOGLE_CLIENT_ID  | Google oAuth Client ID | `/codesketcher-$stage/google/client-id` | Yes      |
+| Name                        | Description            | Default                                     | Required |
+| --------------------------- | ---------------------- | ------------------------------------------- | -------- |
+| REACT_APP_EXECUTOR_ENDPOINT | Backend Endpoint       | `ssm:/codesketcher-$stage/api/endpoint`     | Yes      |
+| REACT_APP_GOOGLE_CLIENT_ID  | Google oAuth Client ID | `ssm:/codesketcher-$stage/google/client-id` | Yes      |
 
 Or if you would like to use your own values:
 
