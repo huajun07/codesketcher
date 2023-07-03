@@ -6,6 +6,8 @@ import sys
 from io import StringIO
 from contextlib import redirect_stdout
 
+CODE_FILENAME = "user_code"
+
 
 class Debugger(bdb.Bdb):
     def __init__(self):
@@ -13,7 +15,6 @@ class Debugger(bdb.Bdb):
         super().__init__(skip=["awslambdaric.bootstrap"])
         self.root_frame = None
         self.is_tracing = False
-        self.is_importing = False
         self.done = False
         self.previous_frame = None
         self.previous_line_number = -1
@@ -55,6 +56,12 @@ class Debugger(bdb.Bdb):
             return []
         return self.get_scope(frame.f_back) + [frame.f_code.co_name]
 
+    # Checks if the frame is of interest (i.e. originates from user code)
+    def frame_check(self, frame):
+        if frame.f_code.co_filename != CODE_FILENAME:
+            return False
+        return True
+
     def user_return(self, frame, return_value):
         # Since local variables are dropped upon returning, we need to capture them here
         if len(self.get_scope(frame)) == len(self.previous_function_scope):
@@ -71,19 +78,12 @@ class Debugger(bdb.Bdb):
             self.previous_line_number = frame.f_lineno
             return
 
-        if self.done:
-            # Code has finished executing, any further lines are from caller's frame and should be ignored
+        if not self.frame_check(frame) and not frame == self.root_frame.f_back:
+            # Only consider lines from the user's code (or the root frame's parent, when execution is done)
             return
 
-        # Once we start importing, ignore all frames until we are done.
-        # Check for done by checking if we have returned to the previous frame.
-        if self.is_importing:
-            if frame == self.previous_frame:
-                self.is_importing = False
-            else:
-                return
-        if "importlib" in frame.f_globals.get("__name__", ""):
-            self.is_importing = True
+        if self.done:
+            # Code has finished executing, any further lines are from caller's frame and should be ignored
             return
 
         current_scope = self.previous_function_scope
@@ -203,7 +203,11 @@ def execute(event):
         try:
             empty_dict = {}
             # At the top level, globals == locals. Hence both must reference the same dictionary.
-            debugger.run(code, globals=empty_dict, locals=empty_dict)
+            debugger.run(
+                compile(code, filename=CODE_FILENAME, mode="exec"),
+                globals=empty_dict,
+                locals=empty_dict,
+            )
             return json_size_checker(
                 {
                     "executed": True,
