@@ -26,10 +26,17 @@ See the section about [deployment](https://facebook.github.io/create-react-app/d
 
 # Environment Variables
 
-| Name                        | Description            | Default | Required |
-| --------------------------- | ---------------------- | ------- | -------- |
-| REACT_APP_EXECUTOR_ENDPOINT | Backend Endpoint       |         | Yes      |
-| REACT_APP_GOOGLE_CLIENT_ID  | Google oAuth Client ID |         | Yes      |
+Configuration is obtained from SSM, but can be overwritten in a local `.env` file. Ensure that the following SSM parameters have been setup and your IAM user has access to them:
+
+- `/codesketcher-$stage/api/endpoint`
+- `/codesketcher-$stage/google/client-id`
+
+| Name                        | Description            | Default                                     | Required |
+| --------------------------- | ---------------------- | ------------------------------------------- | -------- |
+| REACT_APP_EXECUTOR_ENDPOINT | Backend Endpoint       | `ssm:/codesketcher-$stage/api/endpoint`     | Yes      |
+| REACT_APP_GOOGLE_CLIENT_ID  | Google oAuth Client ID | `ssm:/codesketcher-$stage/google/client-id` | Yes      |
+
+Or if you would like to use your own values:
 
 ```sh
 cp .env.example .env

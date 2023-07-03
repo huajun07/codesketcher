@@ -30,8 +30,8 @@ functions:
           method: '*'
           path: /{any+}
     environment:
-      DB_HOST: ${env:DB_HOST}
-      DB_NAME: ${env:DB_NAME}
-      DB_USERNAME: ${env:DB_USERNAME}
-      DB_PASSWORD: ${env:DB_PASSWORD}
-      GOOGLE_CLIENT_ID: ${env:GOOGLE_CLIENT_ID}
+      DB_HOST: ${ssm:/codesketcher-${sls:stage}/rds/host}
+      DB_NAME: ${ssm:/codesketcher-${sls:stage}/rds/name}
+      DB_USERNAME: ${ssm:/codesketcher-${sls:stage}/rds/username}
+      DB_PASSWORD: ${ssm:/codesketcher-${sls:stage}/rds/password}
+      GOOGLE_CLIENT_ID: ${ssm:/codesketcher-${sls:stage}/google/client-id}
