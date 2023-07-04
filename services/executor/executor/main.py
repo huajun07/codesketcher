@@ -1,10 +1,11 @@
 import bdb
-import copy
 import inspect
 import json
 import sys
 from io import StringIO
 from contextlib import redirect_stdout
+
+CODE_FILENAME = "user_code"
 
 
 class Debugger(bdb.Bdb):
@@ -13,7 +14,6 @@ class Debugger(bdb.Bdb):
         super().__init__(skip=["awslambdaric.bootstrap"])
         self.root_frame = None
         self.is_tracing = False
-        self.is_importing = False
         self.done = False
         self.previous_frame = None
         self.previous_line_number = -1
@@ -21,8 +21,8 @@ class Debugger(bdb.Bdb):
         self.previous_function_scope = []  # e.g. ["f1", "f2"]. Empty if not in function
         self.previous_local_variables_stack = [{}]
         self.previous_global_variables = {}
-        self.current_local_variables = {}
-        self.current_global_variables = {}
+        self.current_raw_local_variables = {}
+        self.current_raw_global_variables = {}
 
     # This function takes in a dictionary of variables and clones them
     # into a predefined format that can be serialized into JSON data.
@@ -55,11 +55,17 @@ class Debugger(bdb.Bdb):
             return []
         return self.get_scope(frame.f_back) + [frame.f_code.co_name]
 
+    # Checks if the frame is of interest (i.e. originates from user code)
+    def frame_check(self, frame):
+        if frame.f_code.co_filename != CODE_FILENAME:
+            return False
+        return True
+
     def user_return(self, frame, return_value):
         # Since local variables are dropped upon returning, we need to capture them here
         if len(self.get_scope(frame)) == len(self.previous_function_scope):
-            self.current_local_variables |= frame.f_locals
-            self.current_global_variables |= frame.f_globals
+            self.current_raw_local_variables |= frame.f_locals
+            self.current_raw_global_variables |= frame.f_globals
 
     def user_line(self, frame):
         if not self.is_tracing:
@@ -71,19 +77,12 @@ class Debugger(bdb.Bdb):
             self.previous_line_number = frame.f_lineno
             return
 
-        if self.done:
-            # Code has finished executing, any further lines are from caller's frame and should be ignored
+        if not self.frame_check(frame) and not frame == self.root_frame.f_back:
+            # Only consider lines from the user's code (or the root frame's parent, when execution is done)
             return
 
-        # Once we start importing, ignore all frames until we are done.
-        # Check for done by checking if we have returned to the previous frame.
-        if self.is_importing:
-            if frame == self.previous_frame:
-                self.is_importing = False
-            else:
-                return
-        if "importlib" in frame.f_globals.get("__name__", ""):
-            self.is_importing = True
+        if self.done:
+            # Code has finished executing, any further lines are from caller's frame and should be ignored
             return
 
         current_scope = self.previous_function_scope
@@ -95,14 +94,14 @@ class Debugger(bdb.Bdb):
         if len(self.previous_function_scope) <= len(self.get_scope(frame)):
             if "__name__" in frame.f_globals and frame.f_globals["__name__"] == "bdb":
                 # Code has finished executing, frame is caller's frame, hence we take frame.f_locals["locals"] instead
-                self.current_local_variables |= frame.f_locals["locals"]
-                self.current_global_variables |= frame.f_locals["globals"]
+                self.current_raw_local_variables |= frame.f_locals["locals"]
+                self.current_raw_global_variables |= frame.f_locals["globals"]
                 self.done = True
             else:
-                self.current_local_variables |= frame.f_locals
-                self.current_global_variables |= frame.f_globals
-        self.current_global_variables.pop("__builtins__", None)
-        self.current_local_variables.pop("__builtins__", None)
+                self.current_raw_local_variables |= frame.f_locals
+                self.current_raw_global_variables |= frame.f_globals
+        self.current_raw_global_variables.pop("__builtins__", None)
+        self.current_raw_local_variables.pop("__builtins__", None)
 
         def filter_variable(x):
             if inspect.ismodule(x):
@@ -111,37 +110,35 @@ class Debugger(bdb.Bdb):
                 return True
             return False
 
-        for name in list(self.current_global_variables.keys()):
-            if filter_variable(self.current_global_variables[name]):
-                self.current_global_variables.pop(name, None)
-        for name in list(self.current_local_variables.keys()):
-            if filter_variable(self.current_local_variables[name]):
-                self.current_local_variables.pop(name, None)
-        frame.f_code.co_name
+        for name in list(self.current_raw_global_variables.keys()):
+            if filter_variable(self.current_raw_global_variables[name]):
+                self.current_raw_global_variables.pop(name, None)
+        for name in list(self.current_raw_local_variables.keys()):
+            if filter_variable(self.current_raw_local_variables[name]):
+                self.current_raw_local_variables.pop(name, None)
 
-        local_variables_info = self.clone_variables(self.current_local_variables)
-        global_variables_info = self.clone_variables(self.current_global_variables)
+        local_variables = self.clone_variables(self.current_raw_local_variables)
+        global_variables = self.clone_variables(self.current_raw_global_variables)
 
         local_variable_changes = {}
         global_variable_changes = {}
 
         previous_local_variables = self.previous_local_variables_stack[-1]
-        for var in self.current_local_variables:
+        for var in self.current_raw_local_variables:
             if (
                 var in previous_local_variables
-                and previous_local_variables[var] == self.current_local_variables[var]
+                and previous_local_variables[var] == local_variables[var]
             ):
                 continue
-            local_variable_changes[var] = local_variables_info[var]
+            local_variable_changes[var] = local_variables[var]
 
-        for var in self.current_global_variables:
+        for var in self.current_raw_global_variables:
             if (
                 var in self.previous_global_variables
-                and self.previous_global_variables[var]
-                == self.current_global_variables[var]
+                and self.previous_global_variables[var] == global_variables[var]
             ):
                 continue
-            global_variable_changes[var] = global_variables_info[var]
+            global_variable_changes[var] = global_variables[var]
 
         if self.root_frame == self.previous_frame:
             # In the root frame, all local variables are also global variables.
@@ -164,12 +161,10 @@ class Debugger(bdb.Bdb):
 
         self.previous_function_scope = current_scope
         self.previous_line_number = frame.f_lineno
-        self.previous_local_variables_stack[-1] = copy.deepcopy(
-            self.current_local_variables
-        )
-        self.previous_global_variables = copy.deepcopy(self.current_global_variables)
-        self.current_local_variables = {}
-        self.current_global_variables = {}
+        self.previous_local_variables_stack[-1] = local_variables
+        self.previous_global_variables = global_variables
+        self.current_raw_local_variables = {}
+        self.current_raw_global_variables = {}
 
 
 def json_size_checker(return_data):
@@ -203,7 +198,11 @@ def execute(event):
         try:
             empty_dict = {}
             # At the top level, globals == locals. Hence both must reference the same dictionary.
-            debugger.run(code, globals=empty_dict, locals=empty_dict)
+            debugger.run(
+                compile(code, filename=CODE_FILENAME, mode="exec"),
+                globals=empty_dict,
+                locals=empty_dict,
+            )
             return json_size_checker(
                 {
                     "executed": True,
