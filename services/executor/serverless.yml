@@ -12,9 +12,15 @@ provider:
       - ${ssm:/codesketcher-${sls:stage}/vpc/subnet-executor-id}
     securityGroupIds:
       - ${ssm:/codesketcher-${sls:stage}/vpc/security-group-id}
+  ecr:
+    images:
+      executorimage:
+        path: ./
+        file: Dockerfile
 
 functions:
   executor:
-    handler: executor/main.handler
     name: executor-${sls:stage}
     timeout: 1
+    image:
+      name: executorimage
