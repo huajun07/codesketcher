@@ -1,4 +1,4 @@
-import axios from 'axios'
+import axios, { AxiosError } from 'axios'
 
 interface boolValue {
   type: 'bool'
@@ -51,8 +51,13 @@ interface instructionRes {
   output?: string
 }
 
-const getInstructions = async (code: string, input = ''): Promise<instructionRes> => {
+const getInstructions = async (
+  code: string,
+  input = '',
+): Promise<instructionRes> => {
   const defaultErrorMessage = 'An unexpected error has occured'
+  const serverOverloadedMessage =
+    'Server is overloaded, please try again in awhile ):'
   try {
     const res = await axios.post(
       process.env.REACT_APP_EXECUTOR_ENDPOINT + '/execute',
@@ -62,7 +67,7 @@ const getInstructions = async (code: string, input = ''): Promise<instructionRes
       },
     )
     const ret: instructionRes = {}
-    const {data: instructions, output} = res.data
+    const { data: instructions, output } = res.data
     ret.output = output as string
     if (instructions) ret.instructions = instructions
     if (!instructions || res.data?.error) {
@@ -70,6 +75,10 @@ const getInstructions = async (code: string, input = ''): Promise<instructionRes
     }
     return ret
   } catch (err) {
+    if ((err as AxiosError).response?.status === 429)
+      return {
+        errorMessage: serverOverloadedMessage,
+      }
     return {
       errorMessage: defaultErrorMessage,
     }
