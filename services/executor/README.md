@@ -24,6 +24,15 @@ Before deploying, ensure that you have setup the following:
 
 - Run `npm run deploy:dev` or `npm run deploy:prod` to deploy.
 
+## Running Locally
+
+To run the Lambda locally:
+
+```bash
+docker build -t executor:local .
+docker run -p 9000:8080 executor:local
+```
+
 ## Running Tests
 
 ```bash

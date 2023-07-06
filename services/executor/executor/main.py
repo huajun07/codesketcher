@@ -1,3 +1,4 @@
+import os
 import bdb
 import inspect
 import json
@@ -178,7 +179,13 @@ def json_size_checker(return_data):
     return return_data
 
 
+def prepare_environment():
+    for env in os.environ.keys():
+        del os.environ[env]
+
+
 def execute(event):
+    prepare_environment()
     if not isinstance(event, dict):
         return {"executed": False, "error": "Input event is not a dictionary"}
 
