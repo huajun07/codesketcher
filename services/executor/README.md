@@ -9,10 +9,29 @@ npm install
 
 ## Getting Started
 
-To deploy to the dev/prod environments (NOTE: **Prod deployment should not be run locally**):
+This service's deployment is handled by the [Serverless](https://www.serverless.com/) framework.
+To deploy to the dev/prod environments:
 
-- Set the `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` environment variables for the correct IAM user
-- Run `npm run deploy:dev` or `npm run deploy:prod` to deploy
+### Infra Dependencies
+
+Before deploying, ensure that you have setup the following:
+
+- An IAM role called `codesketcher-executor-lambda-no-perms` with **no permissions**. The executor lambda will take on this role, and it will not be able to touch any resources at all.
+- A private subnet, whose id is stored as a SSM parameter `/codesketcher-$stage/vpc/subnet-executor-id`. The executor lambda will live in this subnet. Note that this subnet should not be connected to the Internet at all (by not routing it to an Internet Gateway).
+- A security group, whose id is stored as a SSM parameter `/codesketcher-$stage/vpc/security-group-id`. Ensure that all inbound/outbound traffic are blocked.
+
+### Deployment
+
+- Run `npm run deploy:dev` or `npm run deploy:prod` to deploy.
+
+## Running Locally
+
+To run the Lambda locally:
+
+```bash
+docker build -t executor:local .
+docker run -p 9000:8080 executor:local
+```
 
 ## Running Tests
 

@@ -167,7 +167,7 @@ def test_syntax_error():
         "executed": False,
         "data": [],
         "output": "",
-        "error": "unterminated string literal (detected at line 2) (<string>, line 2)",
+        "error": "unterminated string literal (detected at line 2) (user_code, line 2)",
     }
 
 
@@ -724,3 +724,26 @@ def test_from_imports():
         ],
         "output": "",
     }
+
+
+def test_unclonable_imports():
+    result = execute(
+        {
+            "code": dedent(
+                """\
+                    import threading
+                    def worker():
+                        print('Worker thread')
+                    threads = []
+                    for _ in range(2):
+                        t = threading.Thread(target=worker)
+                        threads.append(t)
+                        t.start()
+                    for t in threads:
+                        t.join()"""
+            )
+        }
+    )
+
+    assert result["output"] == "Worker thread\nWorker thread\n"
+    assert "error" not in result
