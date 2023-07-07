@@ -111,6 +111,16 @@ export const CodeIDEButtons = (props: CodeIDEButtonProps) => {
     toggleModify()
   }
 
+  const downloadFile = () => {
+    const blob = new Blob([code], { type: 'text/plain' })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.download = curIdx === 0 ? 'untitled.py' : codenames[curIdx]
+    if (!link.download.endsWith('.py')) link.download += '.py'
+    link.href = url
+    link.click()
+  }
+
   const isDiff = code !== curFile.code || input !== curFile.input
 
   return (
@@ -234,7 +244,9 @@ export const CodeIDEButtons = (props: CodeIDEButtonProps) => {
                     Share
                   </MenuItem>
                 </Tooltip>
-                <MenuItem icon={<DownloadIcon />}>Download</MenuItem>
+                <MenuItem icon={<DownloadIcon />} onClick={downloadFile}>
+                  Download
+                </MenuItem>
               </MenuList>
             </Menu>
           </ButtonGroup>
