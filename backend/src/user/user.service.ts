@@ -31,6 +31,10 @@ const addCode = async (
 	code: string,
 	input: string | undefined = undefined
 ) => {
+	if (codename.match(/[^a-zA-Z0-9\-._]/))
+		throw new BadRequest(
+			"Codename can only contain alphanumeric and '_', '.' and '-'"
+		)
 	if (codename.length > NAME_LEN_LIMIT)
 		throw new LargePayload('Code name exceed limit')
 	if (code.length > LEN_LIMIT)
@@ -86,7 +90,11 @@ const updateCode = async (
 }
 
 const updateCodename = async (uid: string, codename: string, name: string) => {
-	if (codename.length > NAME_LEN_LIMIT)
+	if (name.match(/[^a-zA-Z0-9\-._]/))
+		throw new BadRequest(
+			"Codename can only contain alphanumeric and '_', '.' and '-'"
+		)
+	if (name.length > NAME_LEN_LIMIT)
 		throw new LargePayload('Code name exceed limit')
 	try {
 		const [affectedCount, data] = await Code.update(
