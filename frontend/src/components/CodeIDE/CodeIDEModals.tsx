@@ -45,6 +45,8 @@ export const CodeIDEModal = (props: ModalProps) => {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) =>
     setInput(e.target.value)
   const checkError = () => {
+    if (input.includes('/'))
+      return { err: true, errorMsg: 'Name cannot contain /' }
     if (input === '') return { err: true, errorMsg: 'Name cannot be blank' }
     if (input.length > 100) return { err: true, errorMsg: 'Name is too long' }
     if (variant === 'rename' && codenames[curIdx] === input)
