@@ -2,6 +2,7 @@ import express from 'express'
 import {
 	addCode,
 	deleteCode,
+	genShareCode,
 	getAllCodes,
 	updateCode,
 	updateCodename,
@@ -97,6 +98,21 @@ router.delete(
 		const codename = req.params.codename as string
 		await deleteCode(uid, codename)
 		res.status(200).json({ message: 'Successful Deletion' })
+	}
+)
+
+router.post(
+	'/codes/:codename/share',
+	celebrate({
+		[Segments.PARAMS]: Joi.object().keys({
+			codename: Joi.string().required(),
+		}),
+	}),
+	async (req: TypedRequest<CodeName, undefined>, res) => {
+		const { uid } = res.locals
+		const codename = req.params.codename as string
+		const response = await genShareCode(uid, codename)
+		res.status(201).json(response)
 	}
 )
 
