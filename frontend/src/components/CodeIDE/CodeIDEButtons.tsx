@@ -217,6 +217,7 @@ export const CodeIDEButtons = (props: CodeIDEButtonProps) => {
                   </>
                 )}
                 <Tooltip
+                  placement="top"
                   label={
                     loggedIn
                       ? curIdx === 0
