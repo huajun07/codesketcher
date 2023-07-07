@@ -55,7 +55,7 @@ interface Code {
   codename: string
   code: string
   input: string | null
-  shareId: string | null
+  share_id: string | null
 }
 
 const getCodes = async () => {
@@ -66,7 +66,6 @@ const getCodes = async () => {
 
 const genId = async (codename: string) => {
   const res = await axios.post(`${url}/${codename}/share`, {}, getAuthHeader())
-  console.log(res)
   if (res.status >= 400) throw new Error(res.data?.message || 'Network Error')
   return res.data.shareId as string
 }

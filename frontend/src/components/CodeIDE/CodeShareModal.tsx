@@ -60,14 +60,14 @@ export const CodeShareModal = (props: ModalProps) => {
           <ModalBody>
             <InputGroup size="md">
               <Input
-                pr="4.5rem"
                 value={shareLink || 'No Share Link'}
                 cursor="auto"
                 isDisabled={!shareLink}
                 readOnly
               />
-              <InputRightElement width="4.5rem">
+              <InputRightElement>
                 <IconButton
+                  size="sm"
                   icon={<CopyIcon />}
                   variant="ghost"
                   colorScheme="gray"

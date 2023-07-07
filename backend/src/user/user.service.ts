@@ -11,10 +11,11 @@ import randomstring from 'randomstring'
 
 const getAllCodes = async (uid: string) => {
 	const codes = await Code.findAll({
-		attributes: ['codename', 'code', 'input'],
+		attributes: ['codename', 'code', 'input', 'share_id'],
 		where: {
 			uid,
 		},
+		order: [['codename', 'ASC']],
 	})
 	return codes
 }
