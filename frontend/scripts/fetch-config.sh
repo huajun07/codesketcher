@@ -2,7 +2,7 @@
 
 set -e # exit after first failed command
 
-stage=$1
+stage=${NODE_ENV}
 
 if [[ $stage != "local" && $stage != "dev" && $stage != "prod" ]] ; then
     echo "Stage must be either 'local', 'dev' or 'prod'"
