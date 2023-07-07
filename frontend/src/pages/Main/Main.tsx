@@ -1,4 +1,5 @@
-import { createContext, useState } from 'react'
+import { createContext, useEffect, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import {
   Box,
   Center,
@@ -11,6 +12,7 @@ import { useExecutionStore, useUserDataStore } from 'stores'
 import { shallow } from 'zustand/shallow'
 
 import { getInstructions } from 'utils/executor'
+import { getCodeValues } from 'utils/files'
 import {
   CodeIDE,
   CodeIDEButtons,
@@ -25,10 +27,12 @@ export const LoaderContext = createContext<
 >(undefined)
 
 export const Main = () => {
-  const { code, input } = useUserDataStore(
+  const { code, input, setCode, setInput } = useUserDataStore(
     (state) => ({
       code: state.code,
       input: state.input,
+      setCode: state.setCode,
+      setInput: state.setInput,
     }),
     shallow,
   )
@@ -49,6 +53,41 @@ export const Main = () => {
   const [loading, setLoading] = useState(false)
   const [output, setOutput] = useState<string | null>(null)
   const [ioIndex, setIOIndex] = useState(0)
+
+  const [searchParams, setSearchParams] = useSearchParams()
+
+  const toast = useToast()
+  const makeToast = (msg: string | undefined) => {
+    toast({
+      title: 'An Error Has Occured',
+      description: msg,
+      status: 'error',
+      duration: 2000,
+      isClosable: true,
+    })
+  }
+
+  useEffect(() => {
+    // Clean url search params to avoid repeated loading
+    const cleanUrl = () => {
+      searchParams.delete('id')
+      setSearchParams(searchParams)
+    }
+    const id = searchParams.get('id')
+    if (id) {
+      getCodeValues(id)
+        .then((val) => {
+          const { code, input } = val
+          setCode(code)
+          setInput(input || '')
+          cleanUrl()
+        })
+        .catch((_err) => {
+          makeToast('Code Not Found')
+          cleanUrl()
+        })
+    }
+  })
 
   useInterval(
     () => {
@@ -73,17 +112,6 @@ export const Main = () => {
     if (newStep >= instructions.length) {
       setPlaying(false)
     }
-  }
-
-  const toast = useToast()
-  const makeToast = (msg: string | undefined) => {
-    toast({
-      title: 'An Error Has Occured',
-      description: msg,
-      status: 'error',
-      duration: 2000,
-      isClosable: true,
-    })
   }
 
   const toggleEditing = async () => {

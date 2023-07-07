@@ -3,6 +3,7 @@ import { create } from 'zustand'
 import {
   createCode,
   deleteCode,
+  genId,
   getCodes,
   updateCode,
   updateName,
@@ -22,12 +23,13 @@ const defaultValues = {
   picture: '',
   sub: '',
   loggedIn: false,
-  files: [{ input: '', code: '' }],
+  files: [{ input: '', code: '', shareId: null }] as File[],
   codenames: ['Load your codes'],
   curFile: { input: '', code: '' },
   codename: '',
   code: '',
   input: '',
+  shareId: null,
   curIdx: 0,
   loading: false,
 }
@@ -43,6 +45,7 @@ const getValues = async (token: string) => {
 interface File {
   code: string
   input: string
+  shareId: string | null
 }
 
 interface UserState extends idToken {
@@ -51,10 +54,11 @@ interface UserState extends idToken {
   setCredentials: (creds: string) => Promise<void>
   unSetCredentials: () => void
   files: File[]
-  curFile: File
+  curFile: { code: string; input: string }
   codenames: string[]
   code: string
   input: string
+  shareId: string | null
   curIdx: number
   codename: string
   setIdx: (idx: number) => void
@@ -64,6 +68,7 @@ interface UserState extends idToken {
   create: (name: string, useCur?: boolean) => Promise<void>
   drop: () => Promise<void>
   load: () => Promise<void>
+  genId: () => Promise<void>
   setCode: (code: string) => void
   setInput: (input: string) => void
 }
@@ -89,11 +94,12 @@ export const useUserDataStore = create<UserState>((set, get) => ({
   },
   setIdx: (idx: number) => {
     if (idx < 0 || idx >= get().files.length) throw Error('Invalid Action')
-    const { code, input } = get().files[idx]
+    const { code, input, shareId } = get().files[idx]
     set({
       curIdx: idx,
       code,
       input,
+      shareId,
       curFile: { code, input },
       codename: get().codenames[idx],
     })
@@ -119,7 +125,7 @@ export const useUserDataStore = create<UserState>((set, get) => ({
     await createCode(name, code, input)
     const { files, codenames } = get()
     codenames.push(name)
-    files.push({ code, input })
+    files.push({ code, input, shareId: null })
     set({ codenames, files })
     get().setIdx(files.length - 1)
     return
@@ -139,7 +145,7 @@ export const useUserDataStore = create<UserState>((set, get) => ({
     const { code, input, codename } = get()
     await updateCode(codename, code, input)
     const { files, curIdx } = get()
-    files[curIdx] = { code, input }
+    files[curIdx] = { ...files[curIdx], code, input }
     set({ files, curFile: { code, input } })
     return
   },
@@ -150,10 +156,22 @@ export const useUserDataStore = create<UserState>((set, get) => ({
       .concat(data.map((val) => val.codename))
     const files = get()
       .files.slice(0, 1)
-      .concat(data.map((val) => ({ code: val.code, input: val.input || '' })))
+      .concat(
+        data.map((val) => ({
+          code: val.code,
+          input: val.input || '',
+          shareId: val.shareId,
+        })),
+      )
     set({ files, codenames })
     get().setIdx(-1)
     return
+  },
+  genId: async () => {
+    const newId = await genId(get().codename)
+    const files = get().files
+    files[get().curIdx].shareId = newId
+    set({ shareId: newId, files })
   },
   setCode: (code: string) => {
     set({ code })
@@ -173,7 +191,11 @@ getValues(localStorage.getItem($LOCAL_GOOGLE_JWT) || '').then(async (state) => {
         data.map((val) => val.codename),
       )
       const files = defaultValues.files.concat(
-        data.map((val) => ({ code: val.code, input: val.input || '' })),
+        data.map((val) => ({
+          code: val.code,
+          input: val.input || '',
+          shareId: val.shareId,
+        })),
       )
       useUserDataStore.setState({ codenames, files })
     } catch (err) {

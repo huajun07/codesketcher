@@ -1,8 +1,16 @@
 import { useState } from 'react'
 import { AiFillCaretRight } from 'react-icons/ai'
 import { BiSave } from 'react-icons/bi'
-import { MdEdit } from 'react-icons/md'
-import { AddIcon, ChevronDownIcon, HamburgerIcon } from '@chakra-ui/icons'
+import { MdEdit, MdShare } from 'react-icons/md'
+import {
+  AddIcon,
+  ChevronDownIcon,
+  DeleteIcon,
+  DownloadIcon,
+  EditIcon,
+  HamburgerIcon,
+  RepeatIcon,
+} from '@chakra-ui/icons'
 import {
   Button,
   ButtonGroup,
@@ -31,6 +39,7 @@ import { shallow } from 'zustand/shallow'
 import { getErrorMessage } from 'utils/error'
 
 import { CodeIDEModal } from './CodeIDEModals'
+import { CodeShareModal } from './CodeShareModal'
 
 interface CodeIDEButtonProps {
   editing: boolean
@@ -66,6 +75,7 @@ export const CodeIDEButtons = (props: CodeIDEButtonProps) => {
     shallow,
   )
   const { isOpen, onToggle } = useDisclosure()
+  const { isOpen: openShare, onToggle: toggleShare } = useDisclosure()
   const [variant, setVariant] = useState<
     'create' | 'rename' | 'delete' | 'save'
   >('create')
@@ -109,6 +119,11 @@ export const CodeIDEButtons = (props: CodeIDEButtonProps) => {
         variant={variant}
         open={isOpen}
         toggle={onToggle}
+        triggerError={triggerError}
+      />
+      <CodeShareModal
+        open={openShare}
+        toggle={toggleShare}
         triggerError={triggerError}
       />
       <Flex
@@ -190,13 +205,35 @@ export const CodeIDEButtons = (props: CodeIDEButtonProps) => {
               <MenuList>
                 {curIdx !== 0 && (
                   <>
-                    <MenuItem onClick={renameFunc}>Rename</MenuItem>
-                    <MenuItem onClick={reload}>Reload</MenuItem>
-                    <MenuItem onClick={deleteFunc}>Delete</MenuItem>
+                    <MenuItem icon={<EditIcon />} onClick={renameFunc}>
+                      Rename
+                    </MenuItem>
+                    <MenuItem icon={<RepeatIcon />} onClick={reload}>
+                      Reload
+                    </MenuItem>
+                    <MenuItem icon={<DeleteIcon />} onClick={deleteFunc}>
+                      Delete
+                    </MenuItem>
                   </>
                 )}
-                <MenuItem>Share</MenuItem>
-                <MenuItem>Download</MenuItem>
+                <Tooltip
+                  label={
+                    loggedIn
+                      ? curIdx === 0
+                        ? 'Save your code!'
+                        : ''
+                      : 'Login and save your code!'
+                  }
+                >
+                  <MenuItem
+                    isDisabled={curIdx === 0}
+                    icon={<MdShare />}
+                    onClick={toggleShare}
+                  >
+                    Share
+                  </MenuItem>
+                </Tooltip>
+                <MenuItem icon={<DownloadIcon />}>Download</MenuItem>
               </MenuList>
             </Menu>
           </ButtonGroup>
