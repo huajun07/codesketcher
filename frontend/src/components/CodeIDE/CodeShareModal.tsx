@@ -75,6 +75,12 @@ export const CodeShareModal = (props: ModalProps) => {
                   isDisabled={!shareLink}
                   onClick={() => {
                     navigator.clipboard.writeText(shareLink || '')
+                    toast({
+                      title: 'Copied to Clipboard',
+                      status: 'success',
+                      duration: 2000,
+                      isClosable: true,
+                    })
                   }}
                 />
               </InputRightElement>
