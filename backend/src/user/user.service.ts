@@ -31,7 +31,7 @@ const addCode = async (
 	code: string,
 	input: string | undefined = undefined
 ) => {
-	if (codename.match(/[^a-zA-Z0-o\-._]/))
+	if (codename.match(/[^a-zA-Z0-9\-._]/))
 		throw new BadRequest(
 			"Codename can only contain alphanumeric and '_', '.' and '-'"
 		)
@@ -90,7 +90,7 @@ const updateCode = async (
 }
 
 const updateCodename = async (uid: string, codename: string, name: string) => {
-	if (name.match(/[^a-zA-Z0-o\-._]/))
+	if (name.match(/[^a-zA-Z0-9\-._]/))
 		throw new BadRequest(
 			"Codename can only contain alphanumeric and '_', '.' and '-'"
 		)

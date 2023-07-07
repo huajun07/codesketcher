@@ -45,7 +45,7 @@ export const CodeIDEModal = (props: ModalProps) => {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) =>
     setInput(e.target.value)
   const checkError = () => {
-    if (input.match(/[^a-zA-Z0-o\-._]/))
+    if (input.match(/[^a-zA-Z0-9\-._]/))
       return {
         err: true,
         errorMsg: 'Name must only contain alphanumeric or .-_',
