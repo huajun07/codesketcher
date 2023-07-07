@@ -29,4 +29,9 @@ export class Code extends Model {
 		type: DataType.TEXT,
 	})
 	input?: string
+
+	@Column({
+		type: DataType.STRING,
+	})
+	shareId?: string
 }

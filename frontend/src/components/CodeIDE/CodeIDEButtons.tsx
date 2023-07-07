@@ -1,8 +1,16 @@
 import { useState } from 'react'
 import { AiFillCaretRight } from 'react-icons/ai'
 import { BiSave } from 'react-icons/bi'
-import { MdEdit } from 'react-icons/md'
-import { AddIcon, ChevronDownIcon, HamburgerIcon } from '@chakra-ui/icons'
+import { MdEdit, MdShare } from 'react-icons/md'
+import {
+  AddIcon,
+  ChevronDownIcon,
+  DeleteIcon,
+  DownloadIcon,
+  EditIcon,
+  HamburgerIcon,
+  RepeatIcon,
+} from '@chakra-ui/icons'
 import {
   Button,
   ButtonGroup,
@@ -31,6 +39,7 @@ import { shallow } from 'zustand/shallow'
 import { getErrorMessage } from 'utils/error'
 
 import { CodeIDEModal } from './CodeIDEModals'
+import { CodeShareModal } from './CodeShareModal'
 
 interface CodeIDEButtonProps {
   editing: boolean
@@ -65,7 +74,8 @@ export const CodeIDEButtons = (props: CodeIDEButtonProps) => {
     }),
     shallow,
   )
-  const { isOpen, onToggle } = useDisclosure()
+  const { isOpen: isOpenModify, onToggle: toggleModify } = useDisclosure()
+  const { isOpen: isOpenShare, onToggle: toggleShare } = useDisclosure()
   const [variant, setVariant] = useState<
     'create' | 'rename' | 'delete' | 'save'
   >('create')
@@ -83,22 +93,22 @@ export const CodeIDEButtons = (props: CodeIDEButtonProps) => {
 
   const createFunc = () => {
     setVariant('create')
-    onToggle()
+    toggleModify()
   }
 
   const saveFunc = () => {
     setVariant('save')
-    onToggle()
+    toggleModify()
   }
 
   const deleteFunc = () => {
     setVariant('delete')
-    onToggle()
+    toggleModify()
   }
 
   const renameFunc = () => {
     setVariant('rename')
-    onToggle()
+    toggleModify()
   }
 
   const isDiff = code !== curFile.code || input !== curFile.input
@@ -107,8 +117,13 @@ export const CodeIDEButtons = (props: CodeIDEButtonProps) => {
     <>
       <CodeIDEModal
         variant={variant}
-        open={isOpen}
-        toggle={onToggle}
+        open={isOpenModify}
+        toggle={toggleModify}
+        triggerError={triggerError}
+      />
+      <CodeShareModal
+        open={isOpenShare}
+        toggle={toggleShare}
         triggerError={triggerError}
       />
       <Flex
@@ -190,13 +205,36 @@ export const CodeIDEButtons = (props: CodeIDEButtonProps) => {
               <MenuList>
                 {curIdx !== 0 && (
                   <>
-                    <MenuItem onClick={renameFunc}>Rename</MenuItem>
-                    <MenuItem onClick={reload}>Reload</MenuItem>
-                    <MenuItem onClick={deleteFunc}>Delete</MenuItem>
+                    <MenuItem icon={<EditIcon />} onClick={renameFunc}>
+                      Rename
+                    </MenuItem>
+                    <MenuItem icon={<RepeatIcon />} onClick={reload}>
+                      Reload
+                    </MenuItem>
+                    <MenuItem icon={<DeleteIcon />} onClick={deleteFunc}>
+                      Delete
+                    </MenuItem>
                   </>
                 )}
-                <MenuItem>Share</MenuItem>
-                <MenuItem>Download</MenuItem>
+                <Tooltip
+                  placement="top"
+                  label={
+                    loggedIn
+                      ? curIdx === 0
+                        ? 'Save your code to enable sharing!'
+                        : ''
+                      : 'Login and save your code to enable sharing!'
+                  }
+                >
+                  <MenuItem
+                    isDisabled={curIdx === 0}
+                    icon={<MdShare />}
+                    onClick={toggleShare}
+                  >
+                    Share
+                  </MenuItem>
+                </Tooltip>
+                <MenuItem icon={<DownloadIcon />}>Download</MenuItem>
               </MenuList>
             </Menu>
           </ButtonGroup>

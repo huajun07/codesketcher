@@ -9,6 +9,7 @@ import logger from './logger'
 import docsRouter from './docs/docs.route'
 import executeRouter from './execute/execute.route'
 import userRouter from './user/user.route'
+import publicRoutes from './public/public.routes'
 import { sequelizeLoader } from './db/loader'
 import { AuthMiddleware } from './middlewares/auth.middleware'
 import { HttpError } from './errors'
@@ -28,6 +29,7 @@ app.use(bodyParser.json())
 
 app.use(docsRouter)
 app.use(executeRouter)
+app.use(publicRoutes)
 app.use('/user', AuthMiddleware.isTokenAuthenticated, userRouter)
 
 // handles all celebrate errors (i.e. request validation error)

@@ -1,13 +1,21 @@
 import { sequelize } from '../db/loader'
 import { Code } from '../db/models'
-import { BadRequest, LargePayload, NotFound, ResourceConflict } from '../errors'
+import {
+	BadRequest,
+	LargePayload,
+	NotFound,
+	RequestTimeout,
+	ResourceConflict,
+} from '../errors'
+import randomstring from 'randomstring'
 
 const getAllCodes = async (uid: string) => {
 	const codes = await Code.findAll({
-		attributes: ['codename', 'code', 'input'],
+		attributes: ['codename', 'code', 'input', 'share_id'],
 		where: {
 			uid,
 		},
+		order: [['codename', 'ASC']],
 	})
 	return codes
 }
@@ -102,4 +110,29 @@ const updateCodename = async (uid: string, codename: string, name: string) => {
 		throw err
 	}
 }
-export { getAllCodes, addCode, deleteCode, updateCode, updateCodename }
+
+const genShareCode = async (uid: string, codename: string) => {
+	const TIMEOUT_ATTEMPTS = 40
+	const curId = (await Code.findOne({ where: { uid, codename } }))?.shareId
+	let attempts = 0
+	while (attempts < TIMEOUT_ATTEMPTS) {
+		const newId = randomstring.generate(32)
+		if (newId === curId) continue
+		const [affectedCount] = await Code.update(
+			{ shareId: newId },
+			{ where: { uid, codename } }
+		)
+		if (affectedCount !== 0) return { shareId: newId }
+		attempts++
+	}
+	throw new RequestTimeout()
+}
+
+export {
+	getAllCodes,
+	addCode,
+	deleteCode,
+	updateCode,
+	updateCodename,
+	genShareCode,
+}

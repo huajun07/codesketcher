@@ -39,6 +39,14 @@ export class NotFound extends HttpError {
 	}
 }
 
+export class RequestTimeout extends HttpError {
+	constructor(message?: string) {
+		super(408, message || 'Request Timeout')
+		Object.setPrototypeOf(this, new.target.prototype) // restore prototype chain
+		Error.captureStackTrace(this)
+	}
+}
+
 export class ResourceConflict extends HttpError {
 	constructor(message?: string) {
 		super(409, message || 'Resource has been used')
