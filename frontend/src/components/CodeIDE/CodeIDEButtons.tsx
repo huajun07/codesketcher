@@ -74,8 +74,8 @@ export const CodeIDEButtons = (props: CodeIDEButtonProps) => {
     }),
     shallow,
   )
-  const { isOpen, onToggle } = useDisclosure()
-  const { isOpen: openShare, onToggle: toggleShare } = useDisclosure()
+  const { isOpen: isOpenModify, onToggle: toggleModify } = useDisclosure()
+  const { isOpen: isOpenShare, onToggle: toggleShare } = useDisclosure()
   const [variant, setVariant] = useState<
     'create' | 'rename' | 'delete' | 'save'
   >('create')
@@ -93,22 +93,22 @@ export const CodeIDEButtons = (props: CodeIDEButtonProps) => {
 
   const createFunc = () => {
     setVariant('create')
-    onToggle()
+    toggleModify()
   }
 
   const saveFunc = () => {
     setVariant('save')
-    onToggle()
+    toggleModify()
   }
 
   const deleteFunc = () => {
     setVariant('delete')
-    onToggle()
+    toggleModify()
   }
 
   const renameFunc = () => {
     setVariant('rename')
-    onToggle()
+    toggleModify()
   }
 
   const isDiff = code !== curFile.code || input !== curFile.input
@@ -117,12 +117,12 @@ export const CodeIDEButtons = (props: CodeIDEButtonProps) => {
     <>
       <CodeIDEModal
         variant={variant}
-        open={isOpen}
-        toggle={onToggle}
+        open={isOpenModify}
+        toggle={toggleModify}
         triggerError={triggerError}
       />
       <CodeShareModal
-        open={openShare}
+        open={isOpenShare}
         toggle={toggleShare}
         triggerError={triggerError}
       />
