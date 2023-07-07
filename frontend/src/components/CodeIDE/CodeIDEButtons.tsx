@@ -221,9 +221,9 @@ export const CodeIDEButtons = (props: CodeIDEButtonProps) => {
                   label={
                     loggedIn
                       ? curIdx === 0
-                        ? 'Save your code!'
+                        ? 'Save your code to enable sharing!'
                         : ''
-                      : 'Login and save your code!'
+                      : 'Login and save your code to enable sharing!'
                   }
                 >
                   <MenuItem
