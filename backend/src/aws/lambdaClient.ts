@@ -2,7 +2,10 @@ import config from '../config'
 import { InvokeCommand, Lambda } from '@aws-sdk/client-lambda'
 
 class Client {
-	lambdaClient = new Lambda({ region: config.get('executorRegion') })
+	lambdaClient = new Lambda({
+		endpoint: config.get('aws.executorEndpoint'),
+		region: config.get('aws.executorRegion'),
+	})
 
 	async execute(functionName: string, payload: Record<string, unknown>) {
 		const command = new InvokeCommand({
