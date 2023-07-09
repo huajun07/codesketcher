@@ -1,15 +1,15 @@
 {
 	"name": "backend",
 	"scripts": {
-		"local": "source ./scripts/fetch-config.sh local && cp env/.env.local .env && nodemon src/index.ts",
+		"local": "nodemon src/index.ts",
 		"dev": "source ./scripts/fetch-config.sh dev && cp env/.env.development .env && nodemon src/index.ts",
 		"test": "jest",
 		"build": "tsc",
 		"deploy:dev": "cp env/.env.development .env && serverless deploy --stage dev",
 		"deploy:prod": "cp env/.env.production .env && serverless deploy --stage prod",
 		"start": "cp env/.env.production .env && node build/index.js",
-		"db:create:local": "cp env/.env.local .env && sequelize-cli db:create",
-		"db:migrate:local": "cp env/.env.local .env && sequelize-cli db:migrate",
+		"db:create": "sequelize-cli db:create",
+		"db:migrate": "sequelize-cli db:migrate",
 		"db:migrate:dev": "source ./scripts/fetch-config.sh dev && sequelize-cli db:migrate",
 		"db:create:dev": "source ./scripts/fetch-config.sh dev && sequelize-cli db:create",
 		"db:migrate:prod": "source ./scripts/fetch-config.sh prod && sequelize-cli db:migrate",

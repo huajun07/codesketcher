@@ -6,7 +6,7 @@ export default async function execute(payload: {
 	code: string
 	input?: string
 }) {
-	const result = await client.execute(config.get('executorName'), payload)
+	const result = await client.execute(config.get('aws.executorName'), payload)
 	if ('errorMessage' in result) {
 		// detect if AWS Lambda threw an error
 		const errorMessage = result.errorMessage as string
