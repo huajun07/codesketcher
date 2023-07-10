@@ -1,14 +1,14 @@
 {
 	"name": "backend",
 	"scripts": {
+		"start": "node build/src/index.js",
 		"local": "nodemon src/index.ts",
 		"dev": "source ./scripts/fetch-config.sh dev && cp env/.env.development .env && nodemon src/index.ts",
 		"test": "jest --runInBand --coverage",
-		"start-test": "start-server-and-test local 8000 test",
+		"start-test": "start-server-and-test start 8000 test",
 		"build": "tsc",
 		"deploy:dev": "cp env/.env.development .env && serverless deploy --stage dev",
 		"deploy:prod": "cp env/.env.production .env && serverless deploy --stage prod",
-		"start": "cp env/.env.production .env && node build/index.js",
 		"db:create": "sequelize-cli db:create",
 		"db:migrate": "sequelize-cli db:migrate",
 		"db:migrate:dev": "source ./scripts/fetch-config.sh dev && sequelize-cli db:migrate",
