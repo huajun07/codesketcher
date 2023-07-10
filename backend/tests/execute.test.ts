@@ -1,5 +1,6 @@
 import request from 'supertest'
-const req = request(`http://localhost:8000`)
+import app from '../src'
+const req = request(app)
 
 describe('Execution Test', () => {
 	test('Sanity Check', async () => {

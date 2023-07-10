@@ -1,7 +1,8 @@
 import { assertDBValues, seedData, stripDatetime, truncateTable } from './utils'
 import request from 'supertest'
 import { sequelize, sequelizeLoader } from '../src/db/loader'
-const req = request(`http://localhost:8000`)
+import app from '../src'
+const req = request(app)
 
 describe('Code Creation Test', () => {
 	beforeAll(async () => {

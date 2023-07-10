@@ -66,10 +66,11 @@ const httpErrorHandler: ErrorRequestHandler = (err, _req, res, _next) => {
 app.use(httpErrorHandler)
 
 sequelizeLoader().then(() => {
-	if (config.get('env') === 'local' || config.get('env') === 'test') {
+	if (config.get('env') === 'local') {
 		app.listen(config.get('port'), () => {
 			logger.info(`App started on port ${config.get('port')}`)
 		})
 	}
 })
 exports.handler = serverlessExpress({ app })
+export default app
