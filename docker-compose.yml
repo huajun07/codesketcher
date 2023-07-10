@@ -19,16 +19,12 @@ services:
       dockerfile: Dockerfile
       context: ./services/executor
     image: "executor"
-    volumes:
-      - ./services/executor/executor:/var/task
   backend_api:
     container_name: "backend_api"
     build:
       dockerfile: Dockerfile
       context: ./backend
     image: "backend_api"
-    volumes:
-      - ./backend:/usr/src/app
     depends_on:
       db_service:
         condition: service_healthy
@@ -54,8 +50,6 @@ services:
       dockerfile: Dockerfile
       context: ./frontend
     image: "frontend"
-    volumes:
-      - ./frontend:/usr/src/app
     ports:
       - "3000:3000"
     environment:
