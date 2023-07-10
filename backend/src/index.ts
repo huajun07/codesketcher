@@ -14,6 +14,7 @@ import { sequelizeLoader } from './db/loader'
 import { AuthMiddleware } from './middlewares/auth.middleware'
 import { HttpError } from './errors'
 import cors from 'cors'
+import healthCheckmiddleware from './middlewares/healthCheck.middleware'
 
 const app = express()
 
@@ -27,6 +28,7 @@ app.use(
 
 app.use(bodyParser.json())
 
+app.use(healthCheckmiddleware)
 app.use(docsRouter)
 app.use(executeRouter)
 app.use(publicRoutes)
@@ -64,7 +66,7 @@ const httpErrorHandler: ErrorRequestHandler = (err, _req, res, _next) => {
 app.use(httpErrorHandler)
 
 sequelizeLoader().then(() => {
-	if (config.get('env') === 'local') {
+	if (config.get('env') === 'local' || config.get('env') === 'test') {
 		app.listen(config.get('port'), () => {
 			logger.info(`App started on port ${config.get('port')}`)
 		})
