@@ -11,7 +11,7 @@ import randomstring from 'randomstring'
 
 const getAllCodes = async (uid: string) => {
 	const codes = await Code.findAll({
-		attributes: ['codename', 'code', 'input', 'share_id'],
+		attributes: ['codename', 'code', 'input', ['share_id', 'shareId']],
 		where: {
 			uid,
 		},
@@ -121,7 +121,9 @@ const updateCodename = async (uid: string, codename: string, name: string) => {
 
 const genShareCode = async (uid: string, codename: string) => {
 	const TIMEOUT_ATTEMPTS = 40
-	const curId = (await Code.findOne({ where: { uid, codename } }))?.shareId
+	const code = await Code.findOne({ where: { uid, codename } })
+	if (!code) throw new NotFound()
+	const curId = code.shareId
 	let attempts = 0
 	while (attempts < TIMEOUT_ATTEMPTS) {
 		const newId = randomstring.generate(32)

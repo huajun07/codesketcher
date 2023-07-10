@@ -55,7 +55,7 @@ interface Code {
   codename: string
   code: string
   input: string | null
-  share_id: string | null
+  shareId: string | null
 }
 
 const getCodes = async () => {

@@ -160,7 +160,7 @@ export const useUserDataStore = create<UserState>((set, get) => ({
         data.map((val) => ({
           code: val.code,
           input: val.input || '',
-          shareId: val.share_id,
+          shareId: val.shareId,
         })),
       )
     set({ files, codenames })
@@ -194,7 +194,7 @@ getValues(localStorage.getItem($LOCAL_GOOGLE_JWT) || '').then(async (state) => {
         data.map((val) => ({
           code: val.code,
           input: val.input || '',
-          shareId: val.share_id,
+          shareId: val.shareId,
         })),
       )
       useUserDataStore.setState({ codenames, files })
