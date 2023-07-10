@@ -2,11 +2,13 @@ import { assertDBValues, seedData, truncateTable } from './utils'
 import request from 'supertest'
 import { sequelize, sequelizeLoader } from '../src/db/loader'
 import app from '../src'
+import { AuthMiddleware } from '../src/middlewares/auth.middleware'
 const req = request(app)
 
 describe('Code Delete Test', () => {
 	beforeAll(async () => {
 		await sequelizeLoader()
+		AuthMiddleware.decodeJWTHeader = jest.fn(async (val) => val)
 	})
 
 	beforeEach(async () => {

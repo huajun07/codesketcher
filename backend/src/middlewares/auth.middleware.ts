@@ -11,7 +11,6 @@ interface TokenData {
 
 export class AuthMiddleware {
 	static decodeJWTHeader = async (header: string) => {
-		if (config.get('env') === 'test') return header
 		const token = header?.split(' ')[1]
 		// Ref: https://developers.google.com/identity/openid-connect/openid-connect#validatinganidtoken
 		const openIDConfig = (
