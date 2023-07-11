@@ -33,12 +33,14 @@ describe('Code Share Test', () => {
 
 	test('Sanity Check', async () => {
 		await seedData([defaultRes])
+		let curId = ''
 		await req
 			.post('/user/codes/sample/share')
 			.set('Authorization', '1')
 			.expect(201)
 			.then(async (res) => {
 				const shareId = res.body.shareId
+				curId = shareId
 				await assertDBValues([
 					{
 						...defaultRes,
@@ -56,6 +58,7 @@ describe('Code Share Test', () => {
 			.expect(201)
 			.then(async (res) => {
 				const shareId = res.body.shareId
+				expect(shareId).not.toBe(curId)
 				await assertDBValues([
 					{
 						...defaultRes,

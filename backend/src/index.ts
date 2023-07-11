@@ -14,7 +14,6 @@ import { sequelizeLoader } from './db/loader'
 import { AuthMiddleware } from './middlewares/auth.middleware'
 import { HttpError } from './errors'
 import cors from 'cors'
-import healthCheckmiddleware from './middlewares/healthCheck.middleware'
 
 const app = express()
 
@@ -28,7 +27,6 @@ app.use(
 
 app.use(bodyParser.json())
 
-app.use(healthCheckmiddleware)
 app.use(docsRouter)
 app.use(executeRouter)
 app.use(publicRoutes)
