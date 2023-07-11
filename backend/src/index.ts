@@ -71,3 +71,4 @@ sequelizeLoader().then(() => {
 	}
 })
 exports.handler = serverlessExpress({ app })
+export default app
