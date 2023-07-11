@@ -1,13 +1,12 @@
 #!/bin/sh
 
 set -e # exit after first failed command
-
 cd backend
-npm ci
-npm run build
+[ -d "node_modules" ] || npm ci
+[ -d "build" ] || npm run build
 
 cd ../frontend
-npm ci --force
+[ -d "node_modules" ] || npm ci --force
 
 cd ../
 export GOOGLE_CLIENT_ID=$(aws ssm get-parameter --name /codesketcher-dev/google/client-id --output text --query "Parameter.Value")
