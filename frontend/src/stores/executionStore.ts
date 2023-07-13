@@ -106,11 +106,16 @@ function processInstructions(
       global_variable_changes: {},
       local_variable_changes: {},
     }
-    for (let j = rangeStart; j <= i; j++)
-      Object.assign(instruction, {
-        global_variable_changes: rawInstructions[j].global_variable_changes,
-        local_variable_changes: rawInstructions[j].local_variable_changes,
-      })
+    for (let j = rangeStart; j <= i; j++) {
+      Object.assign(
+        instruction.global_variable_changes,
+        rawInstructions[j].global_variable_changes,
+      )
+      Object.assign(
+        instruction.local_variable_changes,
+        rawInstructions[j].local_variable_changes,
+      )
+    }
     rangeStart = i + 1
     newInstructions.push(instruction)
   }
