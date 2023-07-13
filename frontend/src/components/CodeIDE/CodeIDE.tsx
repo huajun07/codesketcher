@@ -1,10 +1,13 @@
+import { useRef } from 'react'
 import { useColorModeValue } from '@chakra-ui/react'
 import { python } from '@codemirror/lang-python'
 import { zebraStripes } from '@uiw/codemirror-extensions-zebra-stripes'
 import { githubDark, githubLight } from '@uiw/codemirror-theme-github'
 import CodeMirror from '@uiw/react-codemirror'
-import { useUserDataStore } from 'stores'
+import { useExecutionStore, useUserDataStore } from 'stores'
 import { shallow } from 'zustand/shallow'
+
+import { createBreakpointsExtension } from './CodeMirrorBreakpointExtension'
 
 interface codeIDEProps {
   editable: boolean
@@ -12,6 +15,9 @@ interface codeIDEProps {
 }
 
 export const CodeIDE = (props: codeIDEProps) => {
+  const updateSelectedLineNumbers = useExecutionStore(
+    (state) => state.updateSelectedLineNumbers,
+  )
   const { code, setCode } = useUserDataStore(
     (state) => ({
       code: state.code,
@@ -19,6 +25,20 @@ export const CodeIDE = (props: codeIDEProps) => {
     }),
     shallow,
   )
+
+  const breakpointsExtension = useRef(
+    createBreakpointsExtension((state, set) => {
+      if (state === undefined) return
+      const lineNumbers: number[] = []
+      const iter = set.iter()
+      while (iter.value !== null) {
+        lineNumbers.push(state.doc.lineAt(iter.from).number)
+        iter.next()
+      }
+      updateSelectedLineNumbers(lineNumbers)
+    }),
+  )
+
   const placeholder = 'Enter your python code here!\nE.g. a = [1, 2, 3]'
   return (
     <CodeMirror
@@ -40,6 +60,7 @@ export const CodeIDE = (props: codeIDEProps) => {
           darkColor: '#aca2ff40',
         }),
         python(),
+        breakpointsExtension.current,
       ]}
       onChange={setCode}
       theme={useColorModeValue(githubLight, githubDark)}
