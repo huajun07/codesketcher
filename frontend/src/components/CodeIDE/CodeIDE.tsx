@@ -1,6 +1,8 @@
-import { useRef } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 import { useColorModeValue } from '@chakra-ui/react'
 import { python } from '@codemirror/lang-python'
+import { EditorState, RangeSet } from '@codemirror/state'
+import { GutterMarker } from '@codemirror/view'
 import { zebraStripes } from '@uiw/codemirror-extensions-zebra-stripes'
 import { githubDark, githubLight } from '@uiw/codemirror-theme-github'
 import CodeMirror from '@uiw/react-codemirror'
@@ -18,16 +20,17 @@ export const CodeIDE = (props: codeIDEProps) => {
   const updateSelectedLineNumbers = useExecutionStore(
     (state) => state.updateSelectedLineNumbers,
   )
-  const { code, setCode } = useUserDataStore(
+  const { code, setCode, curFile } = useUserDataStore(
     (state) => ({
       code: state.code,
       setCode: state.setCode,
+      curFile: state.curFile,
     }),
     shallow,
   )
 
-  const breakpointsExtension = useRef(
-    createBreakpointsExtension((state, set) => {
+  const breakpointsExtensionCallback = useCallback(
+    (state: EditorState, set: RangeSet<GutterMarker>) => {
       if (state === undefined) return
       const lineNumbers: number[] = []
       const iter = set.iter()
@@ -36,8 +39,19 @@ export const CodeIDE = (props: codeIDEProps) => {
         iter.next()
       }
       updateSelectedLineNumbers(lineNumbers)
-    }),
+    },
+    [updateSelectedLineNumbers],
   )
+
+  const breakpointsExtension = useRef(
+    createBreakpointsExtension(breakpointsExtensionCallback),
+  )
+  useEffect(() => {
+    // reset all state when the file changes
+    breakpointsExtension.current = createBreakpointsExtension(
+      breakpointsExtensionCallback,
+    )
+  }, [curFile, breakpointsExtensionCallback])
 
   const placeholder = 'Enter your python code here!\nE.g. a = [1, 2, 3]'
   return (
