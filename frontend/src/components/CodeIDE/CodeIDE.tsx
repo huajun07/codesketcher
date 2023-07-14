@@ -20,11 +20,11 @@ export const CodeIDE = (props: codeIDEProps) => {
   const updateSelectedLineNumbers = useExecutionStore(
     (state) => state.updateSelectedLineNumbers,
   )
-  const { code, setCode, curFile } = useUserDataStore(
+  const { code, setCode, fileIndex } = useUserDataStore(
     (state) => ({
       code: state.code,
       setCode: state.setCode,
-      curFile: state.curFile,
+      fileIndex: state.curIdx,
     }),
     shallow,
   )
@@ -51,7 +51,7 @@ export const CodeIDE = (props: codeIDEProps) => {
     breakpointsExtension.current = createBreakpointsExtension(
       breakpointsExtensionCallback,
     )
-  }, [curFile, breakpointsExtensionCallback])
+  }, [fileIndex, breakpointsExtensionCallback])
 
   const placeholder = 'Enter your python code here!\nE.g. a = [1, 2, 3]'
   return (
