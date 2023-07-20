@@ -87,7 +87,7 @@ export const VisualArea = () => {
           />
           <Selecto
             dragContainer={'#visual-area-container'}
-            selectFromInside={true}
+            selectFromInside={false}
             selectByClick={true}
             selectableTargets={['.visual-component-move-button']}
             onDragStart={(event) => {
