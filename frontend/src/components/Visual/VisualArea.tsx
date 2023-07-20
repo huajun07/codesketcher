@@ -78,9 +78,8 @@ export const VisualArea = () => {
               target.style.transform = transform
             }}
             resizable
-            onResize={({ target, width, height, delta }) => {
-              width = Math.max(width, 400) // at least 400px wide
-              height = Math.max(height, 300) // at least 300px tall
+            onResize={({ target, width, height, delta, drag }) => {
+              target.style.transform = drag.transform
               delta[0] && (target.style.width = `${width}px`)
               delta[1] && (target.style.height = `${height}px`)
             }}

@@ -1,4 +1,6 @@
 .visual-component {
   position: absolute;
   z-index: 100;
+  min-width: 400px;
+  min-height: 300px;
 }
