@@ -57,19 +57,34 @@ export const VisualArea = () => {
           id="visual-area-container"
           bgColor="gray.50"
         >
-          {childKeys.map((key) => (
-            <div
-              key={key}
-              className={'visual-component ' + styles['visual-component']}
-              style={{ height: 300, width: 400, backgroundColor: 'white' }}
-              data-key={key}
-            >
-              <GraphVisualization
-                erase={() => eraseVisualization(key)}
-                selected={selectedTargets.some((x) => x.dataset.key === key)}
-              />
-            </div>
-          ))}
+          {childKeys.map((key) => {
+            const isSelected = selectedTargets.some(
+              (x) => x.dataset.key === key,
+            )
+            return (
+              <Box
+                key={key}
+                className={
+                  'visual-component ' +
+                  styles['visual-component'] +
+                  (isSelected ? ` ${styles['visual-component-selected']}` : '')
+                }
+                height={300}
+                width={400}
+                bgColor="white"
+                border="2px solid"
+                padding={1}
+                borderColor="black.100"
+                borderRadius={8}
+                data-key={key}
+              >
+                <GraphVisualization
+                  erase={() => eraseVisualization(key)}
+                  selected={isSelected}
+                />
+              </Box>
+            )
+          })}
           <Moveable
             ref={moveableRef}
             target={selectedTargets}
@@ -89,18 +104,26 @@ export const VisualArea = () => {
             dragContainer={'#visual-area-container'}
             selectFromInside={false}
             selectByClick={true}
-            selectableTargets={['.visual-component-move-button']}
+            selectableTargets={['.visual-component']}
             onDragStart={(event) => {
               event.preventDrag()
               const moveable = moveableRef.current
               if (moveable === null) return
-              const target = event.inputEvent.target
+              const target = event.inputEvent.target as HTMLElement
               if (
                 moveable.isMoveableElement(target) ||
                 selectedTargets.some((t) => t === target || t.contains(target))
               ) {
                 event.stop()
               }
+              const isChildOfSelectable = (
+                element: HTMLElement | null,
+              ): boolean => {
+                if (element === document.body || element === null) return false
+                if (element.classList.contains('visual-component')) return true
+                return isChildOfSelectable(element.parentElement)
+              }
+              if (isChildOfSelectable(target.parentElement)) event.stop()
             }}
             onSelectEnd={(event) => {
               const moveable = moveableRef.current
@@ -111,14 +134,7 @@ export const VisualArea = () => {
                   moveable.dragStart(event.inputEvent)
                 })
               }
-              setSelectedTargets(
-                event.selected.map((x) => {
-                  let root = x
-                  while (root.dataset.key === undefined)
-                    root = root.parentElement as HTMLElement
-                  return root
-                }),
-              )
+              setSelectedTargets(event.selected)
             }}
           />
         </Box>

@@ -3,4 +3,13 @@
   z-index: 100;
   min-width: 400px;
   min-height: 300px;
+  cursor: all-scroll;
+}
+
+.visual-component > * {
+  cursor: auto;
+}
+
+.visual-component-selected > * {
+  cursor: all-scroll;
 }

@@ -122,13 +122,7 @@ export const GraphVisualization = (props: GraphVisualizationProps) => {
   }
 
   return (
-    <Box
-      w="full"
-      h="full"
-      position="relative"
-      border="1px solid black"
-      borderRadius={8}
-    >
+    <Box w="full" h="full" position="relative">
       <Button
         onClick={() => setSettingsOpen(!settingsOpen)}
         mt={4}
@@ -151,18 +145,6 @@ export const GraphVisualization = (props: GraphVisualizationProps) => {
         opacity={0.8}
       >
         <DeleteIcon />
-      </Button>
-
-      <Button
-        className="visual-component-move-button"
-        mb={4}
-        ml={4}
-        position="absolute"
-        bottom="0"
-        zIndex={1}
-        opacity={0.8}
-      >
-        <FaArrowsAlt />
       </Button>
 
       <Tooltip label="Zoom in">
