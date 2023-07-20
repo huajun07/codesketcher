@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import CytoscapeComponent from 'react-cytoscapejs'
 import cytoscape from 'cytoscape'
 import cola from 'cytoscape-cola'
@@ -16,6 +17,13 @@ interface GraphProps {
 export const Graph = (props: GraphProps) => {
   const { directed, weighted, adjacencyList, displayData, cyRef, locked } =
     props
+
+  useEffect(() => {
+    // block all pointer events on graph while locked
+    const container = cyRef.current?.container?.()
+    if (container === null || container === undefined) return
+    container.style.pointerEvents = locked ? 'none' : 'auto'
+  }, [cyRef, locked])
 
   const n = adjacencyList.length
   const elements: cytoscape.ElementDefinition[] = []
@@ -68,9 +76,6 @@ export const Graph = (props: GraphProps) => {
       elements={elements}
       layout={{ name: 'cola' }}
       style={{ height: '100%', width: '100%' }}
-      userPanningEnabled={!locked}
-      userZoomingEnabled={!locked}
-      boxSelectionEnabled={!locked}
       stylesheet={[
         {
           selector: 'edge',
