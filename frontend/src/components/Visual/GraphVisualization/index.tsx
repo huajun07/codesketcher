@@ -1,5 +1,4 @@
 import { useRef, useState } from 'react'
-import { FaArrowsAlt } from 'react-icons/fa'
 import { AddIcon, DeleteIcon, MinusIcon, SettingsIcon } from '@chakra-ui/icons'
 import { Box, Button, Center, Text, Tooltip } from '@chakra-ui/react'
 import cytoscape from 'cytoscape'
