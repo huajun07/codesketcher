@@ -22,10 +22,11 @@ enum EdgeFormat {
 
 interface GraphVisualizationProps {
   erase: () => void
+  selected: boolean
 }
 
 export const GraphVisualization = (props: GraphVisualizationProps) => {
-  const { erase } = props
+  const { erase, selected } = props
 
   const [settings, setSettings] = useState<GraphSettings>({
     directed: false,
@@ -120,13 +121,14 @@ export const GraphVisualization = (props: GraphVisualizationProps) => {
   }
 
   return (
-    <Box w="full" position="relative">
+    <Box w="full" h="full" position="relative">
       <Button
         onClick={() => setSettingsOpen(!settingsOpen)}
         mt={4}
         ml={4}
         position="absolute"
         zIndex={1}
+        opacity={0.8}
       >
         <SettingsIcon />
       </Button>
@@ -139,6 +141,7 @@ export const GraphVisualization = (props: GraphVisualizationProps) => {
         right="0"
         zIndex={1}
         colorScheme="red"
+        opacity={0.8}
       >
         <DeleteIcon />
       </Button>
@@ -156,6 +159,7 @@ export const GraphVisualization = (props: GraphVisualizationProps) => {
           borderBottom="1px"
           borderBottomColor="gray.300"
           zIndex={1}
+          opacity={0.8}
         >
           <AddIcon />
         </Button>
@@ -171,13 +175,14 @@ export const GraphVisualization = (props: GraphVisualizationProps) => {
           right="0"
           size="sm"
           zIndex={1}
+          opacity={0.8}
         >
           <MinusIcon />
         </Button>
       </Tooltip>
 
       {error && (
-        <Center h="full" w="full">
+        <Center h="full" w="full" px={8}>
           <Text>{error}</Text>
         </Center>
       )}
@@ -190,6 +195,7 @@ export const GraphVisualization = (props: GraphVisualizationProps) => {
           weighted={settings.weighted}
           displayData={displayData}
           cyRef={cyRef}
+          locked={selected}
         />
       )}
 

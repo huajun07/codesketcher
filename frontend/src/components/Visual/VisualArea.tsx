@@ -1,79 +1,144 @@
-import { useState } from 'react'
-import { AddIcon, InfoIcon } from '@chakra-ui/icons'
-import {
-  Button,
-  Center,
-  Code,
-  Flex,
-  Tab,
-  TabList,
-  TabPanel,
-  TabPanels,
-  Tabs,
-  Tooltip,
-} from '@chakra-ui/react'
+import './Moveable.css'
+
+import { useRef, useState } from 'react'
+import { PiGraph } from 'react-icons/pi'
+import Moveable from 'react-moveable'
+import Selecto from 'react-selecto'
+import { InfoIcon } from '@chakra-ui/icons'
+import { Box, Button, Flex, Tooltip } from '@chakra-ui/react'
 import { v4 as uuidv4 } from 'uuid'
 
 import { FAQModal } from './FAQModal'
 import { GraphVisualization } from './GraphVisualization'
+import styles from './VisualArea.module.css'
 
 export const VisualArea = () => {
+  const moveableRef = useRef<Moveable>(null)
+  const [selectedTargets, setSelectedTargets] = useState<
+    (HTMLElement | SVGElement)[]
+  >([])
+
   const [faqOpen, setFAQOpen] = useState(false)
 
   const [childKeys, setChildKeys] = useState<string[]>([])
-  const [tabIndex, setTabIndex] = useState<number>(0)
 
   const eraseVisualization = (key: string) => {
     const index = childKeys.findIndex((x) => x === key)
     if (index === -1) return
-    if (tabIndex >= index) setTabIndex(tabIndex === 0 ? 0 : tabIndex - 1)
     setChildKeys(childKeys.filter((x) => x !== key))
+    setSelectedTargets(selectedTargets.filter((x) => x.dataset.key !== key))
   }
 
   const addVisualization = () => {
-    setTabIndex(childKeys.length)
     setChildKeys([...childKeys, uuidv4()])
   }
 
   return (
     <>
-      <Tabs w="full" index={tabIndex} onChange={(index) => setTabIndex(index)}>
-        <TabList>
+      <Flex direction="column" w="full">
+        <FAQModal open={faqOpen} toggle={() => setFAQOpen(!faqOpen)} />
+        <Flex>
           <Tooltip label="FAQ">
             <Button borderRadius={0} onClick={() => setFAQOpen(true)}>
               <InfoIcon />
             </Button>
           </Tooltip>
-
-          {childKeys.map((key, index) => (
-            <Tab key={key}>{index}</Tab>
-          ))}
-
-          <Tooltip label="Add visualization">
-            <Button borderRadius={0} onClick={addVisualization}>
-              <AddIcon />
+          <Tooltip label="Add a graph">
+            <Button borderRadius={0} onClick={() => addVisualization()}>
+              <PiGraph />
             </Button>
           </Tooltip>
-        </TabList>
+        </Flex>
 
-        {childKeys.length > 0 ? (
-          <TabPanels h="full">
-            {childKeys.map((key) => (
-              <TabPanel p={0} key={key}>
-                <Flex h="calc(100vh - 189px)" alignItems="stretch">
-                  <GraphVisualization erase={() => eraseVisualization(key)} />
-                </Flex>
-              </TabPanel>
-            ))}
-          </TabPanels>
-        ) : (
-          <Center h="full" w="full">
-            Click the&nbsp; <Code>+</Code>&nbsp; button above to add a
-            visualization and get started!
-          </Center>
-        )}
-      </Tabs>
-      <FAQModal open={faqOpen} toggle={() => setFAQOpen(!faqOpen)} />
+        <Box
+          flexGrow={1}
+          position="relative"
+          overflow="hidden"
+          id="visual-area-container"
+          bgColor="gray.50"
+        >
+          {childKeys.map((key) => {
+            const isSelected = selectedTargets.some(
+              (x) => x.dataset.key === key,
+            )
+            return (
+              <Box
+                key={key}
+                className={
+                  'visual-component ' +
+                  styles['visual-component'] +
+                  (isSelected ? ` ${styles['visual-component-selected']}` : '')
+                }
+                height={300}
+                width={400}
+                bgColor="white"
+                border="2px solid"
+                padding={1}
+                borderColor="black.100"
+                borderRadius={8}
+                data-key={key}
+              >
+                <GraphVisualization
+                  erase={() => eraseVisualization(key)}
+                  selected={isSelected}
+                />
+              </Box>
+            )
+          })}
+          <Moveable
+            ref={moveableRef}
+            target={selectedTargets}
+            individualGroupable
+            draggable
+            onDrag={({ target, transform }) => {
+              target.style.transform = transform
+            }}
+            resizable
+            onResize={({ target, width, height, delta, drag }) => {
+              target.style.transform = drag.transform
+              delta[0] && (target.style.width = `${width}px`)
+              delta[1] && (target.style.height = `${height}px`)
+            }}
+          />
+          <Selecto
+            dragContainer={'#visual-area-container'}
+            selectFromInside={false}
+            selectByClick={true}
+            selectableTargets={['.visual-component']}
+            onDragStart={(event) => {
+              event.preventDrag()
+              const moveable = moveableRef.current
+              if (moveable === null) return
+              const target = event.inputEvent.target as HTMLElement
+              if (
+                moveable.isMoveableElement(target) ||
+                selectedTargets.some((t) => t === target || t.contains(target))
+              ) {
+                event.stop()
+              }
+              const isChildOfSelectable = (
+                element: HTMLElement | null,
+              ): boolean => {
+                if (element === document.body || element === null) return false
+                if (element.classList.contains('visual-component')) return true
+                return isChildOfSelectable(element.parentElement)
+              }
+              if (isChildOfSelectable(target.parentElement)) event.stop()
+            }}
+            onSelectEnd={(event) => {
+              const moveable = moveableRef.current
+              if (moveable === null) return
+              if (event.isDragStartEnd) {
+                event.inputEvent.preventDefault()
+                moveable.waitToChangeTarget().then(() => {
+                  moveable.dragStart(event.inputEvent)
+                })
+              }
+              setSelectedTargets(event.selected)
+            }}
+          />
+        </Box>
+      </Flex>
     </>
   )
 }
