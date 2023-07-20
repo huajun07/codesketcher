@@ -120,7 +120,6 @@ export const CodeIDEButtons = (props: CodeIDEButtonProps) => {
     link.href = url
     link.click()
   }
-
   const isDiff = code !== curFile.code || input !== curFile.input
 
   return (
