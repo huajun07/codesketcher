@@ -55,6 +55,7 @@ export const VisualArea = () => {
           position="relative"
           overflow="hidden"
           id="visual-area-container"
+          bgColor="gray.50"
         >
           {childKeys.map((key) => (
             <div
