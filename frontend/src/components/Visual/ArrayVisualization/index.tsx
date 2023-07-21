@@ -1,6 +1,9 @@
+import 'react-data-grid/lib/styles.css'
+
 import { useEffect, useState } from 'react'
+import DataGrid, { Column } from 'react-data-grid'
 import { DeleteIcon } from '@chakra-ui/icons'
-import { Box, Button, Center, Flex, Text, Tooltip } from '@chakra-ui/react'
+import { Button, Center, Checkbox, Flex, Text, Tooltip } from '@chakra-ui/react'
 import {
   AutoComplete,
   AutoCompleteInput,
@@ -10,7 +13,7 @@ import {
 import { useExecutionStore } from 'stores'
 import { shallow } from 'zustand/shallow'
 
-import { parsedVariableArray } from 'utils/executor'
+import { parsedVariable, parsedVariableArray } from 'utils/executor'
 
 interface ArrayVisualizationProps {
   erase: () => void
@@ -27,6 +30,7 @@ export const ArrayVisualization = (props: ArrayVisualizationProps) => {
     }),
     shallow,
   )
+  const [is2dArray, setIs2dArray] = useState(false)
 
   const [error, setError] = useState('')
 
@@ -40,13 +44,19 @@ export const ArrayVisualization = (props: ArrayVisualizationProps) => {
       return
     }
     setError('')
-  }, [variableName, data])
+  }, [variableName, data, is2dArray])
 
   let value: parsedVariableArray = []
   if (error === '') {
     const tvalue = data.find((x) => x.name === variableName)?.value
-    if (!Array.isArray(tvalue)) setError('Variable is not an array')
-    else value = tvalue
+    if (!is2dArray && !Array.isArray(tvalue))
+      setError('Variable is not an array')
+    else if (
+      is2dArray &&
+      (!Array.isArray(tvalue) || tvalue.some((row) => !Array.isArray(row)))
+    ) {
+      setError('Variable is not a 2d array')
+    } else value = tvalue as parsedVariableArray
   }
 
   return (
@@ -83,24 +93,77 @@ export const ArrayVisualization = (props: ArrayVisualizationProps) => {
           </Button>
         </Tooltip>
       </Flex>
+      <Flex align="center" mt={3} mx={4}>
+        2-dimensional array:{' '}
+        <Checkbox
+          ml={2}
+          checked={is2dArray}
+          onInput={() => setIs2dArray(!is2dArray)}
+        />
+      </Flex>
 
-      <Center w="full" px={4} flexGrow={1}>
+      <Center w="full" px={4} flexGrow={1} minH={0}>
         {error ? (
           <Text>{error}</Text>
+        ) : !is2dArray ? (
+          // 1-dimensional array
+          <DataGrid
+            className="rdg-light"
+            style={{ blockSize: 'auto' }}
+            rows={(() => {
+              const row: Record<string, string> = {}
+              value.forEach(
+                (item, index) => (row[index.toString()] = item.toString()),
+              )
+              return [row]
+            })()}
+            columns={value.map((_, index) => ({
+              key: index.toString(),
+              name: index.toString(),
+            }))}
+          />
         ) : (
-          <Flex overflowX="scroll">
-            {value.map((item) => (
-              <Box
-                key={item.toString()}
-                border="1px solid"
-                borderColor="blue.700"
-                px={2}
-                py={1}
-              >
-                {item.toString()}
-              </Box>
-            ))}
-          </Flex>
+          // 2-dimensional array
+          <DataGrid
+            className="rdg-light"
+            style={{
+              blockSize: 'auto',
+              height: '100%',
+              minWidth: 0,
+              gridTemplateColumns: 'max-content',
+            }}
+            rows={(() => {
+              const width = Math.max(
+                ...value.map((row) => (row as parsedVariable[]).length),
+              )
+              const rows: Record<string, string>[] = []
+              for (let i = 0; i < value.length; i++) {
+                const rowValues = value[i] as parsedVariable[]
+                const row: Record<string, string> = { row: i.toString() }
+                for (let j = 0; j < Math.max(rowValues.length, width); j++) {
+                  if (j < rowValues.length)
+                    row[j.toString()] = rowValues[j].toString()
+                  else row[j.toString()] = ''
+                }
+                rows.push(row)
+              }
+              return rows
+            })()}
+            columns={(() => {
+              const width = Math.max(
+                ...value.map((row) => (row as parsedVariable[]).length),
+              )
+              const columns: Column<Record<string, string>>[] = [
+                { key: 'row', name: '', frozen: true },
+              ]
+              for (let i = 0; i < width; i++)
+                columns.push({
+                  key: i.toString(),
+                  name: i.toString(),
+                })
+              return columns
+            })()}
+          />
         )}
       </Center>
     </Flex>
