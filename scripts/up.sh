@@ -6,7 +6,7 @@ cd backend
 [ -d "build" ] || npm run build
 
 cd ../frontend
-[ -d "node_modules" ] || npm ci --force
+[ -d "node_modules" ] || npm ci
 
 cd ../
 export GOOGLE_CLIENT_ID=$(aws ssm get-parameter --name /codesketcher-dev/google/client-id --output text --query "Parameter.Value")
