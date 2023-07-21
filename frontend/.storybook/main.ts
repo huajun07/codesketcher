@@ -1,13 +1,13 @@
 
+// import path from 'path'
 import TsconfigPathsPlugin from 'tsconfig-paths-webpack-plugin'
 
-const config = {
-  stories: ['../src/**/*.mdx', '../src/**/*.stories.@(js|jsx|mjs|ts|tsx)'],
+module.exports = {
+  stories: ['../src/**/*.stories.@(js|jsx|mjs|ts|tsx)'],
   addons: [
     '@storybook/addon-links',
     '@storybook/addon-essentials',
     '@storybook/preset-create-react-app',
-    '@storybook/addon-onboarding',
     '@storybook/addon-interactions',
     '@chakra-ui/storybook-addon',
     'storybook-addon-module-mock',
@@ -30,18 +30,13 @@ const config = {
   webpackFinal: async (config, { configType }) => {
     if (config.resolve){
       config.resolve.plugins = [new TsconfigPathsPlugin()]
-      config.resolve.alias['@emotion/core'] = '@emotion/react'
-      config.resolve.alias['emotion-theming'] = '@emotion/react'
+    //   config.resolve.alias['@emotion/core'] = emotionReactPath
+    //   config.resolve.alias['emotion-theming'] = emotionReactPath
+    //   config.resolve.alias['@emotion/styled'] = emotionStyledPath
     }
-    config.module.rules.push({
-      test: /\.mjs$/,
-      include: /node_modules/,
-      type: 'javascript/auto',
-    })
     return config
   },
   features:{
     emotionAlias: false
   }
 }
-export default config
