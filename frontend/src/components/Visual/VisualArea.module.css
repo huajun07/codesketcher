@@ -1,9 +1,17 @@
 .visual-component {
   position: absolute;
   z-index: 100;
+  cursor: all-scroll;
+}
+
+.visual-component-graph {
   min-width: 400px;
   min-height: 300px;
-  cursor: all-scroll;
+}
+
+.visual-component-array {
+  min-width: 400px;
+  min-height: 200px;
 }
 
 .visual-component > * {
@@ -11,5 +19,9 @@
 }
 
 .visual-component-selected > * {
-  cursor: all-scroll;
+  cursor: all-scroll !important;
+}
+
+.visual-component-selected input {
+  cursor: all-scroll !important;
 }

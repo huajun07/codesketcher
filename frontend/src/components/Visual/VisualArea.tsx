@@ -1,6 +1,7 @@
 import './Moveable.css'
 
 import { useRef, useState } from 'react'
+import { MdDataArray } from 'react-icons/md'
 import { PiGraph } from 'react-icons/pi'
 import Moveable from 'react-moveable'
 import Selecto from 'react-selecto'
@@ -8,6 +9,7 @@ import { InfoIcon } from '@chakra-ui/icons'
 import { Box, Button, Flex, Tooltip } from '@chakra-ui/react'
 import { v4 as uuidv4 } from 'uuid'
 
+import { ArrayVisualization } from './ArrayVisualization'
 import { FAQModal } from './FAQModal'
 import { GraphVisualization } from './GraphVisualization'
 import styles from './VisualArea.module.css'
@@ -20,17 +22,30 @@ export const VisualArea = () => {
 
   const [faqOpen, setFAQOpen] = useState(false)
 
-  const [childKeys, setChildKeys] = useState<string[]>([])
+  enum VisualizationType {
+    Graph = 'graph',
+    Array = 'array',
+  }
+  const [visualizations, setVisualizations] = useState<
+    {
+      key: string
+      type: VisualizationType
+    }[]
+  >([])
 
   const eraseVisualization = (key: string) => {
-    const index = childKeys.findIndex((x) => x === key)
-    if (index === -1) return
-    setChildKeys(childKeys.filter((x) => x !== key))
+    setVisualizations(visualizations.filter((x) => x.key !== key))
     setSelectedTargets(selectedTargets.filter((x) => x.dataset.key !== key))
   }
 
-  const addVisualization = () => {
-    setChildKeys([...childKeys, uuidv4()])
+  const addVisualization = (type: VisualizationType) => {
+    setVisualizations([
+      ...visualizations,
+      {
+        key: uuidv4(),
+        type,
+      },
+    ])
   }
 
   return (
@@ -44,8 +59,19 @@ export const VisualArea = () => {
             </Button>
           </Tooltip>
           <Tooltip label="Add a graph">
-            <Button borderRadius={0} onClick={() => addVisualization()}>
+            <Button
+              borderRadius={0}
+              onClick={() => addVisualization(VisualizationType.Graph)}
+            >
               <PiGraph />
+            </Button>
+          </Tooltip>
+          <Tooltip label="Add an array">
+            <Button
+              borderRadius={0}
+              onClick={() => addVisualization(VisualizationType.Array)}
+            >
+              <MdDataArray />
             </Button>
           </Tooltip>
         </Flex>
@@ -57,7 +83,7 @@ export const VisualArea = () => {
           id="visual-area-container"
           bgColor="gray.50"
         >
-          {childKeys.map((key) => {
+          {visualizations.map(({ key, type }) => {
             const isSelected = selectedTargets.some(
               (x) => x.dataset.key === key,
             )
@@ -66,6 +92,7 @@ export const VisualArea = () => {
                 className={
                   'visual-component ' +
                   styles['visual-component'] +
+                  ` ${styles['visual-component-' + type]} ` +
                   (isSelected ? ` ${styles['visual-component-selected']}` : '')
                 }
                 height={300}
@@ -77,10 +104,16 @@ export const VisualArea = () => {
                 borderRadius={8}
                 data-key={key}
               >
-                <GraphVisualization
-                  erase={() => eraseVisualization(key)}
-                  selected={isSelected}
-                />
+                {type === VisualizationType.Graph ? (
+                  <GraphVisualization
+                    erase={() => eraseVisualization(key)}
+                    selected={isSelected}
+                  />
+                ) : type === VisualizationType.Array ? (
+                  <ArrayVisualization erase={() => eraseVisualization(key)} />
+                ) : (
+                  <></>
+                )}
               </Box>
             )
           })}
