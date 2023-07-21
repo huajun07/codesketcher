@@ -1,8 +1,6 @@
 import { Flex } from '@chakra-ui/react'
 import type { Meta, StoryObj } from '@storybook/react'
 
-// import * as stores from 'stores'
-// import { createMock } from 'storybook-addon-module-mock'
 import { VisualArea } from 'components'
 
 // More on how to set up stories at: https://storybook.js.org/docs/react/writing-stories/introduction#default-export

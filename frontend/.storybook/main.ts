@@ -30,9 +30,6 @@ module.exports = {
   webpackFinal: async (config, { configType }) => {
     if (config.resolve){
       config.resolve.plugins = [new TsconfigPathsPlugin()]
-    //   config.resolve.alias['@emotion/core'] = emotionReactPath
-    //   config.resolve.alias['emotion-theming'] = emotionReactPath
-    //   config.resolve.alias['@emotion/styled'] = emotionStyledPath
     }
     return config
   },
