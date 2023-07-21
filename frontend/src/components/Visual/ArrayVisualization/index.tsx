@@ -15,6 +15,8 @@ import { shallow } from 'zustand/shallow'
 
 import { parsedVariable, parsedVariableArray } from 'utils/executor'
 
+import styles from './index.module.css'
+
 interface ArrayVisualizationProps {
   erase: () => void
 }
@@ -108,7 +110,7 @@ export const ArrayVisualization = (props: ArrayVisualizationProps) => {
         ) : !is2dArray ? (
           // 1-dimensional array
           <DataGrid
-            className="rdg-light"
+            className={'rdg-light ' + styles['array']}
             style={{ blockSize: 'auto' }}
             rows={(() => {
               const row: Record<string, string> = {}
@@ -125,7 +127,7 @@ export const ArrayVisualization = (props: ArrayVisualizationProps) => {
         ) : (
           // 2-dimensional array
           <DataGrid
-            className="rdg-light"
+            className={'rdg-light ' + styles['array']}
             style={{
               blockSize: 'auto',
               height: '100%',

@@ -1,0 +1,7 @@
+.array * {
+  border-width: 1px;
+}
+
+.array > div > div {
+  text-align: center;
+}
