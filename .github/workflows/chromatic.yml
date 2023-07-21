@@ -22,7 +22,7 @@ jobs:
       - uses: actions/checkout@v1
       - name: Install dependencies
         # 👇 Install dependencies with the same package manager used in the project (replace it as needed), e.g. yarn, npm, pnpm
-        run: npm ci --force
+        run: npm ci
         # 👇 Adds Chromatic as a step in the workflow
       - name: Publish to Chromatic
         uses: chromaui/action@v1
@@ -30,4 +30,5 @@ jobs:
           # 👇 Runs Chromatic CLI in ./frontend
           workingDir: frontend
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+          autoAcceptChanges: true # 👈 Option to accept all changes
           skip: ${{ github.event.pull_request.draft == true }}
