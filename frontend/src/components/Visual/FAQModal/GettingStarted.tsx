@@ -12,7 +12,11 @@ import {
   Text,
 } from '@chakra-ui/react'
 
-export const GettingStarted = () => {
+export const GettingStarted = ({
+  initialIndexes,
+}: {
+  initialIndexes?: number[]
+}) => {
   return (
     <>
       <Heading as="h3" size="lg">
@@ -41,7 +45,7 @@ export const GettingStarted = () => {
         list/matrix. A few formats are supported for the edge variable:
       </Text>
 
-      <Accordion defaultIndex={[]} allowMultiple mt={4}>
+      <Accordion defaultIndex={initialIndexes || []} allowMultiple mt={4}>
         <AccordionItem>
           <Text as="h5" size="md">
             <AccordionButton>
