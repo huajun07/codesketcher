@@ -12,8 +12,6 @@ import {
   assertAdjacencyMatrix,
 } from 'utils/graph'
 
-import styles from '../VisualArea.module.css'
-
 import { Graph } from './Graph'
 import { GraphSettings, GraphSettingsModal } from './GraphSettingsModal'
 
@@ -25,7 +23,6 @@ enum EdgeFormat {
 interface GraphVisualizationProps {
   erase: () => void
   selected: boolean
-  key: string
 }
 
 export const GraphVisualization = (props: GraphVisualizationProps) => {
@@ -124,106 +121,90 @@ export const GraphVisualization = (props: GraphVisualizationProps) => {
   }
 
   return (
-    <Box
-      className={
-        'visual-component ' +
-        styles['visual-component'] +
-        (props.selected ? ` ${styles['visual-component-selected']}` : '')
-      }
-      height={300}
-      width={400}
-      bgColor="white"
-      border="2px solid"
-      padding={1}
-      borderColor="black.100"
-      borderRadius={8}
-      data-key={props.key}
-    >
-      <Box w="full" h="full" position="relative">
-        <Button
-          onClick={() => setSettingsOpen(!settingsOpen)}
-          mt={4}
-          ml={4}
-          position="absolute"
-          zIndex={1}
-          opacity={0.8}
-        >
-          <SettingsIcon />
-        </Button>
+    <Box w="full" h="full" position="relative">
+      <Button
+        onClick={() => setSettingsOpen(!settingsOpen)}
+        mt={4}
+        ml={4}
+        position="absolute"
+        zIndex={1}
+        opacity={0.8}
+      >
+        <SettingsIcon />
+      </Button>
 
+      <Button
+        onClick={erase}
+        mt={4}
+        mr={4}
+        position="absolute"
+        right="0"
+        zIndex={1}
+        colorScheme="red"
+        opacity={0.8}
+      >
+        <DeleteIcon />
+      </Button>
+
+      <Tooltip label="Zoom in">
         <Button
-          onClick={erase}
-          mt={4}
+          onClick={() => zoom(true)}
+          borderBottomRadius={0}
+          mb={12}
           mr={4}
           position="absolute"
+          bottom="0"
           right="0"
+          size="sm"
+          borderBottom="1px"
+          borderBottomColor="gray.300"
           zIndex={1}
-          colorScheme="red"
           opacity={0.8}
         >
-          <DeleteIcon />
+          <AddIcon />
         </Button>
+      </Tooltip>
+      <Tooltip label="Zoom out">
+        <Button
+          onClick={() => zoom(false)}
+          borderTopRadius={0}
+          mb={4}
+          mr={4}
+          position="absolute"
+          bottom="0"
+          right="0"
+          size="sm"
+          zIndex={1}
+          opacity={0.8}
+        >
+          <MinusIcon />
+        </Button>
+      </Tooltip>
 
-        <Tooltip label="Zoom in">
-          <Button
-            onClick={() => zoom(true)}
-            borderBottomRadius={0}
-            mb={12}
-            mr={4}
-            position="absolute"
-            bottom="0"
-            right="0"
-            size="sm"
-            borderBottom="1px"
-            borderBottomColor="gray.300"
-            zIndex={1}
-            opacity={0.8}
-          >
-            <AddIcon />
-          </Button>
-        </Tooltip>
-        <Tooltip label="Zoom out">
-          <Button
-            onClick={() => zoom(false)}
-            borderTopRadius={0}
-            mb={4}
-            mr={4}
-            position="absolute"
-            bottom="0"
-            right="0"
-            size="sm"
-            zIndex={1}
-            opacity={0.8}
-          >
-            <MinusIcon />
-          </Button>
-        </Tooltip>
-
-        {error && (
-          <Center h="full" w="full" px={8}>
-            <Text>{error}</Text>
-          </Center>
-        )}
-        {!error && (
-          <Graph
-            // If there is no error, then adjacencyList must be defined
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            adjacencyList={adjacencyList!}
-            directed={settings.directed}
-            weighted={settings.weighted}
-            displayData={displayData}
-            cyRef={cyRef}
-            locked={selected}
-          />
-        )}
-
-        <GraphSettingsModal
-          settings={settings}
-          setSettings={setSettings}
-          open={settingsOpen}
-          toggle={() => setSettingsOpen(!settingsOpen)}
+      {error && (
+        <Center h="full" w="full" px={8}>
+          <Text>{error}</Text>
+        </Center>
+      )}
+      {!error && (
+        <Graph
+          // If there is no error, then adjacencyList must be defined
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          adjacencyList={adjacencyList!}
+          directed={settings.directed}
+          weighted={settings.weighted}
+          displayData={displayData}
+          cyRef={cyRef}
+          locked={selected}
         />
-      </Box>
+      )}
+
+      <GraphSettingsModal
+        settings={settings}
+        setSettings={setSettings}
+        open={settingsOpen}
+        toggle={() => setSettingsOpen(!settingsOpen)}
+      />
     </Box>
   )
 }

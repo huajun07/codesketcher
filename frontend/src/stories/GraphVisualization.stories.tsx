@@ -16,6 +16,20 @@ const meta = {
   argTypes: {
     selected: { control: 'boolean' },
   },
+  decorators: [
+    (Story) => {
+      return (
+        <div
+          style={{
+            height: 300,
+            width: 400,
+          }}
+        >
+          <Story />
+        </div>
+      )
+    },
+  ],
 } satisfies Meta<typeof GraphVisualization>
 
 export default meta
@@ -26,7 +40,6 @@ type Story = StoryObj<typeof meta>
 export const Basic: Story = {
   args: {
     selected: false,
-    key: 'hi',
   },
   parameters: {
     moduleMock: {
