@@ -30,8 +30,4 @@ jobs:
           # 👇 Runs Chromatic CLI in ./frontend
           workingDir: frontend
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
-          exitOnceUploaded: true
-          onlyChanged: true
-          traceChanged: true
-          diagnostics: true
           skip: ${{ github.event.pull_request.draft == true }}
