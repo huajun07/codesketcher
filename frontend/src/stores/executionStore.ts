@@ -7,7 +7,7 @@ interface dataVal {
   value: parsedVariable
 }
 
-interface ExecutionState {
+export interface ExecutionState {
   currentStep: number
   setStep: (step: number) => void
   rawInstructions: instruction[]
@@ -19,73 +19,80 @@ interface ExecutionState {
   updateSelectedLineNumbers: (lineNumbers: number[]) => void
 }
 
-export const useExecutionStore = create<ExecutionState>((set, get) => ({
+const defaultValues = {
   currentStep: 0,
-  setStep: (step: number) => {
-    const newData: dataVal[] = []
-    for (let i = 0; i < step; i++) {
-      // local_variable_changes and global_variable_changes will be merged for now,
-      // so that the frontend retains the same behaviour. Will be changed once we decide
-      // how to deal with function scopes in the frontend
-      const newInstruction = {
-        ...get().instructions[i].local_variable_changes,
-        ...get().instructions[i].global_variable_changes,
-      }
-      for (const [name, value] of Object.entries(newInstruction)) {
-        const idx = newData.findIndex((item) => item.name === name)
-        const newValue = { name, value: parseVariableValue(value) }
-        if (idx !== -1) newData[idx] = newValue
-        else newData.push(newValue)
-      }
-    }
-    set({ currentStep: step, data: newData })
-  },
-  rawInstructions: [],
   instructions: [],
-  setInstructions: (instructions: instruction[]) => {
-    const allVariableNames = new Set<string>()
-    for (let i = 0; i < instructions.length; i++) {
-      // local_variable_changes and global_variable_changes will be merged for now,
-      // so that the frontend retains the same behaviour. Will be changed once we decide
-      // how to deal with function scopes in the frontend
-      const newInstruction = {
-        ...instructions[i].local_variable_changes,
-        ...instructions[i].global_variable_changes,
-      }
-      Object.keys(newInstruction).forEach((name) => allVariableNames.add(name))
-    }
-    set({
-      currentStep: 0,
-      rawInstructions: instructions,
-      instructions: processInstructions(
-        instructions,
-        get().selectedLineNumbers,
-      ),
-      data: [],
-      allVariableNames: [...allVariableNames],
-    })
-  },
+  rawInstructions: [],
   data: [],
   allVariableNames: [],
   selectedLineNumbers: [],
-  updateSelectedLineNumbers: (lineNumbers: number[]) => {
-    let unchanged = true
-    if (lineNumbers.length !== get().selectedLineNumbers.length)
-      unchanged = false
-    else {
-      for (let i = 0; i < lineNumbers.length; i++) {
-        if (lineNumbers[i] !== get().selectedLineNumbers[i]) unchanged = false
+}
+
+export const createExecutionStore = (initialState: Partial<ExecutionState>) => {
+  return create<ExecutionState>((set, get) => ({
+    ...defaultValues,
+    setStep: (step: number) => {
+      const newData: dataVal[] = []
+      for (let i = 0; i < step; i++) {
+        // local_variable_changes and global_variable_changes will be merged for now,
+        // so that the frontend retains the same behaviour. Will be changed once we decide
+        // how to deal with function scopes in the frontend
+        const newInstruction = {
+          ...get().instructions[i].local_variable_changes,
+          ...get().instructions[i].global_variable_changes,
+        }
+        for (const [name, value] of Object.entries(newInstruction)) {
+          const idx = newData.findIndex((item) => item.name === name)
+          const newValue = { name, value: parseVariableValue(value) }
+          if (idx !== -1) newData[idx] = newValue
+          else newData.push(newValue)
+        }
       }
-    }
-    if (unchanged) return
-    set({
-      selectedLineNumbers: lineNumbers,
-      instructions: processInstructions(get().rawInstructions, lineNumbers),
-      data: [],
-      currentStep: 0,
-    })
-  },
-}))
+      set({ currentStep: step, data: newData })
+    },
+    setInstructions: (instructions: instruction[]) => {
+      const allVariableNames = new Set<string>()
+      for (let i = 0; i < instructions.length; i++) {
+        // local_variable_changes and global_variable_changes will be merged for now,
+        // so that the frontend retains the same behaviour. Will be changed once we decide
+        // how to deal with function scopes in the frontend
+        const newInstruction = {
+          ...instructions[i].local_variable_changes,
+          ...instructions[i].global_variable_changes,
+        }
+        Object.keys(newInstruction).forEach((name) => allVariableNames.add(name))
+      }
+      set({
+        currentStep: 0,
+        rawInstructions: instructions,
+        instructions: processInstructions(
+          instructions,
+          get().selectedLineNumbers,
+        ),
+        data: [],
+        allVariableNames: [...allVariableNames],
+      })
+    },
+    updateSelectedLineNumbers: (lineNumbers: number[]) => {
+      let unchanged = true
+      if (lineNumbers.length !== get().selectedLineNumbers.length)
+        unchanged = false
+      else {
+        for (let i = 0; i < lineNumbers.length; i++) {
+          if (lineNumbers[i] !== get().selectedLineNumbers[i]) unchanged = false
+        }
+      }
+      if (unchanged) return
+      set({
+        selectedLineNumbers: lineNumbers,
+        instructions: processInstructions(get().rawInstructions, lineNumbers),
+        data: [],
+        currentStep: 0,
+      })
+    },
+    ...initialState
+  }))
+}
 
 function processInstructions(
   rawInstructions: instruction[],
@@ -121,3 +128,5 @@ function processInstructions(
   }
   return newInstructions
 }
+
+export const useExecutionStore = createExecutionStore({})

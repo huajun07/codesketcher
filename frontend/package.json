@@ -8,7 +8,10 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "lint-no-fix": "eslint ./ --ignore-path .gitignore && prettier . -c",
-    "lint": "eslint ./ --ignore-path .gitignore --fix && prettier . -c --write"
+    "lint": "eslint ./ --ignore-path .gitignore --fix && prettier . -c --write",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build",
+    "chromatic": "npx chromatic"
   },
   "author": "",
   "license": "ISC",
@@ -17,7 +20,7 @@
     "@chakra-ui/react": "^2.6.1",
     "@chakra-ui/theme": "^3.1.1",
     "@chakra-ui/theme-tools": "^2.0.17",
-    "@choc-ui/chakra-autocomplete": "^5.1.5",
+    "@choc-ui/chakra-autocomplete": "5.1.5",
     "@codemirror/lang-python": "^6.1.2",
     "@emotion/react": "^11.11.0",
     "@emotion/styled": "^11.11.0",
@@ -44,15 +47,33 @@
     "zustand": "^4.3.8"
   },
   "devDependencies": {
+    "@chakra-ui/storybook-addon": "^5.0.1",
+    "@storybook/addon-essentials": "^7.1.0",
+    "@storybook/addon-interactions": "^7.1.0",
+    "@storybook/addon-links": "^7.1.0",
+    "@storybook/blocks": "^7.1.0",
+    "@storybook/jest": "^0.1.0",
+    "@storybook/preset-create-react-app": "^7.1.0",
+    "@storybook/react": "^7.1.0",
+    "@storybook/react-webpack5": "^7.1.0",
+    "@storybook/testing-library": "^0.2.0",
     "@types/react-cytoscapejs": "^1.2.2",
     "@types/react-dom": "^18.2.4",
     "@types/uuid": "^9.0.2",
+    "babel-plugin-named-exports-order": "^0.0.2",
+    "chromatic": "^6.19.9",
     "eslint": "^8.41.0",
     "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-simple-import-sort": "^10.0.0",
+    "eslint-plugin-storybook": "^0.6.12",
     "prettier": "^2.8.8",
-    "typescript": "^5.0.4"
+    "prop-types": "^15.8.1",
+    "storybook": "^7.1.0",
+    "storybook-addon-module-mock": "^1.0.13",
+    "tsconfig-paths-webpack-plugin": "^4.1.0",
+    "typescript": "^5.0.4",
+    "webpack": "^5.88.2"
   },
   "overrides": {
     "react-scripts": {
@@ -62,7 +83,8 @@
   "eslintConfig": {
     "extends": [
       "react-app",
-      "react-app/jest"
+      "react-app/jest",
+      "plugin:storybook/recommended"
     ]
   },
   "browserslist": {
@@ -76,5 +98,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  }
+  },
+  "version": "",
+  "readme": "ERROR: No README data found!",
+  "_id": "codesketcher-frontend@"
 }

@@ -59,7 +59,10 @@ const dijkstraInput = `\
 3 4 5
 0 4 30`
 
-export const CodeExamples = (props: { toggle: () => void }) => {
+export const CodeExamples = (props: {
+  toggle: () => void
+  initialIndexes?: number[]
+}) => {
   const { setCode, setInput, setIdx } = useUserDataStore(
     (state) => ({
       setCode: state.setCode,
@@ -85,7 +88,7 @@ export const CodeExamples = (props: { toggle: () => void }) => {
       </Heading>
       <Text>Here are some codes and inputs for you to try out!</Text>
 
-      <Accordion defaultIndex={[]} allowMultiple mt={4}>
+      <Accordion defaultIndex={props.initialIndexes || []} allowMultiple mt={4}>
         <AccordionItem>
           <Text as="h4" size="md">
             <AccordionButton>

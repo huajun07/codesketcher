@@ -63,7 +63,6 @@ export const VisualArea = () => {
             )
             return (
               <Box
-                key={key}
                 className={
                   'visual-component ' +
                   styles['visual-component'] +

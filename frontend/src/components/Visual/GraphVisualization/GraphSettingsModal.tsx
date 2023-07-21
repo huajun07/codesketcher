@@ -26,7 +26,7 @@ import {
 import { useExecutionStore } from 'stores'
 import { v4 as uuidv4 } from 'uuid'
 
-enum EdgeFormat {
+export enum EdgeFormat {
   AdjacencyMatrix = 'Adjacency Matrix',
   AdjacencyList = 'Adjacency List',
 }
