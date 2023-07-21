@@ -10,7 +10,6 @@ import { v4 as uuidv4 } from 'uuid'
 
 import { FAQModal } from './FAQModal'
 import { GraphVisualization } from './GraphVisualization'
-import styles from './VisualArea.module.css'
 
 export const VisualArea = () => {
   const moveableRef = useRef<Moveable>(null)
@@ -62,27 +61,11 @@ export const VisualArea = () => {
               (x) => x.dataset.key === key,
             )
             return (
-              <Box
+              <GraphVisualization
+                erase={() => eraseVisualization(key)}
+                selected={isSelected}
                 key={key}
-                className={
-                  'visual-component ' +
-                  styles['visual-component'] +
-                  (isSelected ? ` ${styles['visual-component-selected']}` : '')
-                }
-                height={300}
-                width={400}
-                bgColor="white"
-                border="2px solid"
-                padding={1}
-                borderColor="black.100"
-                borderRadius={8}
-                data-key={key}
-              >
-                <GraphVisualization
-                  erase={() => eraseVisualization(key)}
-                  selected={isSelected}
-                />
-              </Box>
+              />
             )
           })}
           <Moveable

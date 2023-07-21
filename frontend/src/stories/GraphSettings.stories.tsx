@@ -1,26 +1,29 @@
 import type { Meta, StoryObj } from '@storybook/react'
 
-import { GettingStarted } from 'components/Visual/FAQModal/GettingStarted'
+import {
+  EdgeFormat,
+  GraphSettingsModal,
+} from '../components/Visual/GraphVisualization/GraphSettingsModal'
 
 // More on how to set up stories at: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 const meta = {
-  title: 'VisualArea/FAQ/GettingStarted',
-  component: GettingStarted,
+  title: 'VisualArea/GraphVisualization/GraphSettingsModal',
+  component: GraphSettingsModal,
   parameters: {
     // Optional parameter to center the component in the Canvas. More info: https://storybook.js.org/docs/react/configure/story-layout
     layout: 'centered',
   },
   args: {
-    initialIndexes: [0, 1, 2],
+    open: true,
+    settings: {
+      directed: true,
+      weighted: false,
+      edgeFormat: EdgeFormat.AdjacencyList,
+      edgesVariableName: 'adjList',
+      displayVariableNames: ['dist'],
+    },
   },
-  decorators: [
-    (Story) => (
-      <div style={{ maxWidth: '920px' }}>
-        <Story />
-      </div>
-    ),
-  ],
-} satisfies Meta<typeof GettingStarted>
+} satisfies Meta<typeof GraphSettingsModal>
 
 export default meta
 type Story = StoryObj<typeof meta>
