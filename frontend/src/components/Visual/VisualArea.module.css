@@ -2,6 +2,8 @@
   position: absolute;
   z-index: 100;
   cursor: all-scroll;
+  max-height: 100%;
+  max-width: 100%;
 }
 
 .visual-component-graph {
