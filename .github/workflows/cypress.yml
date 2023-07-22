@@ -1,16 +1,23 @@
-name: Cypress Tests
-
-# Event for the workflow
-on: pull_request
+name: Cypress E2E Tests
+on:
+  - pull_request
+  - workflow_call
 
 jobs:
-  cypress-run:
-    runs-on: ubuntu-22.04
+  test:
+    runs-on: ubuntu-latest
+    container: node18.12.0-chrome107
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Cypress run
-        uses: cypress-io/github-action@v5
+      # checkout code
+      - uses: actions/checkout@v3
         with:
-          start: cd frontend && npm run test
-          browser: chrome
+          ref: ${{ github.ref }}
+
+      # setup nodejs
+      - uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+
+      - name: Run Cypress Tests
+        working-directory: ./
+        run: cd frontend && npm run test
