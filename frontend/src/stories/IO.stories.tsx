@@ -76,6 +76,27 @@ export const ChangedInput: Story = {
   },
 }
 
+export const DisabledInput: Story = {
+  args: {
+    output: '',
+    index: 0,
+    editing: false,
+  },
+  parameters: {
+    moduleMock: {
+      mock: () => {
+        const mock = createMock(stores, 'useUserDataStore')
+        mock.mockImplementation(
+          stores.createUserStore({
+            input: 'Hello World',
+          }),
+        )
+        return [mock]
+      },
+    },
+  },
+}
+
 export const Output: Story = {
   args: {
     output: 'Test Output',
