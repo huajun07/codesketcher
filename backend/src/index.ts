@@ -1,5 +1,5 @@
 require('express-async-errors')
-import express, { ErrorRequestHandler } from 'express'
+import express, { ErrorRequestHandler, Request, Response } from 'express'
 import bodyParser from 'body-parser'
 import pinoHttp from 'pino-http'
 import serverlessExpress from '@vendia/serverless-express'
@@ -31,6 +31,10 @@ app.use(docsRouter)
 app.use(executeRouter)
 app.use(publicRoutes)
 app.use('/user', AuthMiddleware.isTokenAuthenticated, userRouter)
+
+app.get(['/ping', '/health', '/'], (_request: Request, response: Response) => {
+	return response.status(200).json({ message: 'pong' })
+})
 
 // handles all celebrate errors (i.e. request validation error)
 const celebrateErrorHandler: ErrorRequestHandler = (err, _req, res, next) => {

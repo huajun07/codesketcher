@@ -27,7 +27,7 @@ Cypress.Commands.add('clearDB', () => {
   cy.getToken().then((id_token) => {
     cy.request({
       method: 'GET',
-      url: 'http://localhost:8000/user/codes',
+      url: `${Cypress.env('backend')}/user/codes`,
       headers: {
         Authorization: `Bearer ${id_token}`,
       },
@@ -36,7 +36,7 @@ Cypress.Commands.add('clearDB', () => {
       for (const file of files) {
         cy.request({
           method: 'DELETE',
-          url: `http://localhost:8000/user/codes/${file}`,
+          url: `${Cypress.env('backend')}/user/codes/${file}`,
           headers: {
             Authorization: `Bearer ${id_token}`,
           },

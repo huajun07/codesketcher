@@ -5,16 +5,12 @@
     "local": "react-scripts start",
     "dev": "NODE_ENV=dev && source ./scripts/fetch-config.sh && react-scripts start",
     "build": "source ./scripts/fetch-config.sh && react-scripts build",
-    "test": "start-server-and-test start-all http://localhost:3000 cypress",
     "eject": "react-scripts eject",
     "lint-no-fix": "eslint ./ --ignore-path .gitignore && prettier . -c",
     "lint": "eslint ./ --ignore-path .gitignore --fix && prettier . -c --write",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "chromatic": "npx chromatic",
-    "cypress": "source ./scripts/fetch-google-config.sh && npx cypress run -b chrome --headless",
-    "cypress:dev": "source ./scripts/fetch-google-config.sh && npx cypress open -b chrome",
-    "start-all": "cd ../ && ./scripts/up.sh"
+    "chromatic": "npx chromatic"
   },
   "author": "",
   "license": "ISC",
@@ -52,7 +48,6 @@
   },
   "devDependencies": {
     "@chakra-ui/storybook-addon": "^5.0.1",
-    "@simonsmith/cypress-image-snapshot": "^7.0.0",
     "@storybook/addon-essentials": "^7.1.0",
     "@storybook/addon-interactions": "^7.1.0",
     "@storybook/addon-links": "^7.1.0",
@@ -67,7 +62,6 @@
     "@types/uuid": "^9.0.2",
     "babel-plugin-named-exports-order": "^0.0.2",
     "chromatic": "^6.19.9",
-    "cypress": "^12.17.2",
     "eslint": "^8.41.0",
     "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-prettier": "^4.2.1",

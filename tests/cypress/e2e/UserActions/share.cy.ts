@@ -26,7 +26,7 @@ describe('Share', () => {
       .then((value) => {
         if (typeof value === 'string') {
           console.log(value)
-          shareLink = value.slice('http://localhost:3000'.length)
+          shareLink = value.slice(Cypress.env('frontend').length)
         }
         cy.visit(shareLink)
       })

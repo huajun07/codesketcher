@@ -6,7 +6,7 @@ export default defineConfig({
   viewportHeight: 900,
 
   e2e: {
-    baseUrl: 'http://localhost:3000',
+    baseUrl: process.env.FRONTEND,
     setupNodeEvents(on) {
       addMatchImageSnapshotPlugin(on)
       on('before:browser:launch', (_browser, launchOptions) => {
@@ -19,5 +19,7 @@ export default defineConfig({
     googleClientId: process.env.GOOGLE_CLIENT_ID,
     googleSecret: process.env.GOOGLE_SECRET,
     googleRefreshToken: process.env.GOOGLE_REFRESH_TOKEN,
+    frontend: process.env.FRONTEND,
+    backend: process.env.BACKEND
   },
 })

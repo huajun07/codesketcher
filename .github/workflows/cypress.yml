@@ -1,4 +1,4 @@
-name: Cypress E2E Tests
+name: E2E Tests
 on:
   - pull_request
   - workflow_call
@@ -6,7 +6,6 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    container: cypress/browsers:node18.12.0-chrome107
     steps:
       # checkout code
       - uses: actions/checkout@v3
@@ -18,8 +17,7 @@ jobs:
         with:
           node-version: "18"
 
-      - name: Run Cypress Tests
-        working-directory: ./frontend
+      - name: Run E2E Tests
+        working-directory: ./
         run: |
-          npm ci
-          npm run test
+          ./scripts/e2e-test.sh
