@@ -4,7 +4,7 @@ import { defineConfig } from 'cypress'
 export default defineConfig({
   viewportWidth: 1640,
   viewportHeight: 900,
-
+  video: false,
   e2e: {
     baseUrl: process.env.FRONTEND,
     setupNodeEvents(on) {
