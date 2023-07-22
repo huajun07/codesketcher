@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react'
+import { MdCenterFocusStrong } from 'react-icons/md'
 import { AddIcon, DeleteIcon, MinusIcon, SettingsIcon } from '@chakra-ui/icons'
 import { Box, Button, Center, Text, Tooltip } from '@chakra-ui/react'
 import cytoscape from 'cytoscape'
@@ -56,6 +57,19 @@ export const GraphVisualization = (props: GraphVisualizationProps) => {
         center: { eles: '$nodes' },
       },
       { duration: 80 },
+    )
+  }
+  const fitAndCenter = () => {
+    if (cyRef.current === null) return
+    const cy = cyRef.current
+    cy.animate(
+      {
+        fit: {
+          eles: cy.elements(),
+          padding: 0,
+        },
+      },
+      { duration: 200 },
     )
   }
 
@@ -122,30 +136,49 @@ export const GraphVisualization = (props: GraphVisualizationProps) => {
 
   return (
     <Box w="full" h="full" position="relative">
-      <Button
-        onClick={() => setSettingsOpen(!settingsOpen)}
-        mt={4}
-        ml={4}
-        position="absolute"
-        zIndex={1}
-        opacity={0.8}
-      >
-        <SettingsIcon />
-      </Button>
+      <Tooltip label="Settings">
+        <Button
+          onClick={() => setSettingsOpen(!settingsOpen)}
+          mt={4}
+          ml={4}
+          position="absolute"
+          zIndex={1}
+          opacity={0.8}
+        >
+          <SettingsIcon />
+        </Button>
+      </Tooltip>
 
-      <Button
-        onClick={erase}
-        mt={4}
-        mr={4}
-        position="absolute"
-        right="0"
-        zIndex={1}
-        colorScheme="red"
-        opacity={0.8}
-      >
-        <DeleteIcon />
-      </Button>
+      <Tooltip label="Delete">
+        <Button
+          onClick={erase}
+          mt={4}
+          mr={4}
+          position="absolute"
+          right="0"
+          zIndex={1}
+          colorScheme="red"
+          opacity={0.8}
+        >
+          <DeleteIcon />
+        </Button>
+      </Tooltip>
 
+      <Tooltip label="Fit and center graph">
+        <Button
+          onClick={fitAndCenter}
+          mb={24}
+          mr={4}
+          position="absolute"
+          bottom="0"
+          right="0"
+          size="sm"
+          zIndex={1}
+          opacity={0.8}
+        >
+          <MdCenterFocusStrong />
+        </Button>
+      </Tooltip>
       <Tooltip label="Zoom in">
         <Button
           onClick={() => zoom(true)}
