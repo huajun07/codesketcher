@@ -164,28 +164,25 @@ export const GraphVisualization = (props: GraphVisualizationProps) => {
         </Button>
       </Tooltip>
 
-      <Tooltip label="Zoom in">
+      <Tooltip label="Fit and center graph">
         <Button
-          onClick={() => zoom(true)}
-          borderBottomRadius={0}
-          mb={20}
+          onClick={fitAndCenter}
+          mb={24}
           mr={4}
           position="absolute"
           bottom="0"
           right="0"
           size="sm"
-          borderBottom="1px"
-          borderBottomColor="gray.300"
           zIndex={1}
           opacity={0.8}
         >
-          <AddIcon />
+          <MdCenterFocusStrong />
         </Button>
       </Tooltip>
-      <Tooltip label="Fit and center graph">
+      <Tooltip label="Zoom in">
         <Button
-          onClick={fitAndCenter}
-          borderRadius={0}
+          onClick={() => zoom(true)}
+          borderBottomRadius={0}
           mb={12}
           mr={4}
           position="absolute"
@@ -197,7 +194,7 @@ export const GraphVisualization = (props: GraphVisualizationProps) => {
           zIndex={1}
           opacity={0.8}
         >
-          <MdCenterFocusStrong />
+          <AddIcon />
         </Button>
       </Tooltip>
       <Tooltip label="Zoom out">
