@@ -30,5 +30,4 @@ jobs:
           # 👇 Runs Chromatic CLI in ./frontend
           workingDir: frontend
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
-          autoAcceptChanges: true # 👈 Option to accept all changes
           skip: ${{ github.event.pull_request.draft == true }}
