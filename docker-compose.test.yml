@@ -1,8 +1,8 @@
 version: "3.8"
 services:
   tests:
-    volumes:
-      - ./tests:/usr/src/app
+    # volumes:
+    #   - ./tests:/usr/src/app
     container_name: "tests"
     build:
       dockerfile: Dockerfile
