@@ -19,5 +19,7 @@ jobs:
           node-version: "18"
 
       - name: Run Cypress Tests
-        working-directory: ./
-        run: cd frontend && npm run test
+        working-directory: ./frontend
+        run: |
+          npm ci
+          npm run test
