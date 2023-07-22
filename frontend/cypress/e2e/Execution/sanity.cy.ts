@@ -45,5 +45,7 @@ describe('Sanity Check', () => {
 
     cy.checkTable([['a', '1', ], ['b', '2'], ['c', '3'], ['d', '6']])
 
+    cy.get('.cm-content').eq(2).contains('Value of d is 6')
+
   })
 })

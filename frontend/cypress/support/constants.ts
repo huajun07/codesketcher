@@ -10,4 +10,4 @@ export const inputCode =
   `b = int(input())\n` +
   `c = int(input())\n` +
   `d = a + b + c\n` +
-  `print(f'Value of d is {d}')`
+  `print(f'Value of d is {{}d{}}')`

@@ -60,6 +60,7 @@ export const CodeShareModal = (props: ModalProps) => {
           <ModalBody>
             <InputGroup size="md">
               <Input
+                aria-label="shareLink"
                 value={shareLink || 'No Share Link'}
                 cursor="auto"
                 isDisabled={!shareLink}
