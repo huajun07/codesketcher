@@ -10,7 +10,8 @@ describe('Files', () => {
     cy.typeIDE('Testing Code', 0)
     cy.typeIDE('Testing Input', 1)
     // Click Save Button
-    cy.contains('Unsaved Changes').parents('div').children('button').first().click()
+    cy.contains('Unsaved Changes')
+    cy.get('button[aria-label="save code"]').click()
     // Enter file name
     cy.get('.chakra-modal__body input').type('test.py')
     cy.contains('Confirm').click()
@@ -35,8 +36,7 @@ describe('Files', () => {
     cy.contains('Confirm').click()
     cy.typeIDE('Testing Code 2', 0)
     cy.typeIDE('Testing Input 2', 1)
-    // Click Save Button
-    cy.contains('Unsaved Changes').parents('div').children('button').first().click()
+    cy.get('button[aria-label="save code"]').click()
 
     // Check that code is saved
     cy.visit('/')
@@ -47,7 +47,7 @@ describe('Files', () => {
 
 
     // Rename file
-    cy.get('.chakra-button').eq(2).click()
+    cy.get('button[aria-label="File Settings"]').click()
     cy.contains('Rename').click()
     cy.get('.chakra-modal__body input').type('test.py')
     cy.contains('Confirm').should('be.disabled')
@@ -67,13 +67,13 @@ describe('Files', () => {
     // Test Reload
     cy.typeIDE('\nTesting Code 3', 0)
     cy.typeIDE('\nTesting Input 3', 1)
-    cy.get('.chakra-button').eq(2).click()
+    cy.get('button[aria-label="File Settings"]').click()
     cy.contains('Reload').click()
     cy.get('.cm-content').eq(0).contains('Testing Code 2')
     cy.get('.cm-content').eq(1).contains('Testing Input 2')
 
     // Test Delete
-    cy.get('.chakra-button').eq(2).click()
+    cy.get('button[aria-label="File Settings"]').click()
     cy.contains('Delete').click()
     cy.contains('Confirm').click()
     cy.contains('Load your code').click()

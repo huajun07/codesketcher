@@ -111,6 +111,7 @@ export const DataTable = () => {
         </Box>
         <Box flex={1}>
           <DataGrid
+            aria-label="main table"
             className={useColorModeValue('rdg-light', 'rdg-dark')}
             columns={columns}
             rows={rows.filter((row) => row.name.startsWith(filterVal))}

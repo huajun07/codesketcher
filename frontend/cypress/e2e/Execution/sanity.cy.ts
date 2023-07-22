@@ -4,21 +4,11 @@ import { fibo, inputCode } from "../../support/constants"
 
 describe('Sanity Check', () => {
   beforeEach(() => {
-    cy.clearDB()
-    cy.login()
+    cy.visit('/')
   })
 
   it('Test Run', () => {
     cy.typeIDE(fibo, 0)
-    
-    // Click Save Button
-    cy.get('button[aria-label="save code"]').click()
-    // Enter file name
-    cy.get('.chakra-modal__body input').type('test.py')
-    cy.contains('Confirm').click()
-    cy.visit('/')
-    cy.contains('Load your codes').click()
-    cy.contains('test.py').click()
 
     cy.contains('Run').click()
 
@@ -40,15 +30,6 @@ describe('Sanity Check', () => {
   it('Test with Input', () => {
     cy.typeIDE(inputCode, 0)
     cy.typeIDE('2\n3', 1)
-
-    // Click Save Button
-    cy.get('button[aria-label="save code"]').click()
-    // Enter file name
-    cy.get('.chakra-modal__body input').type('test.py')
-    cy.contains('Confirm').click()
-    cy.visit('/')
-    cy.contains('Load your codes').click()
-    cy.contains('test.py').click()
 
     cy.contains('Run').click()
     cy.stepInput().invoke('val').should('eq', '1')

@@ -7,5 +7,7 @@ declare namespace Cypress {
     typeIDE(str: string, ide: number): Chainable<any>
     deleteIDE(numChars: number, ide: number): Chainable<any>
     clearDB(): Chainable<any>
+    stepInput(): Chainable<any>
+    checkTable(data: string[][]): Chainable<any>
   }
 }

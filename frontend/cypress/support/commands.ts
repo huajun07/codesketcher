@@ -32,7 +32,7 @@ Cypress.Commands.add('clearDB', () => {
         Authorization: `Bearer ${id_token}`,
       },
     }).then(({ body }) => {
-      const files = body.map((val) => val.codename)
+      const files = body.map((val: {codename: string}) => val.codename)
       for (const file of files) {
         cy.request({
           method: 'DELETE',
@@ -55,4 +55,20 @@ Cypress.Commands.add('typeIDE', (str: string, ide: number) => {
 Cypress.Commands.add('deleteIDE', (numChars: number, ide: number) => {
   const str = '{backspace}'.repeat(numChars)
   cy.get('.cm-content').eq(ide).children().last().click().type(str)
+})
+
+Cypress.Commands.add('stepInput', () => {
+  return cy.get('input[aria-label="Step"]')
+})
+
+
+Cypress.Commands.add('checkTable', (data: string[][]) => {
+  for(let i =0 ;i<data.length;i++){
+    for(let j=0;j<data[i].length;j++){
+      cy.get(`[aria-label="main table"] [aria-rowindex="${i+2}"]`) // 1-indexed and header row excluded so +2
+      .children(`[aria-colindex="${j+2}"]`) // 1-indexed and pin col excluded so +2
+      .invoke('prop', 'outerText')
+      .should('eq', data[i][j])
+    }
+  }
 })
