@@ -67,9 +67,14 @@ export const VisualArea = () => {
     <>
       <Flex direction="column" w="full">
         <FAQModal open={faqOpen} toggle={() => setFAQOpen(!faqOpen)} />
-        <Flex>
+        <Flex bgColor="gray.100">
           <Tooltip label="FAQ">
-            <Button borderRadius={0} onClick={() => setFAQOpen(true)}>
+            <Button
+              borderRadius={0}
+              onClick={() => setFAQOpen(true)}
+              borderRight="1px solid"
+              borderRightColor="gray.300"
+            >
               <InfoIcon />
             </Button>
           </Tooltip>
@@ -77,6 +82,8 @@ export const VisualArea = () => {
             <Button
               borderRadius={0}
               onClick={() => addVisualization(VisualizationType.Graph)}
+              borderRight="1px solid"
+              borderRightColor="gray.300"
             >
               <PiGraph />
             </Button>
@@ -85,6 +92,8 @@ export const VisualArea = () => {
             <Button
               borderRadius={0}
               onClick={() => addVisualization(VisualizationType.Array)}
+              borderRight="1px solid"
+              borderRightColor="gray.300"
             >
               <MdDataArray />
             </Button>
