@@ -15,6 +15,7 @@ import { TextIDE } from './TextIDE'
 interface IOProps {
   output?: string | null
   index: number
+  editing: boolean
   setIndex: (newIndex: number) => void
 }
 
@@ -67,7 +68,7 @@ export const IO = (props: IOProps) => {
                   placeholder="Enter your input here (if any) "
                   text={input}
                   setText={setInput}
-                  editable={true}
+                  editable={props.editing}
                 />
               </Box>
             </TabPanel>
