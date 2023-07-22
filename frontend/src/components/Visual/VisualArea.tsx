@@ -16,6 +16,7 @@ import styles from './VisualArea.module.css'
 
 export const VisualArea = () => {
   const moveableRef = useRef<Moveable>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
   const [selectedTargets, setSelectedTargets] = useState<
     (HTMLElement | SVGElement)[]
   >([])
@@ -48,6 +49,20 @@ export const VisualArea = () => {
     ])
   }
 
+  const boundTranslate = (target: HTMLElement, transform: string) => {
+    let [x, y] = transform
+      .slice('translate('.length + 1, -2)
+      .split(',')
+      .map((s) => Number.parseInt(s.trim().slice(0, -2)))
+    x = Math.max(x, 0)
+    y = Math.max(y, 0)
+    if (containerRef.current !== null) {
+      x = Math.min(x, containerRef.current.offsetWidth - target.offsetWidth)
+      y = Math.min(y, containerRef.current.offsetHeight - target.offsetHeight)
+    }
+    return `translate(${x}px, ${y}px)`
+  }
+
   return (
     <>
       <Flex direction="column" w="full">
@@ -77,6 +92,7 @@ export const VisualArea = () => {
         </Flex>
 
         <Box
+          ref={containerRef}
           flexGrow={1}
           position="relative"
           overflow="hidden"
@@ -123,11 +139,17 @@ export const VisualArea = () => {
             individualGroupable
             draggable
             onDrag={({ target, transform }) => {
-              target.style.transform = transform
+              target.style.transform = boundTranslate(
+                target as HTMLElement,
+                transform,
+              )
             }}
             resizable
             onResize={({ target, width, height, delta, drag }) => {
-              target.style.transform = drag.transform
+              target.style.transform = boundTranslate(
+                drag.target as HTMLElement,
+                drag.transform,
+              )
               delta[0] && (target.style.width = `${width}px`)
               delta[1] && (target.style.height = `${height}px`)
             }}
