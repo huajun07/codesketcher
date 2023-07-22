@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react'
+import { MdCenterFocusStrong } from 'react-icons/md'
 import { AddIcon, DeleteIcon, MinusIcon, SettingsIcon } from '@chakra-ui/icons'
 import { Box, Button, Center, Text, Tooltip } from '@chakra-ui/react'
 import cytoscape from 'cytoscape'
@@ -56,6 +57,19 @@ export const GraphVisualization = (props: GraphVisualizationProps) => {
         center: { eles: '$nodes' },
       },
       { duration: 80 },
+    )
+  }
+  const fitAndCenter = () => {
+    if (cyRef.current === null) return
+    const cy = cyRef.current
+    cy.animate(
+      {
+        fit: {
+          eles: cy.elements(),
+          padding: 0,
+        },
+      },
+      { duration: 200 },
     )
   }
 
@@ -154,7 +168,7 @@ export const GraphVisualization = (props: GraphVisualizationProps) => {
         <Button
           onClick={() => zoom(true)}
           borderBottomRadius={0}
-          mb={12}
+          mb={20}
           mr={4}
           position="absolute"
           bottom="0"
@@ -166,6 +180,24 @@ export const GraphVisualization = (props: GraphVisualizationProps) => {
           opacity={0.8}
         >
           <AddIcon />
+        </Button>
+      </Tooltip>
+      <Tooltip label="Fit and center graph">
+        <Button
+          onClick={fitAndCenter}
+          borderRadius={0}
+          mb={12}
+          mr={4}
+          position="absolute"
+          bottom="0"
+          right="0"
+          size="sm"
+          borderBottom="1px"
+          borderBottomColor="gray.300"
+          zIndex={1}
+          opacity={0.8}
+        >
+          <MdCenterFocusStrong />
         </Button>
       </Tooltip>
       <Tooltip label="Zoom out">
