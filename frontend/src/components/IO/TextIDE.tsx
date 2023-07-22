@@ -14,7 +14,10 @@ export const TextIDE = (props: textIDEProps) => {
     <CodeMirror
       value={props.text}
       height="100%"
-      style={{ height: '100%' }}
+      style={{
+        height: '100%',
+        ...(!props.editable && { cursor: 'not-allowed' }),
+      }}
       editable={props.editable}
       readOnly={!props.editable}
       placeholder={props.placeholder}
