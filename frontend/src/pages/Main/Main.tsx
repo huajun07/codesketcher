@@ -183,7 +183,12 @@ export const Main = () => {
         <Flex position="relative" flex={1}>
           <Flex w="500px" borderRightWidth="1px" flexDirection="column">
             <DataTable />
-            <IO output={output} index={ioIndex} setIndex={setIOIndex} />
+            <IO
+              output={output}
+              index={ioIndex}
+              setIndex={setIOIndex}
+              editing={editing}
+            />
           </Flex>
           <Flex flex={1} flexDirection="column" minW="500px">
             <Flex flex={1}>

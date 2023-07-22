@@ -13,7 +13,11 @@ const meta = {
     layout: 'centered',
   },
   // More on argTypes: https://storybook.js.org/docs/react/api/argtypes
-  argTypes: { output: { control: 'string' }, index: { control: 'number' } },
+  argTypes: {
+    output: { control: 'string' },
+    index: { control: 'number' },
+    editing: { control: 'boolean' },
+  },
   decorators: [
     (Story) => (
       <div style={{ minWidth: '500px', minHeight: '500px' }}>
@@ -32,6 +36,7 @@ export const Input: Story = {
   args: {
     output: '',
     index: 0,
+    editing: true,
   },
   parameters: {
     moduleMock: {
@@ -52,6 +57,7 @@ export const ChangedInput: Story = {
   args: {
     output: '',
     index: 0,
+    editing: true,
   },
   parameters: {
     moduleMock: {
@@ -70,9 +76,31 @@ export const ChangedInput: Story = {
   },
 }
 
+export const DisabledInput: Story = {
+  args: {
+    output: '',
+    index: 0,
+    editing: false,
+  },
+  parameters: {
+    moduleMock: {
+      mock: () => {
+        const mock = createMock(stores, 'useUserDataStore')
+        mock.mockImplementation(
+          stores.createUserStore({
+            input: 'Hello World',
+          }),
+        )
+        return [mock]
+      },
+    },
+  },
+}
+
 export const Output: Story = {
   args: {
     output: 'Test Output',
     index: 1,
+    editing: true,
   },
 }
