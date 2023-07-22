@@ -23,3 +23,8 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 build-storybook.log*
+
+__diff_output__
+screenshots
+videos
+downloads

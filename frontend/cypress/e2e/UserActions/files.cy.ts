@@ -25,6 +25,7 @@ describe('Files', () => {
     cy.get('.cm-content').eq(1).contains('Testing Input').should('not.exist')
     cy.contains('Load your codes').click()
     cy.contains('test.py').click()
+    cy.wait(500)
     cy.get('.cm-content').eq(0).contains('Testing Code')
     cy.get('.cm-content').eq(1).contains('Testing Input')
     cy.get('.cm-content').eq(0).contains('Testing Code 2').should('not.exist')
@@ -42,6 +43,7 @@ describe('Files', () => {
     cy.visit('/')
     cy.contains('Load your codes').click()
     cy.contains('test2.py').click()
+    cy.wait(500)
     cy.get('.cm-content').eq(0).contains('Testing Code 2')
     cy.get('.cm-content').eq(1).contains('Testing Input 2')
 
@@ -61,6 +63,7 @@ describe('Files', () => {
     cy.visit('/')
     cy.contains('Load your codes').click()
     cy.contains('test3.py').click()
+    cy.wait(500)
     cy.get('.cm-content').eq(0).contains('Testing Code 2')
     cy.get('.cm-content').eq(1).contains('Testing Input 2')
 
@@ -69,6 +72,7 @@ describe('Files', () => {
     cy.typeIDE('\nTesting Input 3', 1)
     cy.get('button[aria-label="File Settings"]').click()
     cy.contains('Reload').click()
+    cy.wait(500)
     cy.get('.cm-content').eq(0).contains('Testing Code 2')
     cy.get('.cm-content').eq(1).contains('Testing Input 2')
 

@@ -70,6 +70,7 @@ export const VisualArea = () => {
         <Flex bgColor="gray.100">
           <Tooltip label="FAQ">
             <Button
+              aria-label="faq"
               borderRadius={0}
               onClick={() => setFAQOpen(true)}
               borderRight="1px solid"
@@ -80,6 +81,7 @@ export const VisualArea = () => {
           </Tooltip>
           <Tooltip label="Add a graph">
             <Button
+              aria-label="add graph"
               borderRadius={0}
               onClick={() => addVisualization(VisualizationType.Graph)}
               borderRight="1px solid"
@@ -90,6 +92,7 @@ export const VisualArea = () => {
           </Tooltip>
           <Tooltip label="Add an array">
             <Button
+              aria-label="add array"
               borderRadius={0}
               onClick={() => addVisualization(VisualizationType.Array)}
               borderRight="1px solid"

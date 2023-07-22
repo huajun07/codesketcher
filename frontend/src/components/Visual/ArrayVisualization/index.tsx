@@ -98,6 +98,7 @@ export const ArrayVisualization = (props: ArrayVisualizationProps) => {
       <Flex align="center" mt={3} mx={4}>
         2-dimensional array:{' '}
         <Checkbox
+          aria-label="2d-array"
           ml={2}
           checked={is2dArray}
           onInput={() => setIs2dArray(!is2dArray)}

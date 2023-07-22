@@ -105,6 +105,7 @@ export const GraphSettingsModal = (props: GraphSettingsProps) => {
               </Tooltip>
             </Stack>
             <AutoCompleteVariables
+              label="edge variable"
               value={settings.edgesVariableName}
               update={(value) => {
                 modifySettings({ edgesVariableName: value })
@@ -116,6 +117,7 @@ export const GraphSettingsModal = (props: GraphSettingsProps) => {
             <Text as="b">Graph Properties</Text>
             <Flex direction="column">
               <Checkbox
+                aria-label="directed"
                 defaultChecked={settings.directed}
                 onChange={() =>
                   modifySettings({ directed: !settings.directed })
@@ -124,6 +126,7 @@ export const GraphSettingsModal = (props: GraphSettingsProps) => {
                 Directed
               </Checkbox>
               <Checkbox
+                aria-label="weighted"
                 defaultChecked={settings.weighted}
                 onChange={() =>
                   modifySettings({ weighted: !settings.weighted })
@@ -213,6 +216,7 @@ interface AutoCompleteVariablesProps {
   value: string
   update: (newValue: string) => void
   inputProps?: React.ComponentProps<typeof AutoCompleteInput>
+  label?: string
 }
 const AutoCompleteVariables = (props: AutoCompleteVariablesProps) => {
   const { value, update, inputProps } = props
@@ -232,6 +236,7 @@ const AutoCompleteVariables = (props: AutoCompleteVariablesProps) => {
     >
       <AutoCompleteInput
         placeholder="Search..."
+        aria-label={props.label}
         onChange={(event) => update(event.target.value)}
         {...inputProps}
       />
