@@ -11,7 +11,8 @@
     "lint": "eslint ./ --ignore-path .gitignore --fix && prettier . -c --write",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "chromatic": "npx chromatic"
+    "chromatic": "npx chromatic",
+    "cypress": "source ./scripts/fetch-google-config.sh && npx cypress open"
   },
   "author": "",
   "license": "ISC",
@@ -62,6 +63,7 @@
     "@types/uuid": "^9.0.2",
     "babel-plugin-named-exports-order": "^0.0.2",
     "chromatic": "^6.19.9",
+    "cypress": "^12.17.2",
     "eslint": "^8.41.0",
     "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-prettier": "^4.2.1",
