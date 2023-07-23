@@ -19,7 +19,7 @@ export const ArrayWidget = () => {
         />
       </Center>
 
-      <Text>For 2-dimesional arrays, tick the checkbox.</Text>
+      <Text>For 2-dimensional arrays, tick the checkbox.</Text>
       <Center>
         <Image
           src="faq/array_2d.png"
