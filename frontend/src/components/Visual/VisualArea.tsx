@@ -176,6 +176,9 @@ export const VisualArea = () => {
               const moveable = moveableRef.current
               if (moveable === null) return
               const target = event.inputEvent.target as HTMLElement
+              if (target.tagName.toLowerCase() === 'input') {
+                target.focus()
+              }
               if (
                 moveable.isMoveableElement(target) ||
                 selectedTargets.some((t) => t === target || t.contains(target))
