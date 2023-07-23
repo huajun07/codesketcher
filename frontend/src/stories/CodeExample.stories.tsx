@@ -29,4 +29,14 @@ type Story = StoryObj<typeof meta>
 
 // More on writing stories with args: https://storybook.js.org/docs/react/writing-stories/args
 
-export const Basic: Story = {}
+export const Dijkstra: Story = {
+  args: {
+    initialIndexes: [0],
+  },
+}
+
+export const Fibonacci: Story = {
+  args: {
+    initialIndexes: [1],
+  },
+}
