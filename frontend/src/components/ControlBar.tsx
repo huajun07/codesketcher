@@ -144,6 +144,7 @@ export const ControlBar = (props: ControlBarProps) => {
               max={props.length}
               isDisabled={props.disabled}
               onChange={(v) => setStep(Number(v))}
+              aria-label="Step"
             >
               <NumberInputField />
               <NumberInputStepper>

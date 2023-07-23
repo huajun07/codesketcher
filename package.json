@@ -3,5 +3,8 @@
   "version": "1.0.2",
   "description": "Visualise your code in action!",
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "scripts": {
+    "cypress": "./scripts/e2e-tests.sh local"
+  }
 }

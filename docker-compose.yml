@@ -28,6 +28,12 @@ services:
     depends_on:
       db_service:
         condition: service_healthy
+    healthcheck:
+      test: curl --fail http://localhost:8000/ || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
     ports:
       - "8000:8000"
     environment:
@@ -52,6 +58,14 @@ services:
     image: "frontend"
     ports:
       - "3000:3000"
+    links:
+      - backend_api
     environment:
-      REACT_APP_EXECUTOR_ENDPOINT: "http://localhost:8000"
+      REACT_APP_EXECUTOR_ENDPOINT: "http://backend_api:8000"
       REACT_APP_GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+    healthcheck:
+      test: curl --fail http://localhost:3000/ || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s

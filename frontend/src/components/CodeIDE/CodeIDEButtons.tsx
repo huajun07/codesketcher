@@ -202,6 +202,7 @@ export const CodeIDEButtons = (props: CodeIDEButtonProps) => {
             </Menu>
             <Menu>
               <MenuButton
+                aria-label="File Settings"
                 as={IconButton}
                 bg={props.editing ? 'white' : 'gray.100'}
                 isDisabled={!props.editing}
@@ -258,7 +259,7 @@ export const CodeIDEButtons = (props: CodeIDEButtonProps) => {
                 colorScheme="teal"
                 isDisabled={!isDiff}
                 icon={<BiSave size={28} />}
-                aria-label="save"
+                aria-label="save code"
                 onClick={
                   curIdx === 0
                     ? saveFunc
