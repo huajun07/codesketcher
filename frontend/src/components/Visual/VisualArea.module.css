@@ -23,7 +23,3 @@
 .visual-component-selected > * {
   cursor: all-scroll !important;
 }
-
-.visual-component-selected input {
-  cursor: all-scroll !important;
-}
