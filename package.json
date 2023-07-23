@@ -5,6 +5,6 @@
   "author": "",
   "license": "ISC",
   "scripts": {
-    "cypress": "cd frontend && npm run test"
+    "cypress": "./scripts/e2e-tests.sh local"
   }
 }

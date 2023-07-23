@@ -21,7 +21,7 @@ describe('Share', () => {
     cy.contains('Share Link Generated')
 
     let shareLink = ''
-    cy.get('[aria-label="shareLink"]')
+    cy.get('[aria-label="share link"]')
       .invoke('val')
       .then((value) => {
         if (typeof value === 'string') {
@@ -45,7 +45,7 @@ describe('Share', () => {
     cy.contains('Share Link Generated')
 
     shareLink = ''
-    cy.get('[aria-label="shareLink"]')
+    cy.get('[aria-label="share link"]')
       .invoke('val')
       .then((value) => {
         if (typeof value === 'string')

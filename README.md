@@ -31,3 +31,7 @@ Then setup the following in your shell:
 
 - Deployment is done via serverless (backend & services) and amplify (frontend)
 - CI is done using github actions
+
+## Tests
+
+- Run cypress tests locally with `npm run cypress` in top-level directory
