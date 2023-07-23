@@ -1,7 +1,7 @@
 import pytest
 from textwrap import dedent
 from executor.main import execute
-from util import MatchesFunctionString
+from util import MatchesFunctionString, MatchesRegex
 
 
 def test_variable_declaration():
@@ -747,3 +747,92 @@ def test_unclonable_imports():
 
     assert result["output"] == "Worker thread\nWorker thread\n"
     assert "error" not in result
+
+
+def test_list_comprehension():
+    result = execute(
+        {
+            "code": dedent(
+                """\
+                    a = [i for i in range(5)]"""
+            )
+        }
+    )
+
+    assert result == {
+        "executed": True,
+        "data": [
+            {
+                "line_number": 1,
+                "local_variable_changes": {
+                    ".0": {
+                        "type": "range_iterator",
+                        "value": MatchesRegex(
+                            "<range\\_iterator object at 0x[0-9a-f]+>"
+                        ),
+                    }
+                },
+                "global_variable_changes": {},
+                "function_scope": [],
+            },
+            {
+                "line_number": 1,
+                "local_variable_changes": {"i": {"type": "int", "value": 0}},
+                "global_variable_changes": {},
+                "function_scope": ["<listcomp>"],
+            },
+            {
+                "line_number": 1,
+                "local_variable_changes": {"i": {"type": "int", "value": 1}},
+                "global_variable_changes": {},
+                "function_scope": ["<listcomp>"],
+            },
+            {
+                "line_number": 1,
+                "local_variable_changes": {"i": {"type": "int", "value": 2}},
+                "global_variable_changes": {},
+                "function_scope": ["<listcomp>"],
+            },
+            {
+                "line_number": 1,
+                "local_variable_changes": {"i": {"type": "int", "value": 3}},
+                "global_variable_changes": {},
+                "function_scope": ["<listcomp>"],
+            },
+            {
+                "line_number": 1,
+                "local_variable_changes": {"i": {"type": "int", "value": 4}},
+                "global_variable_changes": {},
+                "function_scope": ["<listcomp>"],
+            },
+            {
+                "line_number": 1,
+                "local_variable_changes": {
+                    "a": {
+                        "type": "list",
+                        "value": [
+                            {"type": "int", "value": 0},
+                            {"type": "int", "value": 1},
+                            {"type": "int", "value": 2},
+                            {"type": "int", "value": 3},
+                            {"type": "int", "value": 4},
+                        ],
+                    }
+                },
+                "global_variable_changes": {
+                    "a": {
+                        "type": "list",
+                        "value": [
+                            {"type": "int", "value": 0},
+                            {"type": "int", "value": 1},
+                            {"type": "int", "value": 2},
+                            {"type": "int", "value": 3},
+                            {"type": "int", "value": 4},
+                        ],
+                    }
+                },
+                "function_scope": ["<listcomp>"],
+            },
+        ],
+        "output": "",
+    }

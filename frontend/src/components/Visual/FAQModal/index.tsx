@@ -12,8 +12,10 @@ import {
   Tabs,
 } from '@chakra-ui/react'
 
+import { ArrayWidget } from './ArrayWidget'
 import { CodeExamples } from './CodeExample'
 import { GettingStarted } from './GettingStarted'
+import { GraphWidget } from './GraphWidget'
 
 interface FAQModalProps {
   open: boolean
@@ -35,11 +37,19 @@ export const FAQModal = (props: FAQModalProps) => {
           >
             <TabList>
               <Tab>Getting Started</Tab>
+              <Tab>Graph Widget</Tab>
+              <Tab>Array Widget</Tab>
               <Tab>Code Examples</Tab>
             </TabList>
             <TabPanels>
               <TabPanel>
                 <GettingStarted />
+              </TabPanel>
+              <TabPanel>
+                <GraphWidget />
+              </TabPanel>
+              <TabPanel>
+                <ArrayWidget />
               </TabPanel>
               <TabPanel>
                 <CodeExamples toggle={toggle} />

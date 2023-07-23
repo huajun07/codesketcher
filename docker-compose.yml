@@ -1,0 +1,71 @@
+version: "3.8"
+services:
+  db_service:
+    image: "postgres:15.1-alpine"
+    restart: always
+    environment:
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "password"
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD", "pg_isready", "-q", "-d", "postgres", "-U", "postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  executor:
+    container_name: "executor"
+    build:
+      dockerfile: Dockerfile
+      context: ./services/executor
+    image: "executor"
+  backend_api:
+    container_name: "backend_api"
+    build:
+      dockerfile: Dockerfile
+      context: ./backend
+    image: "backend_api"
+    depends_on:
+      db_service:
+        condition: service_healthy
+    healthcheck:
+      test: curl --fail http://localhost:8000/ || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    ports:
+      - "8000:8000"
+    environment:
+      NODE_ENV: "local"
+      EXECUTOR_ENDPOINT: "http://executor:8080"
+      EXECUTOR_NAME: "function" # Default lambda name Ref: https://docs.aws.amazon.com/lambda/latest/dg/images-test.html#images-test-AWSbase
+      DB_HOST: "db_service"
+      DB_USERNAME: "postgres"
+      DB_PASSWORD: "password"
+      DB_NAME: "codesketcher"
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+      AWS_ACCESS_KEY_ID: "test" # Need dummy values to prevent CredentialsProviderError
+      AWS_SECRET_ACCESS_KEY: "test"
+    links:
+      - db_service
+      - executor
+  frontend:
+    container_name: "frontend"
+    build:
+      dockerfile: Dockerfile
+      context: ./frontend
+    image: "frontend"
+    ports:
+      - "3000:3000"
+    links:
+      - backend_api
+    environment:
+      REACT_APP_EXECUTOR_ENDPOINT: "http://localhost:8000"
+      REACT_APP_GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+    healthcheck:
+      test: curl --fail http://localhost:3000/ || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s

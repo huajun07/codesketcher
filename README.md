@@ -19,7 +19,19 @@ Then setup the following in your shell:
 - Set the `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` environment variables manually OR
 - Save the credentials in `~/.aws/credentials` (details [here](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-configure.html))
 
+## Local Deployment
+
+- All the services can be started with the following command
+
+```sh
+./scripts/up.sh
+```
+
 ## Deployment
 
 - Deployment is done via serverless (backend & services) and amplify (frontend)
 - CI is done using github actions
+
+## Tests
+
+- Run cypress tests locally with `npm run cypress` in top-level directory

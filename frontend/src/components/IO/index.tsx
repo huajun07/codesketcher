@@ -15,6 +15,7 @@ import { TextIDE } from './TextIDE'
 interface IOProps {
   output?: string | null
   index: number
+  editing: boolean
   setIndex: (newIndex: number) => void
 }
 
@@ -60,14 +61,14 @@ export const IO = (props: IOProps) => {
             bg="gray.200"
             borderRadius="1px"
           />
-          <TabPanels overflowY="scroll" height="100%" maxH="390px">
+          <TabPanels overflowY="scroll" height="100%" maxH="calc(60vh - 148px)">
             <TabPanel padding={0} height="100%">
               <Box height="100%">
                 <TextIDE
                   placeholder="Enter your input here (if any) "
                   text={input}
                   setText={setInput}
-                  editable={true}
+                  editable={props.editing}
                 />
               </Box>
             </TabPanel>

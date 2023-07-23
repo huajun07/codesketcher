@@ -59,7 +59,16 @@ const dijkstraInput = `\
 3 4 5
 0 4 30`
 
-export const CodeExamples = (props: { toggle: () => void }) => {
+const fibonacciCode = `\
+# use this example to test out array visualization!
+fibo = [0, 1]
+for i in range(20):
+  fibo.append(fibo[-1] + fibo[-2])`
+
+export const CodeExamples = (props: {
+  toggle: () => void
+  initialIndexes?: number[]
+}) => {
   const { setCode, setInput, setIdx } = useUserDataStore(
     (state) => ({
       setCode: state.setCode,
@@ -85,7 +94,7 @@ export const CodeExamples = (props: { toggle: () => void }) => {
       </Heading>
       <Text>Here are some codes and inputs for you to try out!</Text>
 
-      <Accordion defaultIndex={[]} allowMultiple mt={4}>
+      <Accordion defaultIndex={props.initialIndexes || []} allowMultiple mt={4}>
         <AccordionItem>
           <Text as="h4" size="md">
             <AccordionButton>
@@ -145,17 +154,67 @@ export const CodeExamples = (props: { toggle: () => void }) => {
               <Image
                 src="faq/dijkstra_settings.png"
                 alt="Dijkstra settings"
-                width="50%"
+                width="40%"
                 display="inline"
+                borderRight="1px"
+                borderRightColor="blackAlpha.400"
+                paddingRight={4}
               />
               <Image
                 src="faq/dijkstra_graph.png"
                 alt="Dijkstra graph"
-                width="35%"
+                width="45%"
                 display="inline"
-                borderLeft="1px"
-                borderLeftColor="blackAlpha.400"
-                paddingLeft={4}
+                marginLeft={2}
+              />
+            </Center>
+            <br />
+          </AccordionPanel>
+        </AccordionItem>
+        <AccordionItem>
+          <Text as="h4" size="md">
+            <AccordionButton>
+              <Box as="b" flex="1" textAlign="left">
+                Fibonnaci Numbers
+              </Box>
+              <AccordionIcon />
+            </AccordionButton>
+          </Text>
+          <AccordionPanel pb={4}>
+            <HStack spacing={0} marginBottom={2}>
+              <Center>Code: </Center>
+              <IconButton
+                icon={<CopyIcon />}
+                aria-label="copy"
+                size="sm"
+                variant="link"
+                onClick={() => {
+                  navigator.clipboard.writeText(fibonacciCode)
+                  copyToast()
+                }}
+              />
+              <Spacer />
+              <Button
+                colorScheme="blue"
+                onClick={() => {
+                  setIdx(0)
+                  setCode(fibonacciCode)
+                  props.toggle()
+                }}
+              >
+                Load Code
+              </Button>
+            </HStack>
+            <Code display="block" whiteSpace="pre">
+              {fibonacciCode}
+            </Code>
+            <br />
+            <Center>
+              <Image
+                src="faq/fibonacci_array.png"
+                alt="Fibonacci numbers array"
+                width="40%"
+                display="inline"
               />
             </Center>
             <br />

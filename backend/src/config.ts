@@ -35,17 +35,25 @@ const config = convict({
 		default: 8000,
 		env: 'PORT',
 	},
-	executorRegion: {
-		doc: "The region hosting the executor service's Lambda",
-		format: '*',
-		default: 'ap-southeast-1',
-		env: 'EXECUTOR_REGION',
-	},
-	executorName: {
-		doc: "Name of the executor service's Lambda",
-		format: '*',
-		default: 'executor',
-		env: 'EXECUTOR_NAME',
+	aws: {
+		executorRegion: {
+			doc: "The region hosting the executor service's Lambda",
+			format: '*',
+			default: 'ap-southeast-1',
+			env: 'EXECUTOR_REGION',
+		},
+		executorName: {
+			doc: "Name of the executor service's Lambda",
+			format: '*',
+			default: 'executor',
+			env: 'EXECUTOR_NAME',
+		},
+		executorEndpoint: {
+			doc: 'Endpoint for testing and local development',
+			format: String,
+			default: undefined,
+			env: 'EXECUTOR_ENDPOINT',
+		},
 	},
 	googleClientID: {
 		env: 'GOOGLE_CLIENT_ID',
@@ -62,19 +70,19 @@ const config = convict({
 		},
 		username: {
 			env: 'DB_USERNAME',
-			default: '',
+			default: 'postgres',
 			sensitive: true,
 			format: String,
 		},
 		password: {
 			env: 'DB_PASSWORD',
-			default: '',
+			default: 'password',
 			sensitive: true,
 			format: String,
 		},
 		name: {
 			env: 'DB_NAME',
-			default: '',
+			default: 'codesketcher',
 			sensitive: true,
 			format: 'required-string',
 		},

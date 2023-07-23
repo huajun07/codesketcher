@@ -1,13 +1,21 @@
 import { sequelize } from '../db/loader'
 import { Code } from '../db/models'
-import { BadRequest, LargePayload, NotFound, ResourceConflict } from '../errors'
+import {
+	BadRequest,
+	LargePayload,
+	NotFound,
+	RequestTimeout,
+	ResourceConflict,
+} from '../errors'
+import randomstring from 'randomstring'
 
 const getAllCodes = async (uid: string) => {
 	const codes = await Code.findAll({
-		attributes: ['codename', 'code', 'input'],
+		attributes: ['codename', 'code', 'input', ['share_id', 'shareId']],
 		where: {
 			uid,
 		},
+		order: [['codename', 'ASC']],
 	})
 	return codes
 }
@@ -23,6 +31,10 @@ const addCode = async (
 	code: string,
 	input: string | undefined = undefined
 ) => {
+	if (codename.match(/[^a-zA-Z0-9\-._]/))
+		throw new BadRequest(
+			"Codename can only contain alphanumeric and '_', '.' and '-'"
+		)
 	if (codename.length > NAME_LEN_LIMIT)
 		throw new LargePayload('Code name exceed limit')
 	if (code.length > LEN_LIMIT)
@@ -78,7 +90,11 @@ const updateCode = async (
 }
 
 const updateCodename = async (uid: string, codename: string, name: string) => {
-	if (codename.length > NAME_LEN_LIMIT)
+	if (name.match(/[^a-zA-Z0-9\-._]/))
+		throw new BadRequest(
+			"Codename can only contain alphanumeric and '_', '.' and '-'"
+		)
+	if (name.length > NAME_LEN_LIMIT)
 		throw new LargePayload('Code name exceed limit')
 	try {
 		const [affectedCount, data] = await Code.update(
@@ -102,4 +118,31 @@ const updateCodename = async (uid: string, codename: string, name: string) => {
 		throw err
 	}
 }
-export { getAllCodes, addCode, deleteCode, updateCode, updateCodename }
+
+const genShareCode = async (uid: string, codename: string) => {
+	const TIMEOUT_ATTEMPTS = 40
+	const code = await Code.findOne({ where: { uid, codename } })
+	if (!code) throw new NotFound()
+	const curId = code.shareId
+	let attempts = 0
+	while (attempts < TIMEOUT_ATTEMPTS) {
+		const newId = randomstring.generate(32)
+		if (newId === curId) continue
+		const [affectedCount] = await Code.update(
+			{ shareId: newId },
+			{ where: { uid, codename } }
+		)
+		if (affectedCount !== 0) return { shareId: newId }
+		attempts++
+	}
+	throw new RequestTimeout()
+}
+
+export {
+	getAllCodes,
+	addCode,
+	deleteCode,
+	updateCode,
+	updateCodename,
+	genShareCode,
+}

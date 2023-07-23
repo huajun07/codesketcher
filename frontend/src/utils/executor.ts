@@ -88,7 +88,7 @@ const getInstructions = async (
 // This cannot be defined simply as one type, because Typescript has issues
 // with circular references.
 type parsedVariablePrimitive = boolean | number | string
-type parsedVariableArray = Array<parsedVariable>
+export type parsedVariableArray = Array<parsedVariable>
 type parsedVariableRecord = { [key: string]: parsedVariable }
 type parsedVariable =
   | parsedVariablePrimitive

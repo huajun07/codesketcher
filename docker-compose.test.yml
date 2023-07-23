@@ -1,0 +1,25 @@
+version: "3.8"
+services:
+  frontend:
+    environment:
+      REACT_APP_EXECUTOR_ENDPOINT: "http://backend_api:8000"
+  tests:
+    container_name: "tests"
+    build:
+      dockerfile: Dockerfile
+      context: ./tests
+    image: "tests"
+    depends_on:
+      frontend:
+        condition: service_healthy
+      backend_api:
+        condition: service_healthy
+    environment:
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+      GOOGLE_REFRESH_TOKEN: ${GOOGLE_REFRESH_TOKEN}
+      GOOGLE_SECRET: ${GOOGLE_SECRET}
+      FRONTEND: "http://frontend:3000"
+      BACKEND: "http://backend_api:8000"
+    links:
+      - frontend
+      - backend_api

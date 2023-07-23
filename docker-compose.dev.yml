@@ -1,0 +1,11 @@
+version: "3.8"
+services:
+  executor:
+    volumes:
+      - ./services/executor/executor:/var/task
+  backend_api:
+    volumes:
+      - ./backend:/usr/src/app
+  frontend:
+    volumes:
+      - ./frontend:/usr/src/app

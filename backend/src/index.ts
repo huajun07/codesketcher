@@ -1,5 +1,5 @@
 require('express-async-errors')
-import express, { ErrorRequestHandler } from 'express'
+import express, { ErrorRequestHandler, Request, Response } from 'express'
 import bodyParser from 'body-parser'
 import pinoHttp from 'pino-http'
 import serverlessExpress from '@vendia/serverless-express'
@@ -9,6 +9,7 @@ import logger from './logger'
 import docsRouter from './docs/docs.route'
 import executeRouter from './execute/execute.route'
 import userRouter from './user/user.route'
+import publicRoutes from './public/public.routes'
 import { sequelizeLoader } from './db/loader'
 import { AuthMiddleware } from './middlewares/auth.middleware'
 import { HttpError } from './errors'
@@ -28,7 +29,12 @@ app.use(bodyParser.json())
 
 app.use(docsRouter)
 app.use(executeRouter)
+app.use(publicRoutes)
 app.use('/user', AuthMiddleware.isTokenAuthenticated, userRouter)
+
+app.get(['/ping', '/health', '/'], (_request: Request, response: Response) => {
+	return response.status(200).json({ message: 'pong' })
+})
 
 // handles all celebrate errors (i.e. request validation error)
 const celebrateErrorHandler: ErrorRequestHandler = (err, _req, res, next) => {
@@ -69,3 +75,4 @@ sequelizeLoader().then(() => {
 	}
 })
 exports.handler = serverlessExpress({ app })
+export default app
