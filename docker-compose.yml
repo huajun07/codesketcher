@@ -61,7 +61,7 @@ services:
     links:
       - backend_api
     environment:
-      REACT_APP_EXECUTOR_ENDPOINT: "http://backend_api:8000"
+      REACT_APP_EXECUTOR_ENDPOINT: "http://localhost:8000"
       REACT_APP_GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
     healthcheck:
       test: curl --fail http://localhost:3000/ || exit 1
