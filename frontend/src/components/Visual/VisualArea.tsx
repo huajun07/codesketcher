@@ -130,6 +130,7 @@ export const VisualArea = () => {
                 padding={1}
                 borderColor="black.100"
                 borderRadius={8}
+                key={key}
                 data-key={key}
               >
                 {type === VisualizationType.Graph ? (
