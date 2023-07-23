@@ -24,6 +24,7 @@ class Debugger(bdb.Bdb):
         self.previous_global_variables = {}
         self.current_raw_local_variables = {}
         self.current_raw_global_variables = {}
+        self.list_return = False  # Temporary fix, see Issue #98 for more details
 
     # This function takes in a dictionary of variables and clones them
     # into a predefined format that can be serialized into JSON data.
@@ -63,10 +64,19 @@ class Debugger(bdb.Bdb):
         return True
 
     def user_return(self, frame, return_value):
+        if (
+            len(self.previous_function_scope) > 0
+            and self.previous_function_scope[-1] == "<listcomp>"
+        ):
+            self.list_return = True
         # Since local variables are dropped upon returning, we need to capture them here
-        if len(self.get_scope(frame)) == len(self.previous_function_scope):
+        if (
+            len(self.get_scope(frame)) == len(self.previous_function_scope)
+            or self.list_return
+        ):
             self.current_raw_local_variables |= frame.f_locals
             self.current_raw_global_variables |= frame.f_globals
+            self.list_return = False
 
     def user_line(self, frame):
         if not self.is_tracing:
