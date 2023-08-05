@@ -10,6 +10,12 @@ interface TokenData {
 }
 
 export class AuthMiddleware {
+	/**
+	 * Validate JWT token according to google open id configuration.
+	 * @param header JWT Token (Expected prepend with 'Bearer ')
+	 * @returns If valid returns the user unique ID (Maximum length of 255 case-sensitive ASCII characters)
+	 * @throws Token not found or invalid
+	 */
 	static decodeJWTHeader = async (header: string) => {
 		const token = header?.split(' ')[1]
 		// Ref: https://developers.google.com/identity/openid-connect/openid-connect#validatinganidtoken
@@ -36,11 +42,12 @@ export class AuthMiddleware {
 	}
 
 	/**
-	 * Checks if request is authenticated with a valid JWT Token
+	 * Checks if request is authenticated with a valid JWT Token.
+	 * If valid, retrieve the user ID from the JWT token and add it to the response local variable
 	 * @param req
 	 * @param res
 	 * @param next
-	 * @returns
+	 * @throws JWT token is not present or invalid
 	 */
 	static isTokenAuthenticated = (
 		req: Request,

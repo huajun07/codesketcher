@@ -42,17 +42,20 @@ describe('Code Creation Test', () => {
 	})
 
 	test('Duplicate codename', async () => {
+		// Seed code for user 1
 		await seedData([defaultRes])
 		const resBody = {
 			...defaultRes,
 			uid: '2',
 		}
+		// Check for successful creation of code with same name under different user
 		await req
 			.post('/user/codes/sample')
 			.set('Authorization', '2')
 			.send(defaultReq)
 			.expect(201)
 			.expect((res) => expect(stripDatetime(res.body)).toEqual(resBody))
+		// Check for invalid creation of code with same name under same user
 		await req
 			.post('/user/codes/sample')
 			.set('Authorization', '2')
@@ -70,7 +73,9 @@ describe('Code Creation Test', () => {
 			}
 			data.push(newData)
 		}
+		// Seed 9 files for user 1
 		await seedData(data)
+		// Check for successful creation of 10th file
 		await req
 			.post('/user/codes/sample-10')
 			.set('Authorization', '1')
@@ -80,6 +85,7 @@ describe('Code Creation Test', () => {
 			...defaultRes,
 			codename: 'sample-10',
 		})
+		// Check for invalid creation of 11th file
 		await req
 			.post('/user/codes/sample11')
 			.set('Authorization', '1')

@@ -19,6 +19,7 @@ const app = express()
 
 app.use(cors())
 
+// Logger middleware
 app.use(
 	pinoHttp({
 		logger: logger,
@@ -27,16 +28,21 @@ app.use(
 
 app.use(bodyParser.json())
 
+/**
+ * API endpoints
+ */
 app.use(docsRouter)
 app.use(executeRouter)
 app.use(publicRoutes)
+// All routes through /user needs user auth
 app.use('/user', AuthMiddleware.isTokenAuthenticated, userRouter)
 
+// Health Check
 app.get(['/ping', '/health', '/'], (_request: Request, response: Response) => {
 	return response.status(200).json({ message: 'pong' })
 })
 
-// handles all celebrate errors (i.e. request validation error)
+// Handles all celebrate errors (i.e. request validation error)
 const celebrateErrorHandler: ErrorRequestHandler = (err, _req, res, next) => {
 	if (isCelebrateError(err)) {
 		const allMessages: string[] = []
@@ -48,7 +54,7 @@ const celebrateErrorHandler: ErrorRequestHandler = (err, _req, res, next) => {
 }
 app.use(celebrateErrorHandler)
 
-// handles all other types of errors
+// Handles all other types of errors
 const httpErrorHandler: ErrorRequestHandler = (err, _req, res, _next) => {
 	logger.error({ message: 'sending json error response', error: err })
 
@@ -67,6 +73,7 @@ const httpErrorHandler: ErrorRequestHandler = (err, _req, res, _next) => {
 
 app.use(httpErrorHandler)
 
+// Loads connection pool to Postgresql database
 sequelizeLoader().then(() => {
 	if (config.get('env') === 'local') {
 		app.listen(config.get('port'), () => {

@@ -25,10 +25,10 @@ describe('Graph', () => {
     cy.stepInput().type('{backspace}116')
 
     // Temp fix till issue with react-data-grid ResizeObserver loop limit exceeded is fixed
-    cy.get('iframe#webpack-dev-server-client-overlay').then((element)=>{
-        if (element.length > 0) 
-       element.attr('style', 'display: none')
-    })
+    // cy.get('iframe#webpack-dev-server-client-overlay').then((element)=>{
+    //     if (element.length > 0) 
+    //    element.attr('style', 'display: none')
+    // })
 
     // Add graph
     cy.get('button[aria-label="add graph"]').click()
@@ -42,7 +42,7 @@ describe('Graph', () => {
 
     cy.viewport(1640, 900).then(()=>{
         cy.get('#root').matchImageSnapshot('graph', {
-            "failureThreshold": 0.01,
+            "failureThreshold": 0.0001,
             "failureThresholdType": "percent"
           })
       })

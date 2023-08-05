@@ -53,7 +53,7 @@ export const NavBar = () => {
       >
         <Flex h={16} alignItems={'center'} justifyContent={'space-between'}>
           <Heading color={useColorModeValue('blue.700', 'blue.300')}>
-            CodeSketcher
+            CodeSketcher Test
           </Heading>
 
           <Flex alignItems={'center'}>
