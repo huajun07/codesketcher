@@ -1,6 +1,12 @@
 import axios from 'axios'
 import IdTokenVerifier from 'idtoken-verifier'
 
+/**
+ * Validate JWT token according to google open id configuration.  
+ * @param token JWT Token 
+ * @returns Decoded token as JSON object
+ * @throws Invalid JWT token
+ */
 export const decodeJWT = async (token: string) => {
   // Ref: https://developers.google.com/identity/openid-connect/openid-connect#validatinganidtoken
   const openIDConfig = (

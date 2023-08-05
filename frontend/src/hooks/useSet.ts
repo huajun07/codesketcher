@@ -1,6 +1,11 @@
 import { useRef, useState } from 'react'
 
-// A custom hook to allow useState of a set
+/**
+ * Custom hook to allow useState of a set
+ * @template T
+ * @param {T[]} initialSet
+ * @returns A set with getters and setters wrapped with useState
+ */
 export function useSet<T>(initialSet: T[] = []) {
   const setRef = useRef(new Set(initialSet))
   const [toggle, rerender] = useState(false)

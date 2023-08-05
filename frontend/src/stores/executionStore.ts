@@ -10,11 +10,11 @@ interface dataVal {
 export interface ExecutionState {
   currentStep: number
   setStep: (step: number) => void
-  rawInstructions: instruction[]
-  instructions: instruction[]
+  rawInstructions: instruction[] // All instructions
+  instructions: instruction[] // Reduced selected instructions
   setInstructions: (instructions: instruction[]) => void
-  data: dataVal[]
-  allVariableNames: string[]
+  data: dataVal[] // Data of the current state of variables during the execution
+  allVariableNames: string[] // List of all variables names in the entire execution
   selectedLineNumbers: number[]
   updateSelectedLineNumbers: (lineNumbers: number[]) => void
 }
@@ -28,9 +28,20 @@ const defaultValues = {
   selectedLineNumbers: [],
 }
 
+/**
+ * Factory function for execution store
+ * with option to seed inital values (For automated tests)
+ * @param initalValues Initial Values (optional)
+ * @returns 
+ */
 export const createExecutionStore = (initialState: Partial<ExecutionState>) => {
   return create<ExecutionState>((set, get) => ({
     ...defaultValues,
+    /**
+     * Change the current execution step to given value.
+     * Note this operation updates all related variables like table data
+     * @param step 
+     */
     setStep: (step: number) => {
       const newData: dataVal[] = []
       for (let i = 0; i < step; i++) {
@@ -50,6 +61,10 @@ export const createExecutionStore = (initialState: Partial<ExecutionState>) => {
       }
       set({ currentStep: step, data: newData })
     },
+    /**
+     * Resets the execution from the start with new instructions.
+     * @param instructions New instructions 
+     */
     setInstructions: (instructions: instruction[]) => {
       const allVariableNames = new Set<string>()
       for (let i = 0; i < instructions.length; i++) {
@@ -73,6 +88,11 @@ export const createExecutionStore = (initialState: Partial<ExecutionState>) => {
         allVariableNames: [...allVariableNames],
       })
     },
+    /**
+     * Update select breakpoint line numbers and resets the executions
+     * Note that this function will only trigger a update in the execution instruction if there is a change in the set of selected line numbers 
+     * @param lineNumbers 
+     */
     updateSelectedLineNumbers: (lineNumbers: number[]) => {
       let unchanged = true
       if (lineNumbers.length !== get().selectedLineNumbers.length)
@@ -94,6 +114,13 @@ export const createExecutionStore = (initialState: Partial<ExecutionState>) => {
   }))
 }
 
+/**
+ * Process the raw instructions, only considering instructions at selected line numbers
+ * merging the changes by unselected instructions into selected instructions.
+ * @param rawInstructions All instructions retrieved from the executor endpoint
+ * @param lineNumbers Selected breakpoint line numbers
+ * @returns Reduced merged instructions
+ */
 function processInstructions(
   rawInstructions: instruction[],
   lineNumbers: number[],

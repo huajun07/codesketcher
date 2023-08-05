@@ -33,6 +33,7 @@ const defaultValues = {
   curIdx: 0,
   loading: false,
 }
+
 const getValues = async (token: string) => {
   try {
     const { name, picture, sub } = (await decodeJWT(token)) as idToken
@@ -49,18 +50,18 @@ interface File {
 }
 
 interface UserState extends idToken {
-  loggedIn: boolean
-  loading: boolean
+  loggedIn: boolean // Boolean to check if exist user account logged in
+  loading: boolean // Toggle to allow latency in retrieving user data
   setCredentials: (creds: string) => Promise<void>
   unSetCredentials: () => void
-  files: File[]
-  curFile: { code: string; input: string }
-  codenames: string[]
-  code: string
-  input: string
-  shareId: string | null
-  curIdx: number
-  codename: string
+  files: File[] // All stored files of the user
+  curFile: { code: string; input: string } // Original code/input of currently selected file
+  codenames: string[] // Names of all stored files of the user
+  code: string // Current code in CodeIDE
+  input: string // Current input in InputIDE
+  shareId: string | null // Current shareId
+  curIdx: number // Current index of selected file
+  codename: string // Current name of selected file
   setIdx: (idx: number) => void
   rename: (name: string) => Promise<void>
   update: () => Promise<void>
@@ -73,12 +74,24 @@ interface UserState extends idToken {
   setInput: (input: string) => void
 }
 
+/**
+ * Factory function for user data store
+ * with option to seed inital values (For automated tests)
+ * @param initalValues Initial Values (optional)
+ * @returns 
+ */
 export const createUserStore = (initalValues: Partial<UserState>)=> {
   return create<UserState>((set, get) => ({
     ...defaultValues,
+    /**
+     * Set credential given JWT token and load relevant values
+     * @param creds New JWT token
+     * @throws Invalid JWT token
+     */
     setCredentials: async (creds: string) => {
       const newState = await getValues(creds)
       if (newState) {
+        // Store the token in local storage to allow persistent login
         localStorage.setItem($LOCAL_GOOGLE_JWT, creds)
         set({ ...newState, loading: true })
         try {
@@ -89,10 +102,17 @@ export const createUserStore = (initalValues: Partial<UserState>)=> {
         set({ loading: false })
       } else throw Error('Invalid Token')
     },
+    /**
+     * Logout and reset values
+     */
     unSetCredentials: () => {
       localStorage.removeItem($LOCAL_GOOGLE_JWT)
       set(defaultValues)
     },
+    /**
+     * Change selected file and load its code/input
+     * @param idx New selected file index
+     */
     setIdx: (idx: number) => {
       if (idx < 0 || idx >= get().files.length) throw Error('Invalid Action')
       const { code, input, shareId } = get().files[idx]
@@ -111,6 +131,9 @@ export const createUserStore = (initalValues: Partial<UserState>)=> {
       codenames[get().curIdx] = name
       set({ codename: name, codenames })
     },
+    /**
+     * Reload original code/input of selected code into CodeIDE and InputIDE respectively
+     */
     reload: () => {
       const { code, input } = get().curFile
       set({ code, input })
@@ -150,6 +173,9 @@ export const createUserStore = (initalValues: Partial<UserState>)=> {
       set({ files, curFile: { code, input } })
       return
     },
+    /**
+     * Retrive all stored codes of the user and load them into relevant variables in data store
+     */
     load: async () => {
       const data = await getCodes()
       const codenames = get()
@@ -174,9 +200,17 @@ export const createUserStore = (initalValues: Partial<UserState>)=> {
       files[get().curIdx].shareId = newId
       set({ shareId: newId, files })
     },
+    /**
+     * Modifier function for CodeIDE
+     * @param code New code 
+     */
     setCode: (code: string) => {
       set({ code })
     },
+    /**
+     * Modifier function for InputIDE
+     * @param code New input
+     */
     setInput: (input: string) => {
       set({ input })
     },
@@ -186,7 +220,9 @@ export const createUserStore = (initalValues: Partial<UserState>)=> {
 
 export const useUserDataStore = createUserStore({})
 
+// This runs on start up of webpage to auto login the user if the token has not expired
 getValues(localStorage.getItem($LOCAL_GOOGLE_JWT) || '').then(async (state) => {
+  // Using the user id retrieved from the JWT token, retrieved store codes and update the variables
   useUserDataStore.setState({ ...state })
   if (state) {
     useUserDataStore.setState({ loading: true })

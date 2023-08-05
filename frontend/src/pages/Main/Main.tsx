@@ -89,6 +89,9 @@ export const Main = () => {
     }
   })
 
+  /**
+   * Interval hook to increment the step counter while the execution is playing
+   */
   useInterval(
     () => {
       // sanity check
@@ -96,6 +99,7 @@ export const Main = () => {
         setStep(currentStep + 1)
       }
       if (currentStep >= instructions.length - 1) {
+        // End of execution
         setPlaying(false)
       }
       setLoading(false)
@@ -123,6 +127,7 @@ export const Main = () => {
         makeToast('Code cannot be empty!')
         return
       }
+      // Retrieve instructions from endpoint
       const {
         instructions: newInstructions,
         output: newOutput,
@@ -133,6 +138,8 @@ export const Main = () => {
         makeToast(errorMessage)
         return
       }
+
+      // Set instructions and update components to start playing mode
       setInstructions(newInstructions)
       setIOIndex(1)
       setOutput(newOutput || '')
