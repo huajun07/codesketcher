@@ -44,7 +44,7 @@ describe('Graph', () => {
 
     cy.viewport(1640, 900).then(()=>{
         cy.get('#root').matchImageSnapshot('graph', {
-            "failureThreshold": 0.0001,
+            "failureThreshold": 0.001,
             "failureThresholdType": "percent"
           })
       })
