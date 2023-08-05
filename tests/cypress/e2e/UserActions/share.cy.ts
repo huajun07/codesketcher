@@ -21,6 +21,7 @@ describe('Share', () => {
     cy.contains('Share Link Generated')
 
     let shareLink = ''
+    // Retrieve share link
     cy.get('[aria-label="share link"]')
       .invoke('val')
       .then((value) => {
@@ -28,13 +29,21 @@ describe('Share', () => {
           console.log(value)
           shareLink = value.slice(Cypress.env('frontend').length)
         }
+        // Logout and visit site with share link
+        cy.visit('/')
+        cy.get('.chakra-avatar').parents('button').click()
+        cy.contains('Logout').click()
+        cy.wait(500)
         cy.visit(shareLink)
       })
 
+    // Check that code is successfully loaded while logged out
     cy.get('.cm-content').eq(0).contains('Testing Code')
     cy.get('.cm-content').eq(1).contains('Testing Input')
 
     // Regenerate code
+    cy.login()
+    cy.visit('/')
     cy.contains('Load your codes').click()
     cy.contains('test.py').click()
 
@@ -49,10 +58,16 @@ describe('Share', () => {
       .invoke('val')
       .then((value) => {
         if (typeof value === 'string')
-          shareLink = value.slice('http://localhost:3000'.length)
+          shareLink = value.slice(Cypress.env('frontend').length)
+        // Logout and visit site with share link
+        cy.visit('/')
+        cy.get('.chakra-avatar').parents('button').click()
+        cy.contains('Logout').click()
+        cy.wait(500)
         cy.visit(shareLink)
       })
 
+    // Check that code is successfully loaded while logged out
     cy.get('.cm-content').eq(0).contains('Testing Code')
     cy.get('.cm-content').eq(1).contains('Testing Input')
   })

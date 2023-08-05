@@ -20,6 +20,8 @@ describe('Graph', () => {
     cy.contains(`Dijkstra's Algorithm (Single Source Shortest Path)`).click()
     cy.contains('Load Code').click()
     cy.contains('Run').click()
+
+    // Stop and jump the execution to the 116th state of the execution
     cy.stepInput().invoke('val').should('eq', '1')
     cy.get('button[aria-label="Play/Pause"]').click()
     cy.stepInput().type('{backspace}116')
