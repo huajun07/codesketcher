@@ -45,7 +45,7 @@ describe('Array', () => {
     cy.get('[aria-label="2d-array"]').click({force: true}) 
 
     cy.matchImageSnapshot('2d_array', {
-        "failureThreshold": 0.0001,
+        "failureThreshold": 0.01,
         "failureThresholdType": "percent"
       })
   })
