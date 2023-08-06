@@ -47,7 +47,8 @@ describe('Code Share Test', () => {
 						shareId,
 					},
 				])
-				req
+				// Check that unauth request using the share ID can successfully retrieve the code
+				await req
 					.get('/codes?id=' + shareId)
 					.expect(200)
 					.expect(defaultReq)
@@ -65,10 +66,13 @@ describe('Code Share Test', () => {
 						shareId,
 					},
 				])
-				req
+				// Check that unauth request using the new share ID can successfully retrieve the code
+				await req
 					.get('/codes?id=' + shareId)
 					.expect(200)
 					.expect(defaultReq)
+				// Check that old share ID is invalid
+				await req.post('/codes?id=' + curId).expect(404)
 			})
 	})
 

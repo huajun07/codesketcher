@@ -9,6 +9,9 @@ export interface TypedRequest<Q> extends Express.Request {
 	query: Q
 }
 
+/**
+ * Public endpoint to retrieve a user's stored code via share ID
+ */
 router.get(
 	'/codes',
 	celebrate({

@@ -47,6 +47,9 @@ describe('Code Delete Test', () => {
 			},
 		]
 		await seedData(data)
+		// Check for invalid deletion although there exist files
+		// With same name under different user
+		// With different name under same user
 		await req.delete('/user/codes/sample').set('Authorization', '2').expect(404)
 		await assertDBValues(data)
 	})

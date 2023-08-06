@@ -7,6 +7,7 @@ describe('Files', () => {
   })
 
   it('Modifying files', () => {
+    // Enter new code and input
     cy.typeIDE('Testing Code', 0)
     cy.typeIDE('Testing Input', 1)
     // Click Save Button
