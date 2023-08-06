@@ -37,7 +37,7 @@ const LEN_LIMIT = 10000
  * @param code New code to add
  * @param input New input to add
  * @returns Record of new code created
- * @throws Will throw and error if name is invalid, user have already has too many codes stored or code/input is too large
+ * @throws Will throw an error if name is invalid, user already has too many codes stored or code/input is too large
  */
 const addCode = async (
 	uid: string,
