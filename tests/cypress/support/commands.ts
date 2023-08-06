@@ -1,6 +1,7 @@
 /// <reference types="cypress" />
 
 Cypress.Commands.add('getToken', () => {    
+  // Ref: https://docs.cypress.io/guides/end-to-end-testing/google-authentication
   cy.request({
     method: 'POST',
     url: 'https://www.googleapis.com/oauth2/v4/token',
@@ -25,6 +26,7 @@ Cypress.Commands.add('login', () => {
 
 Cypress.Commands.add('clearDB', () => {
   cy.getToken().then((id_token) => {
+    // Get all code names
     cy.request({
       method: 'GET',
       url: `${Cypress.env('backend')}/user/codes`,
@@ -33,6 +35,7 @@ Cypress.Commands.add('clearDB', () => {
       },
     }).then(({ body }) => {
       const files = body.map((val: {codename: string}) => val.codename)
+      // Delete all files via delete endpoint
       for (const file of files) {
         cy.request({
           method: 'DELETE',

@@ -2,6 +2,8 @@ import config from '../config'
 import { InvokeCommand, Lambda } from '@aws-sdk/client-lambda'
 
 class Client {
+	// Note that the executorEndpoint is used in local/testing env to query the executor docker image
+	// In dev/prod this field will be undefined and thus default to the aws cloud server
 	lambdaClient = new Lambda({
 		endpoint: config.get('aws.executorEndpoint'),
 		region: config.get('aws.executorRegion'),

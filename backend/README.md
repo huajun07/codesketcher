@@ -1,5 +1,7 @@
 # Backend
 
+- View all api endpoints and docs at https://k50ptad6bb.execute-api.ap-southeast-1.amazonaws.com/api-docs/
+
 ## Installing Dependencies
 
 ```bash

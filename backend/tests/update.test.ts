@@ -40,6 +40,12 @@ describe('Code Update Test', () => {
 			}
 			data.push(newData)
 		}
+		// Adding file of same name of different user to ensure it remains unchanged
+		data.push({
+			...defaultRes,
+			codename: 'sample-5',
+			uid: '2',
+		})
 		await seedData(data)
 		const reqBody = {
 			code: 'new code',
@@ -50,6 +56,7 @@ describe('Code Update Test', () => {
 			...reqBody,
 			codename: 'sample-5',
 		}
+		// Check that only the expected file is modified while the rest remains unchanged
 		await req
 			.put('/user/codes/sample-5')
 			.set('Authorization', '1')
@@ -74,6 +81,9 @@ describe('Code Update Test', () => {
 			code: 'new code',
 			input: 'new input',
 		}
+		// Check for invalid update although there exist files
+		// With same name under different user
+		// With different name under same user
 		await req
 			.put('/user/codes/sample')
 			.set('Authorization', '2')

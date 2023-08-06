@@ -3,6 +3,9 @@ import app from '../src'
 const req = request(app)
 
 describe('Authentication Test', () => {
+	/**
+	 * Check that all endpoints that require auth should be inaccessible without a bearer token.
+	 */
 	test('Get Codes', async () => {
 		await req.get('/user/codes').expect(401)
 	})

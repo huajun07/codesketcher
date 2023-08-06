@@ -40,11 +40,18 @@ describe('Code Renaming Test', () => {
 			}
 			data.push(newData)
 		}
+		// Adding file of same name of different user to ensure it remains unchanged
+		data.push({
+			...defaultRes,
+			codename: 'sample-5',
+			uid: '2',
+		})
 		await seedData(data)
 		const resBody = {
 			...defaultRes,
 			codename: 'sample2-5',
 		}
+		// Check that only the expected file is modified while the rest remains unchanged
 		await req
 			.put('/user/codes/sample-5/rename')
 			.set('Authorization', '1')

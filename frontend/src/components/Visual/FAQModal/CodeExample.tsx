@@ -60,10 +60,20 @@ const dijkstraInput = `\
 0 4 30`
 
 const fibonacciCode = `\
-# use this example to test out array visualization!
+# use this example to test out 1d array visualization!
 fibo = [0, 1]
 for i in range(20):
   fibo.append(fibo[-1] + fibo[-2])`
+
+const matrixTranspositionCode = `\
+# use this example to test out 2d array visualization!
+matrix = [ [1, 2, 3], [4, 5, 6], [7, 8, 9] ]
+
+for i in range(len(matrix)):
+  for j in range(i, len(matrix)):
+    matrix[i][j], matrix[j][i] = matrix[j][i], matrix[i][j]
+
+print('Transposed matrix:', matrix)`
 
 export const CodeExamples = (props: {
   toggle: () => void
@@ -213,6 +223,55 @@ export const CodeExamples = (props: {
               <Image
                 src="faq/fibonacci_array.png"
                 alt="Fibonacci numbers array"
+                width="40%"
+                display="inline"
+              />
+            </Center>
+            <br />
+          </AccordionPanel>
+        </AccordionItem>
+        <AccordionItem>
+          <Text as="h4" size="md">
+            <AccordionButton>
+              <Box as="b" flex="1" textAlign="left">
+                Matrix Transposition
+              </Box>
+              <AccordionIcon />
+            </AccordionButton>
+          </Text>
+          <AccordionPanel pb={4}>
+            <HStack spacing={0} marginBottom={2}>
+              <Center>Code: </Center>
+              <IconButton
+                icon={<CopyIcon />}
+                aria-label="copy"
+                size="sm"
+                variant="link"
+                onClick={() => {
+                  navigator.clipboard.writeText(matrixTranspositionCode)
+                  copyToast()
+                }}
+              />
+              <Spacer />
+              <Button
+                colorScheme="blue"
+                onClick={() => {
+                  setIdx(0)
+                  setCode(matrixTranspositionCode)
+                  props.toggle()
+                }}
+              >
+                Load Code
+              </Button>
+            </HStack>
+            <Code display="block" whiteSpace="pre">
+              {matrixTranspositionCode}
+            </Code>
+            <br />
+            <Center>
+              <Image
+                src="faq/matrix_transposition_array.png"
+                alt="Matrix transposition array"
                 width="40%"
                 display="inline"
               />

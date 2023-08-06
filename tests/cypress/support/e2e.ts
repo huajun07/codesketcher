@@ -15,7 +15,7 @@
 
 // Import commands.js using ES2015 syntax:
 import './commands'
-
+// Ref: https://github.com/simonsmith/cypress-image-snapshot
 import {addMatchImageSnapshotCommand} from '@simonsmith/cypress-image-snapshot/command'
 
 addMatchImageSnapshotCommand()

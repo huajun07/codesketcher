@@ -11,6 +11,8 @@ describe('Array', () => {
     // Load and run code
     cy.typeIDE('a = [_ for _ in range(10)]\nb=0', 0)
     cy.contains('Run').click()
+
+    // Stop and jump the execution to the 13th state
     cy.stepInput().invoke('val').should('eq', '1')
     cy.get('button[aria-label="Play/Pause"]').click()
     cy.stepInput().type('{backspace}13')

@@ -50,6 +50,8 @@ describe('Code Retrival Test', () => {
 			data2.push(newData)
 		}
 		await seedData(data.concat(data2))
+		// Check successful retrieval of only user 1's codes
+		// Despite user 2's codes also being in the database
 		await req
 			.get('/user/codes')
 			.set('Authorization', '1')

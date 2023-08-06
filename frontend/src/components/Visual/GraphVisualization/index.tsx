@@ -111,7 +111,7 @@ export const GraphVisualization = (props: GraphVisualizationProps) => {
       } else {
         // adjacency matrix
         if (!assertAdjacencyMatrix(edgesVariable))
-          updateErrorMessage('Given variable is not a adjacency matrix')
+          updateErrorMessage('Given variable is not an adjacency matrix')
         else {
           adjacencyList = adjacencyMatrixToList(
             edgesVariable,

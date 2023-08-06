@@ -1,4 +1,8 @@
 // #region HTTP errors
+/**
+ * Basic HTTP errors classes to easily allow endpoints to return the appropriate http error codes
+ */
+
 export class HttpError extends Error {
 	status: number
 	constructor(status: number, message: string) {

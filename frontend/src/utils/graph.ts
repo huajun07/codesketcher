@@ -10,6 +10,17 @@ function isArrayOfArrays<T>(array: unknown): array is T[][] {
   return true
 }
 
+/**
+ * Check that given object is a unweighted adjacency list
+ * @param adjacencyList Object
+ * @returns Boolean True if object is unweighted adjacency list
+ * @example
+ * // returns false - node 2 not found
+ * assertAdjacencyListUnweighted([[0, 2], []])
+ * @example
+ * // returns true
+ * assertAdjacencyListUnweighted([[0, 2], [], [1, 0, 2]])
+ */
 export function assertAdjacencyListUnweighted(
   adjacencyList: unknown,
 ): adjacencyList is number[][] {
@@ -23,6 +34,17 @@ export function assertAdjacencyListUnweighted(
   return true
 }
 
+/**
+ * Check that given object is a weighted adjacency list
+ * @param adjacencyList Object
+ * @returns Boolean True if object is weighted adjacency list
+ * @example
+ * // returns false - unweighted
+ * assertAdjacencyListWeighted([[0, 2], [], [1, 0, 2]])
+ * @example
+ * // returns true
+ * assertAdjacencyListWeighted([[[0, 11], [2, -3]], [], [[1, 5], [0, 0], [2, -6]]])
+ */
 export function assertAdjacencyListWeighted(
   adjacencyList: unknown,
 ): adjacencyList is [number, number][][] {
@@ -39,6 +61,20 @@ export function assertAdjacencyListWeighted(
   return true
 }
 
+/**
+ * Check that given object is an adjacency matrix
+ * @param adjacencyMatrix Object
+ * @returns Boolean True if object is adjacency matrix
+ * @example
+ * // returns false - incorrect size (Not n x n)
+ * assertAdjacencyMatrix([[1, 0, 1], [0, 0], [0, 1, 1]])
+ * @example
+ * // returns false - Item not number
+ * assertAdjacencyMatrix([[1, 'hi', 1], [0, 0, 1], [0, 1, 1]])
+ * @example
+ * // returns true
+ * assertAdjacencyMatrix([[1, 5, 1], [0, 2, 1], [3, 1, 1]])
+ */
 export function assertAdjacencyMatrix(
   adjacencyMatrix: unknown,
 ): adjacencyMatrix is number[][] {
@@ -53,6 +89,18 @@ export function assertAdjacencyMatrix(
   return true
 }
 
+/**
+ * Convert the given adjacency matrix to adjacency list
+ * @param adjacencyMatrix Given matrix
+ * @param weighted Whether adj matrix is weighted
+ * @returns The converted adj list
+ * @example
+ * // returns [[0, 2], [], [0, 1, 2]]
+ * adjacencyMatrixToList([[1, 0, 1], [0, 0, 0], [1, 1, 1]], false)
+ * @example
+ * // returns [[[0, 11], [2, -3]], [], [[0, 2], [1, 5], [2, -6]]]
+ * adjacencyMatrixToList([[11, 0, -3], [0, 0, 0], [2, 5, -6]], true)
+ */
 export function adjacencyMatrixToList(
   adjacencyMatrix: number[][],
   weighted: boolean,
