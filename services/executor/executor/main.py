@@ -6,6 +6,8 @@ import sys
 from io import StringIO
 from contextlib import redirect_stdout
 
+# User code is run as if it were contained in a file called "user_code".
+# This lets us differentiate execution of user code vs code in builtin Python functions.
 CODE_FILENAME = "user_code"
 
 
@@ -52,6 +54,7 @@ class Debugger(bdb.Bdb):
 
         return {key: convert_variable(value) for key, value in variables_dict.items()}
 
+    # Get the scope of a frame as a list of strings, from outermost to innermost scope.
     def get_scope(self, frame):
         if frame == self.root_frame or frame == self.root_frame.f_back:
             return []
@@ -96,6 +99,7 @@ class Debugger(bdb.Bdb):
             # Code has finished executing, any further lines are from caller's frame and should be ignored
             return
 
+        # Update the stack of captured local variables to match the new scope.
         current_scope = self.previous_function_scope
         while len(current_scope) + 1 < len(self.previous_local_variables_stack):
             self.previous_local_variables_stack.pop()
@@ -114,6 +118,7 @@ class Debugger(bdb.Bdb):
         self.current_raw_global_variables.pop("__builtins__", None)
         self.current_raw_local_variables.pop("__builtins__", None)
 
+        # Filter out undesirable variables (e.g. modules)
         def filter_variable(name, value):
             if inspect.ismodule(value):
                 return True
@@ -137,6 +142,7 @@ class Debugger(bdb.Bdb):
         global_variable_changes = {}
 
         previous_local_variables = self.previous_local_variables_stack[-1]
+        # Compute and store the diff of local/global variables from the previous values.
         for var in self.current_raw_local_variables:
             if (
                 var in previous_local_variables
@@ -191,6 +197,7 @@ def json_size_checker(return_data):
     return return_data
 
 
+# Erase all environment variables for security.
 def prepare_environment():
     for env in os.environ.keys():
         del os.environ[env]
@@ -209,6 +216,8 @@ def execute(event):
     if not isinstance(inp, str):
         return {"executed": False, "error": "Field 'input' must be empty or a string"}
 
+    # Make stdin read from the `inp` string,
+    # and capture all stdout in `output`.
     sys.stdin = StringIO(inp)
     output = StringIO()
     debugger = Debugger()
