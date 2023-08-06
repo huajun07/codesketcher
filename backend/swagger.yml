@@ -19,33 +19,9 @@ paths:
                     type: string
                     pattern: pong
   /ping:
-    get:
-      description: Healthcheck
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    pattern: pong
+    $ref: '#/paths/~1'
   /health:
-    get:
-      description: Healthcheck
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    pattern: pong
+    $ref: '#/paths/~1'
   /execute:
     post:
       description: Get information about how variables change throughout code execution.
