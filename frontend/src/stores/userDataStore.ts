@@ -78,9 +78,9 @@ interface UserState extends idToken {
  * Factory function for user data store
  * with option to seed inital values (For automated tests)
  * @param initalValues Initial Values (optional)
- * @returns 
+ * @returns
  */
-export const createUserStore = (initalValues: Partial<UserState>)=> {
+export const createUserStore = (initalValues: Partial<UserState>) => {
   return create<UserState>((set, get) => ({
     ...defaultValues,
     /**
@@ -202,7 +202,7 @@ export const createUserStore = (initalValues: Partial<UserState>)=> {
     },
     /**
      * Modifier function for CodeIDE
-     * @param code New code 
+     * @param code New code
      */
     setCode: (code: string) => {
       set({ code })
@@ -214,7 +214,7 @@ export const createUserStore = (initalValues: Partial<UserState>)=> {
     setInput: (input: string) => {
       set({ input })
     },
-    ...initalValues
+    ...initalValues,
   }))
 }
 
@@ -222,7 +222,7 @@ export const useUserDataStore = createUserStore({})
 
 // This runs on start up of webpage to auto login the user if the token has not expired
 getValues(localStorage.getItem($LOCAL_GOOGLE_JWT) || '').then(async (state) => {
-  // Using the user id retrieved from the JWT token, retrieved store codes and update the variables
+  // Using the user id retrieved from the JWT token, retrieve stored codes and update the variables
   useUserDataStore.setState({ ...state })
   if (state) {
     useUserDataStore.setState({ loading: true })

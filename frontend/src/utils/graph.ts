@@ -62,7 +62,7 @@ export function assertAdjacencyListWeighted(
 }
 
 /**
- * Check that given object is a adjacency matrix
+ * Check that given object is an adjacency matrix
  * @param adjacencyMatrix Object
  * @returns Boolean True if object is adjacency matrix
  * @example

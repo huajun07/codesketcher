@@ -62,7 +62,7 @@ const stripDatetime = (val: Code): CodeValues => {
 }
 
 /**
- * @param val Record of the database stripped of datatime values
+ * @param val Record of the database stripped of datetime values
  * @returns Record without the uid
  */
 const stripUid = (val: CodeValues) => {
