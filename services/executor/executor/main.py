@@ -114,18 +114,20 @@ class Debugger(bdb.Bdb):
         self.current_raw_global_variables.pop("__builtins__", None)
         self.current_raw_local_variables.pop("__builtins__", None)
 
-        def filter_variable(x):
-            if inspect.ismodule(x):
+        def filter_variable(name, value):
+            if inspect.ismodule(value):
                 return True
-            if "importlib" in type(x).__module__:
+            if "importlib" in type(value).__module__:
+                return True
+            if name.startswith("."):  # filter out CPython generated variables
                 return True
             return False
 
         for name in list(self.current_raw_global_variables.keys()):
-            if filter_variable(self.current_raw_global_variables[name]):
+            if filter_variable(name, self.current_raw_global_variables[name]):
                 self.current_raw_global_variables.pop(name, None)
         for name in list(self.current_raw_local_variables.keys()):
-            if filter_variable(self.current_raw_local_variables[name]):
+            if filter_variable(name, self.current_raw_local_variables[name]):
                 self.current_raw_local_variables.pop(name, None)
 
         local_variables = self.clone_variables(self.current_raw_local_variables)

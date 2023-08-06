@@ -764,14 +764,7 @@ def test_list_comprehension():
         "data": [
             {
                 "line_number": 1,
-                "local_variable_changes": {
-                    ".0": {
-                        "type": "range_iterator",
-                        "value": MatchesRegex(
-                            "<range\\_iterator object at 0x[0-9a-f]+>"
-                        ),
-                    }
-                },
+                "local_variable_changes": {},
                 "global_variable_changes": {},
                 "function_scope": [],
             },
